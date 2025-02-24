@@ -1,26 +1,11 @@
 WHC_SETTINGS = {}
 
-function tab_settings(content)
-    local title = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    title:SetPoint("TOP", content, "TOP", 0, -10) -- Adjust y-offset based on logo size
-    title:SetText("Settings")
-    title:SetFont("Fonts\\FRIZQT__.TTF", 18)
-    title:SetTextColor(0.933, 0.765, 0)
-
-    --  local desc1 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    --  desc1:SetPoint("TOP", title, "TOP", 0, -25) -- Adjust y-offset based on logo size
-    --   desc1:SetText("Customize your adventure with various cosmetics and quality-of-life improvements")
-    --  desc1:SetWidth(300)
-
-
-
-
-
-    local settingsFrame = CreateFrame("Frame", "MySettingsFrame1", content)
+local offsetY = -50
+function createSettingsCheckBox(contentFrame, text)
+    local settingsFrame = CreateFrame("Frame", "MySettingsFrame", contentFrame)
     settingsFrame:SetWidth(200)
     settingsFrame:SetHeight(100)
-    settingsFrame:SetPoint("TOPLEFT", content, "TOPLEFT", 30, -50)
-
+    settingsFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 30, offsetY)
 
     local checkBox = CreateFrame("CheckButton", "MyCheckBox", settingsFrame, "UICheckButtonTemplate")
     checkBox:SetWidth(24)
@@ -29,11 +14,23 @@ function tab_settings(content)
 
     local checkBoxTitle = checkBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     checkBoxTitle:SetPoint("TOPLEFT", checkBox, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
-    checkBoxTitle:SetText("Display minimap button")
+    checkBoxTitle:SetText(text)
     checkBoxTitle:SetFont("Fonts\\FRIZQT__.TTF", 12)
     checkBoxTitle:SetTextColor(0.933, 0.765, 0)
 
+    offsetY = offsetY - 30 -- offset for next checkbox
 
+    return checkBox
+end
+
+function tab_settings(content)
+    local title = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    title:SetPoint("TOP", content, "TOP", 0, -10) -- Adjust y-offset based on logo size
+    title:SetText("Settings")
+    title:SetFont("Fonts\\FRIZQT__.TTF", 18)
+    title:SetTextColor(0.933, 0.765, 0)
+
+    local checkBox = createSettingsCheckBox(content, "Display minimap button")
     checkBox:SetScript("OnClick", function(self)
         if (WhcAddonSettings.minimapicon == 1) then
             WhcAddonSettings.minimapicon = 0
@@ -44,34 +41,9 @@ function tab_settings(content)
             MapIcon:Show()
         end
     end)
-
     WHC_SETTINGS.minimap = checkBox
 
-
-
-
-
-
-
-
-    local settingsFrame1 = CreateFrame("Frame", "MySettingsFrame2", settingsFrame)
-    settingsFrame1:SetWidth(200)
-    settingsFrame1:SetHeight(100)
-    settingsFrame1:SetPoint("TOPLEFT", settingsFrame, "TOPLEFT", 0, -30)
-
-
-    local checkBox1 = CreateFrame("CheckButton", "MyCheckBox", checkBox, "UICheckButtonTemplate")
-    checkBox1:SetWidth(24)
-    checkBox1:SetHeight(24)
-    checkBox1:SetPoint("TOPLEFT", settingsFrame1, "TOPLEFT", 10, -10)
-
-    local checkBox1Title = checkBox1:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    checkBox1Title:SetPoint("TOPLEFT", checkBox1, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
-    checkBox1Title:SetText("Display achievement button on inspect & character sheet")
-    checkBox1Title:SetFont("Fonts\\FRIZQT__.TTF", 12)
-    checkBox1Title:SetTextColor(0.933, 0.765, 0)
-
-
+    local checkBox1 = createSettingsCheckBox(content, "Display achievement button on inspect & character sheet")
     checkBox1:SetScript("OnClick", function(self)
         if (WhcAddonSettings.achievementbtn == 1) then
             WhcAddonSettings.achievementbtn = 0
@@ -86,32 +58,9 @@ function tab_settings(content)
             end
         end
     end)
-
     WHC_SETTINGS.achievementbtn = checkBox1
 
-
-
-
-
-
-    local settingsFrame2 = CreateFrame("Frame", "MySettingsFrame3", settingsFrame)
-    settingsFrame2:SetWidth(200)
-    settingsFrame2:SetHeight(100)
-    settingsFrame2:SetPoint("TOPLEFT", settingsFrame, "TOPLEFT", 0, -60)
-
-
-    local checkBox2 = CreateFrame("CheckButton", "MyCheckBox", checkBox, "UICheckButtonTemplate")
-    checkBox2:SetWidth(24)
-    checkBox2:SetHeight(24)
-    checkBox2:SetPoint("TOPLEFT", settingsFrame2, "TOPLEFT", 10, -10)
-
-    local checkBox2Title = checkBox2:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    checkBox2Title:SetPoint("TOPLEFT", checkBox2, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
-    checkBox2Title:SetText("Display Recent deaths frame")
-    checkBox2Title:SetFont("Fonts\\FRIZQT__.TTF", 12)
-    checkBox2Title:SetTextColor(0.933, 0.765, 0)
-
-
+    local checkBox2 = createSettingsCheckBox(content, "Display Recent deaths frame")
     checkBox2:SetScript("OnClick", function(self)
         if (WhcAddonSettings.recentDeaths == 1) then
             WhcAddonSettings.recentDeaths = 0
@@ -126,9 +75,7 @@ function tab_settings(content)
             end
         end
     end)
-
     WHC_SETTINGS.recentDeathsBtn = checkBox2
-
 
     return content;
 end
