@@ -1,7 +1,9 @@
 WHC_SETTINGS = {}
 
-local offsetY = -50
+local offsetY = -10
 function createSettingsCheckBox(contentFrame, text)
+    offsetY = offsetY - 30 -- offset for next checkbox
+
     local settingsFrame = CreateFrame("Frame", "MySettingsFrame", contentFrame)
     settingsFrame:SetWidth(200)
     settingsFrame:SetHeight(100)
@@ -17,8 +19,6 @@ function createSettingsCheckBox(contentFrame, text)
     checkBoxTitle:SetText(text)
     checkBoxTitle:SetFont("Fonts\\FRIZQT__.TTF", 12)
     checkBoxTitle:SetTextColor(0.933, 0.765, 0)
-
-    offsetY = offsetY - 30 -- offset for next checkbox
 
     return checkBox
 end
