@@ -63,7 +63,7 @@ eventFrame1:SetScript("OnEvent", function(self, event, arg1)
         WhcAddonSettings.auction_long = 0
         WhcAddonSettings.auction_deposit = 0
         WhcAddonSettings.recentDeaths = 1
-
+        WhcAddonSettings.blockInvites = 0
     else
         -- Ensure the specific setting exists and has a default value
         WhcAddonSettings.minimapicon = WhcAddonSettings.minimapicon or 1
@@ -76,6 +76,7 @@ eventFrame1:SetScript("OnEvent", function(self, event, arg1)
         WhcAddonSettings.auction_long = WhcAddonSettings.auction_long or 0
         WhcAddonSettings.auction_deposit = WhcAddonSettings.auction_deposit or 0
         WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
+        WhcAddonSettings.blockInvites = WhcAddonSettings.blockInvites or 0
     end
 
 
