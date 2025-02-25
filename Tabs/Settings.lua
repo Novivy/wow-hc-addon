@@ -56,9 +56,8 @@ function tab_settings(content)
     end)
     WHC_SETTINGS.recentDeathsBtn = checkBox2
 
-    offsetY = offsetY - 20
+    getNextOffsetY()
     createTitle(content, "Achievement Settings", 14)
-
 
     local blockInvitesCheckbox = createSettingsCheckBox(content, "[Lone Wolf] Achievement: Block invites")
     blockInvitesCheckbox:SetScript("OnClick", function(self)

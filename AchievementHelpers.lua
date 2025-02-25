@@ -49,10 +49,7 @@ BlizzardFunctions.InviteUnit = InviteUnit -- Retail
 BlizzardFunctions.InviteByName = InviteByName -- 1.12
 
 --region ====== Lone Wolf ======
-local blockInvites = function(name)
-    printAchievementInfo("[Lone Wolf] Group invite is blocked.")
-end
-
+-- Disables right-click menu
 hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, name)
     if WhcAddonSettings.blockInvites == 1 then
         if UIDROPDOWNMENU_MENU_LEVEL == 1 then
@@ -60,11 +57,31 @@ hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, n
                 local button = _G["DropDownList1Button" .. i]
                 if button and button.value == "INVITE" then
                     button:Disable()
-                    button.func = blockInvites -- Extra measure in case button is not disabled for some reason
                     return
                 end
             end
         end
+    end
+end)
+
+-- Disables friend list "Group Invite" button
+hooksecurefunc("FriendsList_Update", function()
+    if WhcAddonSettings.blockInvites == 1 and FriendsFrameGroupInviteButton then
+        FriendsFrameGroupInviteButton:Disable()
+    end
+end)
+
+-- Disables who "Group Invite" button
+hooksecurefunc("WhoList_Update", function()
+    if WhcAddonSettings.blockInvites == 1 and WhoFrameGroupInviteButton then
+        WhoFrameGroupInviteButton:Disable()
+    end
+end)
+
+-- Disables guild details "Group Invite" button
+hooksecurefunc("GuildStatus_Update", function()
+    if WhcAddonSettings.blockInvites == 1 and GuildMemberGroupInviteButton then
+        GuildMemberGroupInviteButton:Disable()
     end
 end)
 
@@ -83,6 +100,9 @@ function SetBlockInvites()
         AcceptGroup = function() end
 
         -- blocks outgoing invites via /i <char_name>
+        local blockInvites = function(name)
+            printAchievementInfo("[Lone Wolf] Group invite is blocked.")
+        end
         InviteUnit = blockInvites
         InviteByName = blockInvites
     else
