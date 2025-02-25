@@ -19,3 +19,4 @@ Support.lua
 Debug.lua
 Events.lua
 MinimapButton.lua
+AchievementHelpers.lua

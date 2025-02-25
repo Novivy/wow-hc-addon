@@ -1,34 +1,13 @@
 WHC_SETTINGS = {}
 
-local offsetY = -10
-function createSettingsCheckBox(contentFrame, text)
-    offsetY = offsetY - 30 -- offset for next checkbox
-
-    local settingsFrame = CreateFrame("Frame", "MySettingsFrame", contentFrame)
-    settingsFrame:SetWidth(200)
-    settingsFrame:SetHeight(100)
-    settingsFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 30, offsetY)
-
-    local checkBox = CreateFrame("CheckButton", "MyCheckBox", settingsFrame, "UICheckButtonTemplate")
-    checkBox:SetWidth(24)
-    checkBox:SetHeight(24)
-    checkBox:SetPoint("TOPLEFT", settingsFrame, "TOPLEFT", 10, -10)
-
-    local checkBoxTitle = checkBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    checkBoxTitle:SetPoint("TOPLEFT", checkBox, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
-    checkBoxTitle:SetText(text)
-    checkBoxTitle:SetFont("Fonts\\FRIZQT__.TTF", 12)
-    checkBoxTitle:SetTextColor(0.933, 0.765, 0)
-
-    return checkBox
+local offsetY = 20
+function getNextOffsetY()
+    offsetY = offsetY - 30
+    return offsetY
 end
 
 function tab_settings(content)
-    local title = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    title:SetPoint("TOP", content, "TOP", 0, -10) -- Adjust y-offset based on logo size
-    title:SetText("Settings")
-    title:SetFont("Fonts\\FRIZQT__.TTF", 18)
-    title:SetTextColor(0.933, 0.765, 0)
+    createTitle(content, "Settings", 18)
 
     local checkBox = createSettingsCheckBox(content, "Display minimap button")
     checkBox:SetScript("OnClick", function(self)
@@ -77,5 +56,48 @@ function tab_settings(content)
     end)
     WHC_SETTINGS.recentDeathsBtn = checkBox2
 
+    offsetY = offsetY - 20
+    createTitle(content, "Achievement Settings", 14)
+
+
+    local blockInvitesCheckbox = createSettingsCheckBox(content, "[Lone Wolf] Achievement: Block invites")
+    blockInvitesCheckbox:SetScript("OnClick", function(self)
+        if WhcAddonSettings.blockInvites == 1 then
+            WhcAddonSettings.blockInvites = 0
+        else
+            WhcAddonSettings.blockInvites = 1
+        end
+        SetBlockInvites()
+    end)
+    WHC_SETTINGS.blockInvitesCheckbox = blockInvitesCheckbox
+
     return content;
+end
+
+function createTitle(contentFrame, text, fontSize)
+    local title = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    title:SetPoint("TOP", contentFrame, "TOP", 0, getNextOffsetY()) -- Adjust y-offset based on logo size
+    title:SetText(text)
+    title:SetFont("Fonts\\FRIZQT__.TTF", fontSize)
+    title:SetTextColor(0.933, 0.765, 0)
+end
+
+function createSettingsCheckBox(contentFrame, text)
+    local settingsFrame = CreateFrame("Frame", "MySettingsFrame", contentFrame)
+    settingsFrame:SetWidth(200)
+    settingsFrame:SetHeight(100)
+    settingsFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 30, getNextOffsetY())
+
+    local checkBox = CreateFrame("CheckButton", "MyCheckBox", settingsFrame, "UICheckButtonTemplate")
+    checkBox:SetWidth(24)
+    checkBox:SetHeight(24)
+    checkBox:SetPoint("TOPLEFT", settingsFrame, "TOPLEFT", 10, -10)
+
+    local checkBoxTitle = checkBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    checkBoxTitle:SetPoint("TOPLEFT", checkBox, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
+    checkBoxTitle:SetText(text)
+    checkBoxTitle:SetFont("Fonts\\FRIZQT__.TTF", 12)
+    checkBoxTitle:SetTextColor(0.933, 0.765, 0)
+
+    return checkBox
 end

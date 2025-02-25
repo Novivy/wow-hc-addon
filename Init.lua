@@ -99,11 +99,14 @@ eventFrame1:SetScript("OnEvent", function(self, event, arg1)
         SendChatMessage(msg);
     end
 
-
     if (WhcAddonSettings.splash == 0) then
         WhcAddonSettings.splash = 1
 
         UIShowTabContent("General")
+    end
+
+    if WhcAddonSettings.blockInvites == 1 then
+        SetBlockInvites()
     end
 
   --    UIShowTabContent("PVP") -- todo remove

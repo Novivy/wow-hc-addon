@@ -298,16 +298,7 @@ mapChangeEventHandler:SetScript("OnEvent", function(self, event)
     end
 end)
 
-local inviteEventHandler = CreateFrame("Frame")
-inviteEventHandler:RegisterEvent("PARTY_INVITE_REQUEST")
-inviteEventHandler:SetScript("OnEvent", function(self, event)
-    if (WhcAddonSettings.blockInvites == 1) then
-        DeclineGroup()
-        --StaticPopup_Hide("PARTY_INVITE"); -- might be needed, will need to test
-        local name = arg1
-        SendChatMessage("I cannot accept your group invitation as I am going for the \"Lone Wolf\" achievement.", "WHISPER", GetDefaultLanguage(), name);
-    end
-end)
+
 
 
 if (RETAIL == 1) then
