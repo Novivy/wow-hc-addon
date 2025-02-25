@@ -1,8 +1,31 @@
-function colorText(message, colorCode)
+local function dump(o)
+    if type(o) == 'table' then
+        local s = '{ '
+        local idx = 0
+        for k,v in pairs(o) do
+            local key = k
+            if type(k) ~= 'number' then
+                key = '"'..key..'"'
+            end
+
+            if idx > 0 then
+                s = s .. ', '
+            end
+            s = s .. '['..key..'] = ' .. dump(v)
+            idx = idx + 1
+        end
+        return s .. '} '
+    end
+
+    return tostring(o)
+end
+
+
+local function colorText(message, colorCode)
     return colorCode .. message .. FONT_COLOR_CODE_CLOSE
 end
 
-function printAchievementInfo(message)
+local function printAchievementInfo(message)
     DEFAULT_CHAT_FRAME:AddMessage(colorText(message, LIGHTYELLOW_FONT_COLOR_CODE))
 end
 
@@ -26,15 +49,19 @@ BlizzardFunctions.InviteUnit = InviteUnit -- Retail
 BlizzardFunctions.InviteByName = InviteByName -- 1.12
 
 --region ====== Lone Wolf ======
--- needs testing. This should block invites from the right click menu
-hooksecurefunc("UnitPopup_ShowMenu", function(self, dropdownMenu, which, unit, name)
+local blockInvites = function(name)
+    printAchievementInfo("[Lone Wolf] Group invite is blocked.")
+end
+
+hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, name)
     if WhcAddonSettings.blockInvites == 1 then
         if UIDROPDOWNMENU_MENU_LEVEL == 1 then
             for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
                 local button = _G["DropDownList1Button" .. i]
-                if button and button.value == "PARTY_INVITE" then
+                if button and button.value == "INVITE" then
                     button:Disable()
-                    button:SetText(colorText("Invite Blocked", GRAY_FONT_COLOR_CODE))
+                    button.func = blockInvites -- Extra measure in case button is not disabled for some reason
+                    return
                 end
             end
         end
@@ -45,7 +72,7 @@ local inviteEventHandler = CreateFrame("Frame")
 inviteEventHandler:SetScript("OnEvent", function(self, event)
     DeclineGroup()
     StaticPopup_Hide("PARTY_INVITE"); -- Needed to remove the popup
-    printAchievementInfo("[Lone Wolf] Auto declining group invite.")
+    printAchievementInfo("[Lone Wolf] Group invite auto declined.")
 end)
 
 function SetBlockInvites()
@@ -55,10 +82,7 @@ function SetBlockInvites()
         -- Blocks addons like LazyPig from auto accepting invites
         AcceptGroup = function() end
 
-        -- blocks outgoing invites via /i or /who right click
-        local blockInvites = function(name)
-            printAchievementInfo("[Lone Wolf] Invites are blocked.")
-        end
+        -- blocks outgoing invites via /i <char_name>
         InviteUnit = blockInvites
         InviteByName = blockInvites
     else
