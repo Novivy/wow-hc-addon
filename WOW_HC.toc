@@ -2,7 +2,7 @@
 ## Title: |cffff7800WOW-HC.com|r
 ## Notes: Official WOW-HC addon
 ## Author: Nyu
-## Version: 1.0
+## Version: 0.0
 ## SavedVariables: WhcAddonSettings
 
 Init.lua
