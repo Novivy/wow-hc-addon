@@ -1,9 +1,10 @@
-local function colorText(message, colorCode)
-    return colorCode .. message .. FONT_COLOR_CODE_CLOSE
-end
+ADDON_COLOR_CODE = "|cffff7800"
+ACHIEVEMENT_COLOR_CODE = "|cffffff00";
+local addonPrefix = ADDON_COLOR_CODE.."[WOW-HC.com]: "..FONT_COLOR_CODE_CLOSE
 
-local function printAchievementInfo(message)
-    DEFAULT_CHAT_FRAME:AddMessage(colorText(message, LIGHTYELLOW_FONT_COLOR_CODE))
+local function printAchievementInfo(achievement, message)
+    local achievementMsg = ACHIEVEMENT_COLOR_CODE..achievement..HIGHLIGHT_FONT_COLOR_CODE.." Achievement active. "
+    DEFAULT_CHAT_FRAME:AddMessage(addonPrefix..achievementMsg..message..FONT_COLOR_CODE_CLOSE)
 end
 
 local function hooksecurefunc(arg1, arg2, arg3)
@@ -26,6 +27,7 @@ BlizzardFunctions.InviteUnit = InviteUnit -- Retail
 BlizzardFunctions.InviteByName = InviteByName -- 1.12
 
 --region ====== Lone Wolf ======
+local LONE_WOLF_ACHIEVEMENT = "[Lone Wolf]"
 -- Disables right-click menu "Invite" button
 hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, name)
     if WhcAddonSettings.blockInvites == 1 then
@@ -64,7 +66,8 @@ local inviteEventHandler = CreateFrame("Frame")
 inviteEventHandler:SetScript("OnEvent", function(self, event)
     DeclineGroup()
     StaticPopup_Hide("PARTY_INVITE"); -- Needed to remove the popup
-    printAchievementInfo("[Lone Wolf] Group invite auto declined.")
+    printAchievementInfo(LONE_WOLF_ACHIEVEMENT, "Group invite auto declined.")
+    SendChatMessage("I am on the "..LONE_WOLF_ACHIEVEMENT.." achievement. I cannot group with other players.", "WHISPER", GetDefaultLanguage(), arg1)
 end)
 
 function SetBlockInvites()
@@ -76,7 +79,7 @@ function SetBlockInvites()
 
         -- blocks outgoing invites via /i <char_name>
         local blockInvites = function(name)
-            printAchievementInfo("[Lone Wolf] Group invite is blocked.")
+            printAchievementInfo(LONE_WOLF_ACHIEVEMENT, "Group invite is blocked.")
         end
         InviteUnit = blockInvites
         InviteByName = blockInvites
