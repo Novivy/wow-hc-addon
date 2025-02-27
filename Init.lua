@@ -18,8 +18,6 @@ end
 
 
 local eventFrame1 = CreateFrame("Frame")
-eventFrame1:RegisterEvent("VARIABLES_LOADED")
-eventFrame1:SetScript("OnEvent", function(self, event, arg1)
 eventFrame1:RegisterEvent("ADDON_LOADED")
 eventFrame1:SetScript("OnEvent", function(self, event, addonName)
     addonName = addonName or arg1
