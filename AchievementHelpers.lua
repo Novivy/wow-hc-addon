@@ -7,6 +7,7 @@ local function printAchievementInfo(achievement, message)
     DEFAULT_CHAT_FRAME:AddMessage(addonPrefix..achievementMsg..message..FONT_COLOR_CODE_CLOSE)
 end
 
+local _G = getfenv(0)
 local function hooksecurefunc(arg1, arg2, arg3)
     if type(arg1) == "string" then
         arg1, arg2, arg3 = _G, arg1, arg2
