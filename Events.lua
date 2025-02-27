@@ -299,8 +299,6 @@ mapChangeEventHandler:SetScript("OnEvent", function(self, event)
 end)
 
 
-
-
 if (RETAIL == 1) then
     local inspectEventHandler = CreateFrame("Frame")
     inspectEventHandler:RegisterEvent("INSPECT_READY")
