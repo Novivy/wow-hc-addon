@@ -93,6 +93,20 @@ function UIShowTabContent(tabIndex, arg1)
                     WHC_SETTINGS.recentDeathsBtn:SetChecked(0)
                 end
             end
+
+            if (WhcAddonSettings.blockInvites == 1) then
+                if (RETAIL == 1) then
+                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(true)
+                else
+                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(1)
+                end
+            else
+                if (RETAIL == 1) then
+                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(false)
+                else
+                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(0)
+                end
+            end
             -- end
         elseif (tabIndex == "General") then
             --

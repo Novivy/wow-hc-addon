@@ -12,6 +12,29 @@ function DebugPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage(message)
 end
 
+-- Function to print table key values
+function DebugDump(o)
+    if type(o) == 'table' then
+        local s = '{ '
+        local idx = 0
+        for k,v in pairs(o) do
+            local key = k
+            if type(k) ~= 'number' then
+                key = '"'..key..'"'
+            end
+
+            if idx > 0 then
+                s = s .. ', '
+            end
+            s = s .. '['..key..'] = ' .. DebugDump(v)
+            idx = idx + 1
+        end
+        return s .. '} '
+    end
+
+    return DebugPrint(tostring(o))
+end
+
 -- Print message when the addon is loaded
 -- DebugPrint("ReleaseSpiritMod loaded.")
 

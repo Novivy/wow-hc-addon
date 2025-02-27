@@ -8,7 +8,6 @@
 ## Future versions:
 - /world join after a few seconds to prevent replacing general
 - settings checkbox to allow /creature say to only display death announcements
-- settings checkbox block group invite
 - settings checkbox block trades
 - settings checkbox block repairs
 - settings checkbox block items loot from mails
