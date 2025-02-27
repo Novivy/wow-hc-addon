@@ -63,11 +63,16 @@ hooksecurefunc("GuildStatus_Update", function()
 end)
 
 local inviteEventHandler = CreateFrame("Frame")
-inviteEventHandler:SetScript("OnEvent", function(self, event)
+inviteEventHandler:SetScript("OnEvent", function(self, event, name)
     DeclineGroup()
     StaticPopup_Hide("PARTY_INVITE"); -- Needed to remove the popup
     printAchievementInfo(LONE_WOLF_ACHIEVEMENT, "Group invite auto declined.")
-    SendChatMessage("I am on the "..LONE_WOLF_ACHIEVEMENT.." achievement. I cannot group with other players.", "WHISPER", GetDefaultLanguage(), arg1)
+
+    local playerName = arg1
+    if RETAIL == 1 then
+        playerName = name
+    end
+    SendChatMessage("I am on the "..LONE_WOLF_ACHIEVEMENT.." achievement. I cannot group with other players.", "WHISPER", GetDefaultLanguage(), playerName)
 end)
 
 function SetBlockInvites()
