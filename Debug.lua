@@ -12,6 +12,7 @@ function DebugPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage(message)
 end
 
+-- Function to print table key values
 function DebugDump(o)
     if type(o) == 'table' then
         local s = '{ '
