@@ -1,5 +1,5 @@
-ADDON_COLOR_CODE = "|cffff7800"
-ACHIEVEMENT_COLOR_CODE = "|cffffff00";
+local ADDON_COLOR_CODE = "|cffff7800"
+local ACHIEVEMENT_COLOR_CODE = "|cffffff00";
 local addonPrefix = ADDON_COLOR_CODE.."[WOW-HC.com]: "..FONT_COLOR_CODE_CLOSE
 
 local function printAchievementInfo(achievement, message)
@@ -7,7 +7,6 @@ local function printAchievementInfo(achievement, message)
     DEFAULT_CHAT_FRAME:AddMessage(addonPrefix..achievementMsg..message..FONT_COLOR_CODE_CLOSE)
 end
 
-local _G = getfenv(0)
 local function hooksecurefunc(arg1, arg2, arg3)
     if type(arg1) == "string" then
         arg1, arg2, arg3 = _G, arg1, arg2
@@ -22,7 +21,7 @@ local function hooksecurefunc(arg1, arg2, arg3)
     end
 end
 
-BlizzardFunctions = {}
+local BlizzardFunctions = {}
 BlizzardFunctions.AcceptGroup = AcceptGroup
 BlizzardFunctions.InviteUnit = InviteUnit -- Retail
 BlizzardFunctions.InviteByName = InviteByName -- 1.12
