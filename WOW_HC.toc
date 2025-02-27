@@ -1,8 +1,8 @@
-## Interface: 11200, 11201, 11203, 11303, 11304, 11305, 11306, 11307, 11400, 11401, 11402, 11403,, 11404,
+## Interface: 11200, 11201, 11203, 11303, 11304, 11305, 11306, 11307, 11400, 11401, 11402, 11403, 11404,
 ## Title: |cffff7800WOW-HC.com|r
 ## Notes: Official WOW-HC addon
 ## Author: Nyu
-## Version: 0.0
+## Version: 1.0
 ## SavedVariables: WhcAddonSettings
 
 Init.lua
