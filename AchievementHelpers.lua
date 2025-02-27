@@ -49,16 +49,14 @@ BlizzardFunctions.InviteUnit = InviteUnit -- Retail
 BlizzardFunctions.InviteByName = InviteByName -- 1.12
 
 --region ====== Lone Wolf ======
--- Disables right-click menu
+-- Disables right-click menu "Invite" button
 hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, name)
     if WhcAddonSettings.blockInvites == 1 then
-        if UIDROPDOWNMENU_MENU_LEVEL == 1 then
-            for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
-                local button = _G["DropDownList1Button" .. i]
-                if button and button.value == "INVITE" then
-                    button:Disable()
-                    return
-                end
+        for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
+            local button = _G["DropDownList1Button" .. i]
+            if button and button.value == "INVITE" then
+                button:Disable()
+                return
             end
         end
     end
