@@ -18,8 +18,12 @@ end
 
 
 local eventFrame1 = CreateFrame("Frame")
-eventFrame1:RegisterEvent("VARIABLES_LOADED")
-eventFrame1:SetScript("OnEvent", function(self, event, arg1)
+eventFrame1:RegisterEvent("ADDON_LOADED")
+eventFrame1:SetScript("OnEvent", function(self, event, addonName)
+    addonName = addonName or arg1
+    if addonName ~= "WOW_HC" then
+        return
+    end
 
     local version = GetBuildInfo()
     if (version == "1.12.0" or version == "1.12.1") then

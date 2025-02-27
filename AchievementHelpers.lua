@@ -1,5 +1,5 @@
-ADDON_COLOR_CODE = "|cffff7800"
-ACHIEVEMENT_COLOR_CODE = "|cffffff00";
+local ADDON_COLOR_CODE = "|cffff7800"
+local ACHIEVEMENT_COLOR_CODE = "|cffffff00";
 local addonPrefix = ADDON_COLOR_CODE.."[WOW-HC.com]: "..FONT_COLOR_CODE_CLOSE
 
 local function printAchievementInfo(achievement, message)
@@ -21,7 +21,7 @@ local function hooksecurefunc(arg1, arg2, arg3)
     end
 end
 
-BlizzardFunctions = {}
+local BlizzardFunctions = {}
 BlizzardFunctions.AcceptGroup = AcceptGroup
 BlizzardFunctions.InviteUnit = InviteUnit -- Retail
 BlizzardFunctions.InviteByName = InviteByName -- 1.12
