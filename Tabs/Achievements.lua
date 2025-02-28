@@ -112,26 +112,47 @@ end
 
 UIachievements = {}
 
-local tabAchievements = {
-    { id = 16384, icon = "spell_shadow_unsummonbuilding",       name = "Demon Slayer",           desc = "Reach level 60 only by killing demons." },
-
-    { id = 4096,  icon = "spell_nature_strengthofearthtotem02", name = "Grounded",               desc = "Reach level 60 without ever using flying services." },
-    { id = 64,    icon = "inv_misc_note_02",                    name = "Help Yourself",          desc = "Reach level 60 without ever turning in a quest (class and profession quests allowed)." },
-    { id = 1,     icon = "trade_blacksmithing",                 name = "Iron Bones",             desc = "Reach level 60 without ever repairing the durability of an item." },
-
-    { id = 4,     icon = "inv_misc_coin_03",                    name = "Killer Trader",          desc = "Reach level 60 without ever using the auction house to sell an item." },
-    { id = 32768, icon = "spell_holy_holynova",                 name = "Lightbringer",           desc = "Reach level 60 only by killing undead creatures." },
-    { id = 2048,  icon = "spell_nature_spiritwolf",             name = "Lone Wolf",              desc = "Reach level 60 without ever grouping with other players." },
-    { id = 256,   icon = "inv_gizmo_rocketboot_01",             name = "Marathon Runner",        desc = "Reach level 60 without ever learning a riding skill." },
-    { id = 128,   icon = "inv_shirt_white_01",                  name = "Mister White",           desc = "Reach level 60 without ever equipping an uncommon or greater quality item (only white and grey items allowed)." },
-    { id = 8,     icon = "inv_box_01",                          name = "My precious!",           desc = "Reach level 60 without ever trading goods or money with another player." },
-    { id = 32,    icon = "inv_pants_wolf",                      name = "Only Fan",               desc = "Reach level 60 without ever equipping anything other than weapons, shields, ammos, tabards or bags." },
-    { id = 8192,  icon = "inv_hammer_20",                       name = "Self-made",              desc = "Reach level 60 without ever equipping items that you did not craft yourself." },
-    { id = 1024,  icon = "spell_holy_layonhands",               name = "Soft Hands",             desc = "Reach level 60 without ever learning any primary profession." },
-    { id = 16,    icon = "inv_crate_03",                        name = "Special Deliveries",     desc = "Reach level 60 without ever getting goods or money from the mail (Simple letters and NPC quest/items are allowed)." },
-    { id = 512,   icon = "ability_hunter_pet_boar",             name = "That Which Has No Life", desc = "Reach level 60 only by killing boars or quilboars." },
-    { id = 2,     icon = "inv_misc_coin_05",                    name = "Time is money",          desc = "Reach level 60 without ever using the auction house to buy an item." },
+ACHIEVEMENT_DEMON_SLAYER           = 16384
+ACHIEVEMENT_GROUNDED               = 4096
+ACHIEVEMENT_HELP_YOURSELF          = 64
+ACHIEVEMENT_IRON_BONES             = 1
+ACHIEVEMENT_KILLER_TRADER          = 4
+ACHIEVEMENT_LIGHTBRINGER           = 32768
+ACHIEVEMENT_LONE_WOLF              = 2048
+ACHIEVEMENT_MARATHON_RUNNER        = 256
+ACHIEVEMENT_MISTER_WHITE           = 128
+ACHIEVEMENT_MY_PRECIOUS            = 8
+ACHIEVEMENT_ONLY_FAN               = 32
+ACHIEVEMENT_SELF_MADE              = 8192
+ACHIEVEMENT_SOFT_HANDS             = 1024
+ACHIEVEMENT_SPECIAL_DELIVERIES     = 16
+ACHIEVEMENT_THAT_WHICH_HAS_NO_LIFE = 512
+ACHIEVEMENT_TIME_IS_MONEY          = 2
+TabAchievements = {
+    [16384] = { icon = "spell_shadow_unsummonbuilding",       itemId = "707016", name = "Demon Slayer",           desc = "Reach level 60 only by killing demons." },
+    [4096]  = { icon = "spell_nature_strengthofearthtotem02", itemId = "707014", name = "Grounded",               desc = "Reach level 60 without ever using flying services." },
+    [64]    = { icon = "inv_misc_note_02",                    itemId = "707006", name = "Help Yourself",          desc = "Reach level 60 without ever turning in a quest (class and profession quests allowed)." },
+    [1]     = { icon = "trade_blacksmithing",                 itemId = "707000", name = "Iron Bones",             desc = "Reach level 60 without ever repairing the durability of an item." },
+    [4]     = { icon = "inv_misc_coin_03",                    itemId = "707002", name = "Killer Trader",          desc = "Reach level 60 without ever using the auction house to sell an item." },
+    [32768] = { icon = "spell_holy_holynova",                 itemId = "707017", name = "Lightbringer",           desc = "Reach level 60 only by killing undead creatures." },
+    [2048]  = { icon = "spell_nature_spiritwolf",             itemId = "707013", name = "Lone Wolf",              desc = "Reach level 60 without ever grouping with other players." },
+    [256]   = { icon = "inv_gizmo_rocketboot_01",             itemId = "707010", name = "Marathon Runner",        desc = "Reach level 60 without ever learning a riding skill." },
+    [128]   = { icon = "inv_shirt_white_01",                  itemId = "707007", name = "Mister White",           desc = "Reach level 60 without ever equipping an uncommon or greater quality item (only white and grey items allowed)." },
+    [8]     = { icon = "inv_box_01",                          itemId = "707003", name = "My precious!",           desc = "Reach level 60 without ever trading goods or money with another player." },
+    [32]    = { icon = "inv_pants_wolf",                      itemId = "707005", name = "Only Fan",               desc = "Reach level 60 without ever equipping anything other than weapons, shields, ammos, tabards or bags." },
+    [8192]  = { icon = "inv_hammer_20",                       itemId = "707015", name = "Self-made",              desc = "Reach level 60 without ever equipping items that you did not craft yourself." },
+    [1024]  = { icon = "spell_holy_layonhands",               itemId = "707012", name = "Soft Hands",             desc = "Reach level 60 without ever learning any primary profession." },
+    [16]    = { icon = "inv_crate_03",                        itemId = "707004", name = "Special Deliveries",     desc = "Reach level 60 without ever getting goods or money from the mail (Simple letters and NPC quest/items are allowed)." },
+    [512]   = { icon = "ability_hunter_pet_boar",             itemId = "707011", name = "That Which Has No Life", desc = "Reach level 60 only by killing boars or quilboars." },
+    [2]     = { icon = "inv_misc_coin_05",                    itemId = "707001", name = "Time is money",          desc = "Reach level 60 without ever using the auction house to buy an item." },
 }
+local sortedAchievements = {}
+for id, data in pairs(TabAchievements) do
+    table.insert(sortedAchievements, { id = id, data = data })
+end
+table.sort(sortedAchievements, function(a, b)
+    return a.data.name < b.data.name  -- Sort alphabetically by name
+end)
 
 function tab_achievements(content)
     local title = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -173,18 +194,10 @@ function tab_achievements(content)
     scrollContent:SetHeight(800)
     scrollFrame:SetScrollChild(scrollContent) -- Attach the content frame to the scroll frame
 
-    local i = 0;
-    for key, value in pairs(tabAchievements) do
-        if (i == 0) then
-            y = -10
-        else
-            y = -10 + -(i * 53)
-        end
+    for i, value in ipairs(sortedAchievements) do
+        local y = -10 - 53 * (i-1)
 
-        itemSlot(scrollContent, 10, y, value.name, value.desc, value.icon, value.id);
-
-
-        i = i + 1
+        itemSlot(scrollContent, 10, y, value.data.name, value.data.desc, value.data.icon, value.id);
     end
 
     local desc2 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
