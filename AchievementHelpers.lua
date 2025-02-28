@@ -1,7 +1,6 @@
-local ADDON_COLOR_CODE = "|cffff7800"
-local addonPrefix = ADDON_COLOR_CODE.."[WOW-HC.com]: "..FONT_COLOR_CODE_CLOSE
-
 local ACHIEVEMENT_COLOR_CODE = "|cffff8000";
+local addonPrefix = ACHIEVEMENT_COLOR_CODE.."[WOW-HC.com]: "..FONT_COLOR_CODE_CLOSE
+
 local function achievementLink(achievement)
     return ACHIEVEMENT_COLOR_CODE.."|Hitem:"..achievement.itemId..":0:0:0|h["..achievement.name.."]|h"..FONT_COLOR_CODE_CLOSE
 end
