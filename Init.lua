@@ -54,34 +54,20 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
         end
     end
 
-
-    if not WhcAddonSettings then
-        WhcAddonSettings = {}
-        WhcAddonSettings.minimapicon = 1
-        WhcAddonSettings.minimapX = 0
-        WhcAddonSettings.minimapY = 0
-        WhcAddonSettings.achievementbtn = 1
-        WhcAddonSettings.splash = 0
-        WhcAddonSettings.auction_short = 0
-        WhcAddonSettings.auction_medium = 0
-        WhcAddonSettings.auction_long = 0
-        WhcAddonSettings.auction_deposit = 0
-        WhcAddonSettings.recentDeaths = 1
-        WhcAddonSettings.blockInvites = 0
-    else
-        -- Ensure the specific setting exists and has a default value
-        WhcAddonSettings.minimapicon = WhcAddonSettings.minimapicon or 1
-        WhcAddonSettings.achievementbtn = WhcAddonSettings.achievementbtn or 1
-        WhcAddonSettings.splash = WhcAddonSettings.splash or 1
-        WhcAddonSettings.minimapX = WhcAddonSettings.minimapX or 0
-        WhcAddonSettings.minimapY = WhcAddonSettings.minimapY or 0
-        WhcAddonSettings.auction_short = WhcAddonSettings.auction_short or 0
-        WhcAddonSettings.auction_medium = WhcAddonSettings.auction_medium or 0
-        WhcAddonSettings.auction_long = WhcAddonSettings.auction_long or 0
-        WhcAddonSettings.auction_deposit = WhcAddonSettings.auction_deposit or 0
-        WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
-        WhcAddonSettings.blockInvites = WhcAddonSettings.blockInvites or 0
-    end
+    WhcAddonSettings = WhcAddonSettings or {}
+    -- Ensure the specific setting exists and has a default value
+    WhcAddonSettings.minimapicon = WhcAddonSettings.minimapicon or 1
+    WhcAddonSettings.achievementbtn = WhcAddonSettings.achievementbtn or 1
+    WhcAddonSettings.splash = WhcAddonSettings.splash or 0
+    WhcAddonSettings.minimapX = WhcAddonSettings.minimapX or 0
+    WhcAddonSettings.minimapY = WhcAddonSettings.minimapY or 0
+    WhcAddonSettings.auction_short = WhcAddonSettings.auction_short or 0
+    WhcAddonSettings.auction_medium = WhcAddonSettings.auction_medium or 0
+    WhcAddonSettings.auction_long = WhcAddonSettings.auction_long or 0
+    WhcAddonSettings.auction_deposit = WhcAddonSettings.auction_deposit or 0
+    WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
+    WhcAddonSettings.blockInvites = WhcAddonSettings.blockInvites or 0
+    WhcAddonSettings.blockTrades = WhcAddonSettings.blockTrades or 0
 
 
     if (WhcAddonSettings.minimapicon == 1) then
@@ -110,7 +96,11 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
     end
 
     if WhcAddonSettings.blockInvites == 1 then
-        SetBlockInvites()
+        Whc_SetBlockInvites()
+    end
+
+    if WhcAddonSettings.blockTrades == 1 then
+        Whc_SetBlockTrades()
     end
 
   --    UIShowTabContent("PVP") -- todo remove

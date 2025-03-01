@@ -26,24 +26,27 @@ local function hooksecurefunc(arg1, arg2, arg3)
 end
 
 local BlizzardFunctions = {}
-BlizzardFunctions.AcceptGroup = AcceptGroup
-BlizzardFunctions.InviteUnit = InviteUnit -- Retail
-BlizzardFunctions.InviteByName = InviteByName -- 1.12
-
---region ====== Lone Wolf ======
-local loneWolfLink = achievementLink(TabAchievements[ACHIEVEMENT_LONE_WOLF])
--- Disables right-click menu "Invite" button
+-- Disables right-click menu buttons
 hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, name)
-    if WhcAddonSettings.blockInvites == 1 then
-        for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
-            local button = _G["DropDownList1Button" .. i]
-            if button and button.value == "INVITE" then
+    for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
+        local button = _G["DropDownList1Button" .. i]
+        if button then
+            if button.value == "INVITE" and WhcAddonSettings.blockInvites == 1 then
                 button:Disable()
-                return
+            end
+
+            if button.value == "TRADE" and WhcAddonSettings.blockTrades == 1 then
+                button:Disable()
             end
         end
     end
 end)
+
+--region ====== Lone Wolf ======
+BlizzardFunctions.AcceptGroup = AcceptGroup
+BlizzardFunctions.InviteUnit = InviteUnit -- Retail
+BlizzardFunctions.InviteByName = InviteByName -- 1.12
+local loneWolfLink = achievementLink(TabAchievements[ACHIEVEMENT_LONE_WOLF])
 
 -- Disables friend list "Group Invite" button
 hooksecurefunc("FriendsList_Update", function()
@@ -79,7 +82,7 @@ inviteEventHandler:SetScript("OnEvent", function(self, event, name)
     SendChatMessage("I am on the "..loneWolfLink.." achievement. I cannot group with other players.", "WHISPER", GetDefaultLanguage(), playerName)
 end)
 
-function SetBlockInvites()
+function Whc_SetBlockInvites()
     if WhcAddonSettings.blockInvites == 1 then
         -- Blocks incoming invites
         inviteEventHandler:RegisterEvent("PARTY_INVITE_REQUEST")
@@ -88,7 +91,7 @@ function SetBlockInvites()
 
         -- blocks outgoing invites via /i <char_name>
         local blockInvites = function(name)
-            printAchievementInfo(loneWolfLink, "Group invite is blocked.")
+            printAchievementInfo(loneWolfLink, "Group invites are blocked.")
         end
         InviteUnit = blockInvites
         InviteByName = blockInvites
@@ -97,6 +100,23 @@ function SetBlockInvites()
         AcceptGroup = BlizzardFunctions.AcceptGroup
         InviteUnit = BlizzardFunctions.InviteUnit
         InviteByName = BlizzardFunctions.InviteByName
+    end
+end
+--endregion
+
+--region ====== My precious! ======
+BlizzardFunctions.InitiateTrade = InitiateTrade
+local myPreciousLink = achievementLink(TabAchievements[ACHIEVEMENT_MY_PRECIOUS])
+function Whc_SetBlockTrades()
+    -- Block incoming via Blizzard interface checkbox
+    SetCVar("blockTrades", WhcAddonSettings.blockTrades)
+    if WhcAddonSettings.blockTrades == 1 then
+        -- Block outgoing trade
+        InitiateTrade = function()
+            printAchievementInfo(myPreciousLink, "Trade requests are blocked.")
+        end
+    else
+        InitiateTrade = BlizzardFunctions.InitiateTrade
     end
 end
 --endregion

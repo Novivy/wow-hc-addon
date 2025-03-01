@@ -107,6 +107,20 @@ function UIShowTabContent(tabIndex, arg1)
                     WHC_SETTINGS.blockInvitesCheckbox:SetChecked(0)
                 end
             end
+
+            if (WhcAddonSettings.blockTrades == 1) then
+                if (RETAIL == 1) then
+                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(true)
+                else
+                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(1)
+                end
+            else
+                if (RETAIL == 1) then
+                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(false)
+                else
+                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(0)
+                end
+            end
             -- end
         elseif (tabIndex == "General") then
             --

@@ -66,9 +66,20 @@ function tab_settings(content)
         else
             WhcAddonSettings.blockInvites = 1
         end
-        SetBlockInvites()
+        Whc_SetBlockInvites()
     end)
     WHC_SETTINGS.blockInvitesCheckbox = blockInvitesCheckbox
+
+    local blockTradesCheckbox = createSettingsCheckBox(content, "[My Precious!] Achievement: Block trades")
+    blockTradesCheckbox:SetScript("OnClick", function(self)
+        if WhcAddonSettings.blockTrades == 1 then
+            WhcAddonSettings.blockTrades = 0
+        else
+            WhcAddonSettings.blockTrades = 1
+        end
+        Whc_SetBlockTrades()
+    end)
+    WHC_SETTINGS.blockTradesCheckbox = blockTradesCheckbox
 
     return content;
 end
