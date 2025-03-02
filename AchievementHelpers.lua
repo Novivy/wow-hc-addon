@@ -123,7 +123,12 @@ local timeIsMoneyLink = achievementLink(TabAchievements[ACHIEVEMENT_TIME_IS_MONE
 
 BlizzardFunctions.PlaceAuctionBid = PlaceAuctionBid
 
--- TODO Find out how to disable the "create auction" button on the default Blizzard UI.
+hooksecurefunc("AuctionFrameBid_Update", function()
+    if WhcAddonSettings.blockAuctionBuy == 1 then
+        BidBidButton:Disable()
+        BidBuyoutButton:Disable()
+    end
+end)
 function Whc_SetBlockAuctionBuy()
     PlaceAuctionBid = BlizzardFunctions.PlaceAuctionBid
 
