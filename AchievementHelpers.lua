@@ -107,7 +107,7 @@ local myPreciousLink = achievementLink(TabAchievements[ACHIEVEMENT_MY_PRECIOUS])
 function Whc_SetBlockTrades()
     InitiateTrade = BlizzardFunctions.InitiateTrade
 
-    -- Block incoming via Blizzard interface checkbox
+    -- Block incoming trade via Blizzard interface checkbox
     SetCVar("blockTrades", WhcAddonSettings.blockTrades)
     if WhcAddonSettings.blockTrades == 1 then
         -- Block outgoing trade
