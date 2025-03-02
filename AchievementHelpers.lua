@@ -121,9 +121,14 @@ end
 
 --region ====== Killer Trader ======
 local killerTraderLink = achievementLink(TabAchievements[ACHIEVEMENT_KILLER_TRADER])
-BlizzardFunctions.StartAuction = StartAuction
 
--- TODO Find a way to block the "Post Auction" button on the Blizzard UI
+hooksecurefunc("AuctionsFrameAuctions_ValidateAuction", function()
+    if WhcAddonSettings.blockAuctionSell == 1 then
+        AuctionsCreateAuctionButton:Disable()
+    end
+end)
+
+BlizzardFunctions.StartAuction = StartAuction
 function Whc_SetBlockAuctionSell()
     StartAuction = BlizzardFunctions.StartAuction
     if WhcAddonSettings.blockAuctionSell == 1 then
