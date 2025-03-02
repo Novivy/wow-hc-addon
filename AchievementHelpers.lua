@@ -126,16 +126,40 @@ BlizzardFunctions.TakeInboxItem = TakeInboxItem
 BlizzardFunctions.TakeInboxMoney = TakeInboxMoney
 local specialDeliveriesLink = achievementLink(TabAchievements[ACHIEVEMENT_SPECIAL_DELIVERIES])
 function Whc_SetBlockMailItems()
+    TakeInboxMoney = BlizzardFunctions.TakeInboxMoney
+    TakeInboxItem = BlizzardFunctions.TakeInboxItem
     if WhcAddonSettings.blockMailItems == 1 then
         -- Block mail items and money
         local blockMailItemsFunc = function()
             printAchievementInfo(specialDeliveriesLink, "Taking mail items and money is blocked.")
         end
-        TakeInboxItem = blockMailItemsFunc
-        TakeInboxMoney = blockMailItemsFunc
-    else
-        TakeInboxItem = BlizzardFunctions.TakeInboxItem
-        TakeInboxMoney = BlizzardFunctions.TakeInboxMoney
+        TakeInboxMoney = function(index)
+            local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(index)
+
+            -- GM money is okay
+            if isGM then
+                return BlizzardFunctions.TakeInboxMoney(index)
+            end
+
+            blockMailItemsFunc()
+        end
+        TakeInboxItem = function(index, itemIndex)
+            local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(index)
+
+            -- GM items are okay
+            if isGM then
+                return BlizzardFunctions.TakeInboxItem(index, itemIndex)
+            end
+
+            -- If the sender has a space in their name then it is a NPC
+            -- Players cannot use spaces when creating their characters
+            local _, count = string.gsub(sender, " ")
+            if count > 0 then
+                return BlizzardFunctions.TakeInboxItem(index, itemIndex)
+            end
+
+            blockMailItemsFunc()
+        end
     end
 end
 --endregion
