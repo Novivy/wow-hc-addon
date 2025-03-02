@@ -132,7 +132,6 @@ function Whc_SetBlockMailItems()
         end
         TakeInboxMoney = function(index)
             local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(index)
-
             -- GM money is okay
             if isGM then
                 return BlizzardFunctions.TakeInboxMoney(index)
@@ -150,9 +149,12 @@ function Whc_SetBlockMailItems()
 
             -- If the sender has a space in their name then it is a NPC
             -- Players cannot use spaces when creating their characters
-            local _, count = string.gsub(sender, " ")
-            if count > 0 then
-                return BlizzardFunctions.TakeInboxItem(index, itemIndex)
+            -- Note: This is not 100% fool proof. There might be NPCs without a space in their name
+            if sender then
+                local _, count = string.gsub(sender, " ")
+                if count > 0 then
+                    return BlizzardFunctions.TakeInboxItem(index, itemIndex)
+                end
             end
 
             blockMailItemsFunc()
