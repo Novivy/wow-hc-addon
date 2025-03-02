@@ -75,14 +75,16 @@ inviteEventHandler:SetScript("OnEvent", function(self, event, name)
     StaticPopup_Hide("PARTY_INVITE"); -- Needed to remove the popup
     printAchievementInfo(loneWolfLink, "Group invite auto declined.")
 
-    local playerName = arg1
-    if RETAIL == 1 then
-        playerName = name
-    end
-    SendChatMessage("I am on the "..loneWolfLink.." achievement. I cannot group with other players.", "WHISPER", GetDefaultLanguage(), playerName)
+    name = name or arg1
+    SendChatMessage("I am on the "..loneWolfLink.." achievement. I cannot group with other players.", "WHISPER", GetDefaultLanguage(), name)
 end)
 
 function Whc_SetBlockInvites()
+    inviteEventHandler:UnregisterEvent("PARTY_INVITE_REQUEST")
+    AcceptGroup = BlizzardFunctions.AcceptGroup
+    InviteUnit = BlizzardFunctions.InviteUnit
+    InviteByName = BlizzardFunctions.InviteByName
+
     if WhcAddonSettings.blockInvites == 1 then
         -- Blocks incoming invites
         inviteEventHandler:RegisterEvent("PARTY_INVITE_REQUEST")
@@ -95,11 +97,6 @@ function Whc_SetBlockInvites()
         end
         InviteUnit = blockInvites
         InviteByName = blockInvites
-    else
-        inviteEventHandler:UnregisterEvent("PARTY_INVITE_REQUEST")
-        AcceptGroup = BlizzardFunctions.AcceptGroup
-        InviteUnit = BlizzardFunctions.InviteUnit
-        InviteByName = BlizzardFunctions.InviteByName
     end
 end
 --endregion
@@ -108,15 +105,15 @@ end
 BlizzardFunctions.InitiateTrade = InitiateTrade
 local myPreciousLink = achievementLink(TabAchievements[ACHIEVEMENT_MY_PRECIOUS])
 function Whc_SetBlockTrades()
-    -- Block incoming via Blizzard interface checkbox
+    InitiateTrade = BlizzardFunctions.InitiateTrade
+
+    -- Block incoming trade via Blizzard interface checkbox
     SetCVar("blockTrades", WhcAddonSettings.blockTrades)
     if WhcAddonSettings.blockTrades == 1 then
         -- Block outgoing trade
         InitiateTrade = function()
             printAchievementInfo(myPreciousLink, "Trade requests are blocked.")
         end
-    else
-        InitiateTrade = BlizzardFunctions.InitiateTrade
     end
 end
 --endregion
