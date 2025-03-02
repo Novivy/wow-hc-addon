@@ -81,6 +81,17 @@ function tab_settings(content)
     end)
     WHC_SETTINGS.blockTradesCheckbox = blockTradesCheckbox
 
+    local blockMailItemsCheckbox = createSettingsCheckBox(content, "[Special Deliveries] Achievement: Block mail items and money")
+    blockMailItemsCheckbox:SetScript("OnClick", function(self)
+        if WhcAddonSettings.blockMailItems == 1 then
+            WhcAddonSettings.blockMailItems = 0
+        else
+            WhcAddonSettings.blockMailItems = 1
+        end
+        Whc_SetBlockMailItems()
+    end)
+    WHC_SETTINGS.blockMailItemsCheckbox = blockMailItemsCheckbox
+
     return content;
 end
 

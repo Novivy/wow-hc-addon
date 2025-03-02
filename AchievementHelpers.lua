@@ -120,3 +120,11 @@ function Whc_SetBlockTrades()
     end
 end
 --endregion
+
+--region ====== My precious! ======
+BlizzardFunctions.TakeInboxMoney = TakeInboxMoney
+local specialDeliveriesLink = achievementLink(TabAchievements[ACHIEVEMENT_SPECIAL_DELIVERIES])
+function Whc_SetBlockMailItems()
+
+end
+--endregion

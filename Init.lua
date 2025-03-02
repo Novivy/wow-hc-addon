@@ -68,6 +68,7 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
     WhcAddonSettings.blockInvites = WhcAddonSettings.blockInvites or 0
     WhcAddonSettings.blockTrades = WhcAddonSettings.blockTrades or 0
+    WhcAddonSettings.blockMailItems = WhcAddonSettings.blockMailItems or 0
 
 
     if (WhcAddonSettings.minimapicon == 1) then
@@ -101,6 +102,10 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
 
     if WhcAddonSettings.blockTrades == 1 then
         Whc_SetBlockTrades()
+    end
+
+    if WhcAddonSettings.blockMailItems == 1 then
+        Whc_SetBlockMailItems()
     end
 
   --    UIShowTabContent("PVP") -- todo remove
