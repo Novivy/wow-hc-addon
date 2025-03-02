@@ -51,77 +51,23 @@ function UIShowTabContent(tabIndex, arg1)
                 SendChatMessage(msg);
             end
         elseif (tabIndex == "Settings") then
-            --    if (VARSLOADED) then
-            if (WhcAddonSettings.minimapicon == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.minimap:SetChecked(true)
-                else
-                    WHC_SETTINGS.minimap:SetChecked(1)
+            local function checkedValue(value)
+                if RETAIL == 0 then
+                    return value
                 end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.minimap:SetChecked(false)
-                else
-                    WHC_SETTINGS.minimap:SetChecked(0)
+
+                if value == 1 then
+                    return true
                 end
+
+                return false
             end
 
-            if (WhcAddonSettings.achievementbtn == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.achievementbtn:SetChecked(true)
-                else
-                    WHC_SETTINGS.achievementbtn:SetChecked(1)
-                end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.achievementbtn:SetChecked(false)
-                else
-                    WHC_SETTINGS.achievementbtn:SetChecked(0)
-                end
-            end
-
-            if (WhcAddonSettings.recentDeaths == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.recentDeathsBtn:SetChecked(true)
-                else
-                    WHC_SETTINGS.recentDeathsBtn:SetChecked(1)
-                end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.recentDeathsBtn:SetChecked(false)
-                else
-                    WHC_SETTINGS.recentDeathsBtn:SetChecked(0)
-                end
-            end
-
-            if (WhcAddonSettings.blockInvites == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(true)
-                else
-                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(1)
-                end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(false)
-                else
-                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(0)
-                end
-            end
-
-            if (WhcAddonSettings.blockTrades == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(true)
-                else
-                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(1)
-                end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(false)
-                else
-                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(0)
-                end
-            end
-            -- end
+            WHC_SETTINGS.minimap:SetChecked(checkedValue(WhcAddonSettings.minimapicon))
+            WHC_SETTINGS.achievementbtn:SetChecked(checkedValue(WhcAddonSettings.achievementbtn))
+            WHC_SETTINGS.recentDeathsBtn:SetChecked(checkedValue(WhcAddonSettings.recentDeaths))
+            WHC_SETTINGS.blockInvitesCheckbox:SetChecked(checkedValue(WhcAddonSettings.blockInvites))
+            WHC_SETTINGS.blockTradesCheckbox:SetChecked(checkedValue(WhcAddonSettings.blockTrades))
         elseif (tabIndex == "General") then
             --
         end
