@@ -117,3 +117,21 @@ function Whc_SetBlockTrades()
     end
 end
 --endregion
+
+--region ====== Time is Money ======
+local timeIsMoneyLink = achievementLink(TabAchievements[ACHIEVEMENT_TIME_IS_MONEY])
+
+BlizzardFunctions.PlaceAuctionBid = PlaceAuctionBid
+
+-- TODO Find out how to disable the "create auction" button on the default Blizzard UI.
+function Whc_SetBlockAuctionBuy()
+    PlaceAuctionBid = BlizzardFunctions.PlaceAuctionBid
+
+    if WhcAddonSettings.blockAuctionBuy == 1 then
+        -- Block outgoing trade
+        PlaceAuctionBid = function()
+            printAchievementInfo(timeIsMoneyLink, "Post items to the auction house is blocked.")
+        end
+    end
+end
+--endregion

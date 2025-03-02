@@ -103,5 +103,8 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
         Whc_SetBlockTrades()
     end
 
+    if WhcAddonSettings.blockAuctionBuy == 1 then
+        Whc_SetBlockAuctionBuy()
+    end
   --    UIShowTabContent("PVP") -- todo remove
 end)

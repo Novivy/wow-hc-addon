@@ -59,6 +59,12 @@ function tab_settings(content)
         Whc_SetBlockTrades()
     end)
 
+    WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(content, "[Time is Money] Achievement: Block buying items from the auction house")
+    WHC_SETTINGS.blockAuctionBuyCheckbox:SetScript("OnClick", function(self)
+        WhcAddonSettings.blockAuctionBuy = math.abs(WhcAddonSettings.blockAuctionBuy - 1)
+        Whc_SetBlockAuctionBuy()
+    end)
+
     return content;
 end
 
