@@ -122,9 +122,20 @@ end
 --endregion
 
 --region ====== My precious! ======
+BlizzardFunctions.TakeInboxItem = TakeInboxItem
 BlizzardFunctions.TakeInboxMoney = TakeInboxMoney
 local specialDeliveriesLink = achievementLink(TabAchievements[ACHIEVEMENT_SPECIAL_DELIVERIES])
 function Whc_SetBlockMailItems()
-
+    if WhcAddonSettings.blockMailItems == 1 then
+        -- Block mail items and money
+        local blockMailItemsFunc = function()
+            printAchievementInfo(specialDeliveriesLink, "Taking mail items and money is blocked.")
+        end
+        TakeInboxItem = blockMailItemsFunc
+        TakeInboxMoney = blockMailItemsFunc
+    else
+        TakeInboxItem = BlizzardFunctions.TakeInboxItem
+        TakeInboxMoney = BlizzardFunctions.TakeInboxMoney
+    end
 end
 --endregion
