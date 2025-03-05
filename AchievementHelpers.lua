@@ -151,6 +151,7 @@ function Whc_SetBlockMailItems()
             -- Players cannot use spaces when creating their characters
             -- Note: This is not 100% fool proof. There might be NPCs without a space in their name
             if sender then
+                DebugPrint("Sender: "..sender)
                 local _, count = string.gsub(sender, " ")
                 if count > 0 then
                     return BlizzardFunctions.TakeInboxItem(index, itemIndex)
