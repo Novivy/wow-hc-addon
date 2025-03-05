@@ -117,3 +117,28 @@ function Whc_SetBlockTrades()
     end
 end
 --endregion
+
+--region ====== Grounded ======
+local groundedLink = achievementLink(TabAchievements[ACHIEVEMENT_GROUNDED])
+
+local taxiServiceEventHandler = CreateFrame("Frame")
+taxiServiceEventHandler:SetScript("OnEvent", function(self, event, name)
+    TaxiFrame:Hide()
+    printAchievementInfo(groundedLink, "Flying services are blocked.")
+end)
+
+BlizzardFunctions.TakeTaxiNode = TakeTaxiNode
+function Whc_SetBlockTaxiService()
+    taxiServiceEventHandler:UnregisterEvent("TAXIMAP_OPENED")
+    TakeTaxiNode = BlizzardFunctions.TakeTaxiNode
+
+    if WhcAddonSettings.blockTrades == 1 then
+        -- block user from opening the taxi map
+        taxiServiceEventHandler:RegisterEvent("TAXIMAP_OPENED")
+        -- Block addons from taking flights
+        TakeTaxiNode = function()
+            printAchievementInfo(groundedLink, "Flying services are blocked.")
+        end
+    end
+end
+--endregion
