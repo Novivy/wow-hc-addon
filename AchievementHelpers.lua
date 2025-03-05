@@ -117,3 +117,31 @@ function Whc_SetBlockTrades()
     end
 end
 --endregion
+
+--region ====== Iron Bones ======
+local ironBonesLink = achievementLink(TabAchievements[ACHIEVEMENT_IRON_BONES])
+
+-- Disable repair buttons from Blizzard interface
+hooksecurefunc("MerchantFrame_UpdateRepairButtons", function()
+    if WhcAddonSettings.blockRepair == 1 then
+        MerchantRepairAllButton:Disable()
+        MerchantRepairItemButton:Disable()
+    end
+end)
+
+BlizzardFunctions.RepairAllItems = RepairAllItems
+BlizzardFunctions.ShowRepairCursor = ShowRepairCursor
+function Whc_SetBlockRepair()
+    RepairAllItems = BlizzardFunctions.RepairAllItems
+    ShowRepairCursor = BlizzardFunctions.ShowRepairCursor
+
+    if WhcAddonSettings.blockRepair == 1 then
+        local blockRepair = function()
+            printAchievementInfo(ironBonesLink, "Repairing items are blocked.")
+        end
+        -- Block other addons from repairing
+        RepairAllItems = blockRepair
+        ShowRepairCursor = blockRepair
+    end
+end
+--endregion

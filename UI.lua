@@ -68,6 +68,7 @@ function UIShowTabContent(tabIndex, arg1)
             WHC_SETTINGS.recentDeathsBtn:SetChecked(checkedValue(WhcAddonSettings.recentDeaths))
             WHC_SETTINGS.blockInvitesCheckbox:SetChecked(checkedValue(WhcAddonSettings.blockInvites))
             WHC_SETTINGS.blockTradesCheckbox:SetChecked(checkedValue(WhcAddonSettings.blockTrades))
+            WHC_SETTINGS.blockRepairCheckbox:SetChecked(checkedValue(WhcAddonSettings.blockRepair))
         elseif (tabIndex == "General") then
             --
         end
