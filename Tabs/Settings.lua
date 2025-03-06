@@ -34,7 +34,7 @@ local function createSettingsCheckBox(contentFrame, text)
     return checkBox
 end
 
-function tab_settings(content)
+function WHC.Tab_settings(content)
     createTitle(content, "Settings", 18)
 
     WHC_SETTINGS.minimap = createSettingsCheckBox(content, "Display minimap button")

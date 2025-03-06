@@ -220,7 +220,7 @@ function WHC.InitializeUI()
         elseif value == "Shop" then
             content = WHC.Tab_Shop(content)
         elseif value == "Settings" then
-            content = tab_settings(content)
+            content = WHC.Tab_settings(content)
         else
             local text = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             text:SetPoint("CENTER", content, "CENTER", 0, 0)
