@@ -46,6 +46,7 @@ closeButton:SetHeight(36)
 closeButton:SetText("Close")
 closeButton:SetScript("OnClick", function()
     WhcAddonSettings.recentDeaths = 0
+    WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
     DeathLogFrame:Hide()
 end)
 

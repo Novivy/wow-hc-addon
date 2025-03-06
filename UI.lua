@@ -5,6 +5,18 @@ UItab = {}
 tabKeys = { "General", "Achievements", "PVP", "Shop", "Support", "Settings" }
 
 
+function WHC.CheckedValue(value)
+    if RETAIL == 0 then
+        return value
+    end
+
+    if value == 1 then
+        return true
+    end
+
+    return false
+end
+
 -- Function to show the selected tab's content
 function WHC.UIShowTabContent(tabIndex, arg1)
     if tabIndex == 0 then
@@ -51,23 +63,11 @@ function WHC.UIShowTabContent(tabIndex, arg1)
                 SendChatMessage(msg);
             end
         elseif (tabIndex == "Settings") then
-            local function checkedValue(value)
-                if RETAIL == 0 then
-                    return value
-                end
-
-                if value == 1 then
-                    return true
-                end
-
-                return false
-            end
-
-            WHC_SETTINGS.minimap:SetChecked(checkedValue(WhcAddonSettings.minimapicon))
-            WHC_SETTINGS.achievementbtn:SetChecked(checkedValue(WhcAddonSettings.achievementbtn))
-            WHC_SETTINGS.recentDeathsBtn:SetChecked(checkedValue(WhcAddonSettings.recentDeaths))
-            WHC_SETTINGS.blockInvitesCheckbox:SetChecked(checkedValue(WhcAddonSettings.blockInvites))
-            WHC_SETTINGS.blockTradesCheckbox:SetChecked(checkedValue(WhcAddonSettings.blockTrades))
+            WHC_SETTINGS.minimap:SetChecked(WHC.CheckedValue(WhcAddonSettings.minimapicon))
+            WHC_SETTINGS.achievementbtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementbtn))
+            WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
+            WHC_SETTINGS.blockInvitesCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockInvites))
+            WHC_SETTINGS.blockTradesCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockTrades))
         elseif (tabIndex == "General") then
             --
         end
