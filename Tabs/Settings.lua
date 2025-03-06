@@ -1,90 +1,12 @@
 WHC_SETTINGS = {}
 
 local offsetY = 20
-function getNextOffsetY()
+local function getNextOffsetY()
     offsetY = offsetY - 30
     return offsetY
 end
 
-function tab_settings(content)
-    createTitle(content, "Settings", 18)
-
-    local checkBox = createSettingsCheckBox(content, "Display minimap button")
-    checkBox:SetScript("OnClick", function(self)
-        if (WhcAddonSettings.minimapicon == 1) then
-            WhcAddonSettings.minimapicon = 0
-
-            MapIcon:Hide()
-        else
-            WhcAddonSettings.minimapicon = 1
-            MapIcon:Show()
-        end
-    end)
-    WHC_SETTINGS.minimap = checkBox
-
-    local checkBox1 = createSettingsCheckBox(content, "Display achievement button on inspect & character sheet")
-    checkBox1:SetScript("OnClick", function(self)
-        if (WhcAddonSettings.achievementbtn == 1) then
-            WhcAddonSettings.achievementbtn = 0
-
-            if (ACHBtn) then
-                ACHBtn:Hide()
-            end
-        else
-            WhcAddonSettings.achievementbtn = 1
-            if (ACHBtn) then
-                ACHBtn:Show()
-            end
-        end
-    end)
-    WHC_SETTINGS.achievementbtn = checkBox1
-
-    local checkBox2 = createSettingsCheckBox(content, "Display Recent deaths frame")
-    checkBox2:SetScript("OnClick", function(self)
-        if (WhcAddonSettings.recentDeaths == 1) then
-            WhcAddonSettings.recentDeaths = 0
-
-            if (DeathLogFrame) then
-                DeathLogFrame:Hide()
-            end
-        else
-            WhcAddonSettings.recentDeaths = 1
-            if (DeathLogFrame) then
-                DeathLogFrame:Show()
-            end
-        end
-    end)
-    WHC_SETTINGS.recentDeathsBtn = checkBox2
-
-    getNextOffsetY()
-    createTitle(content, "Achievement Settings", 14)
-
-    local blockInvitesCheckbox = createSettingsCheckBox(content, "[Lone Wolf] Achievement: Block invites")
-    blockInvitesCheckbox:SetScript("OnClick", function(self)
-        if WhcAddonSettings.blockInvites == 1 then
-            WhcAddonSettings.blockInvites = 0
-        else
-            WhcAddonSettings.blockInvites = 1
-        end
-        Whc_SetBlockInvites()
-    end)
-    WHC_SETTINGS.blockInvitesCheckbox = blockInvitesCheckbox
-
-    local blockTradesCheckbox = createSettingsCheckBox(content, "[My Precious!] Achievement: Block trades")
-    blockTradesCheckbox:SetScript("OnClick", function(self)
-        if WhcAddonSettings.blockTrades == 1 then
-            WhcAddonSettings.blockTrades = 0
-        else
-            WhcAddonSettings.blockTrades = 1
-        end
-        Whc_SetBlockTrades()
-    end)
-    WHC_SETTINGS.blockTradesCheckbox = blockTradesCheckbox
-
-    return content;
-end
-
-function createTitle(contentFrame, text, fontSize)
+local function createTitle(contentFrame, text, fontSize)
     local title = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     title:SetPoint("TOP", contentFrame, "TOP", 0, getNextOffsetY()) -- Adjust y-offset based on logo size
     title:SetText(text)
@@ -92,7 +14,7 @@ function createTitle(contentFrame, text, fontSize)
     title:SetTextColor(0.933, 0.765, 0)
 end
 
-function createSettingsCheckBox(contentFrame, text)
+local function createSettingsCheckBox(contentFrame, text)
     local settingsFrame = CreateFrame("Frame", "MySettingsFrame", contentFrame)
     settingsFrame:SetWidth(200)
     settingsFrame:SetHeight(100)
@@ -110,4 +32,60 @@ function createSettingsCheckBox(contentFrame, text)
     checkBoxTitle:SetTextColor(0.933, 0.765, 0)
 
     return checkBox
+end
+
+function WHC.Tab_settings(content)
+    createTitle(content, "Settings", 18)
+
+    WHC_SETTINGS.minimap = createSettingsCheckBox(content, "Display minimap button")
+    WHC_SETTINGS.minimap:SetScript("OnClick", function(self)
+        WhcAddonSettings.minimapicon = math.abs(WhcAddonSettings.minimapicon - 1)
+        MapIcon:Hide()
+        if (WhcAddonSettings.minimapicon == 1) then
+            MapIcon:Show()
+        end
+    end)
+
+    WHC_SETTINGS.achievementbtn = createSettingsCheckBox(content, "Display achievement button on inspect & character sheet")
+    WHC_SETTINGS.achievementbtn:SetScript("OnClick", function(self)
+        WhcAddonSettings.achievementbtn = math.abs(WhcAddonSettings.achievementbtn - 1)
+        if (ACHBtn) then
+            ACHBtn:Hide()
+        end
+        if (WhcAddonSettings.achievementbtn == 1) then
+            if (ACHBtn) then
+                ACHBtn:Show()
+            end
+        end
+    end)
+
+    WHC_SETTINGS.recentDeathsBtn = createSettingsCheckBox(content, "Display Recent deaths frame")
+    WHC_SETTINGS.recentDeathsBtn:SetScript("OnClick", function(self)
+        WhcAddonSettings.recentDeaths = math.abs(WhcAddonSettings.recentDeaths - 1)
+        if (DeathLogFrame) then
+            DeathLogFrame:Hide()
+        end
+        if (WhcAddonSettings.recentDeaths == 1) then
+            if (DeathLogFrame) then
+                DeathLogFrame:Show()
+            end
+        end
+    end)
+
+    getNextOffsetY()
+    createTitle(content, "Achievement Settings", 14)
+
+    WHC_SETTINGS.blockInvitesCheckbox = createSettingsCheckBox(content, "[Lone Wolf] Achievement: Block invites")
+    WHC_SETTINGS.blockInvitesCheckbox:SetScript("OnClick", function(self)
+        WhcAddonSettings.blockInvites = math.abs(WhcAddonSettings.blockInvites - 1)
+        WHC.SetBlockInvites()
+    end)
+
+    WHC_SETTINGS.blockTradesCheckbox = createSettingsCheckBox(content, "[My Precious!] Achievement: Block trades")
+    WHC_SETTINGS.blockTradesCheckbox:SetScript("OnClick", function(self)
+        WhcAddonSettings.blockTrades = math.abs(WhcAddonSettings.blockTrades - 1)
+        WHC.SetBlockTrades()
+    end)
+
+    return content;
 end

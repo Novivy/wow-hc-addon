@@ -154,7 +154,7 @@ table.sort(sortedAchievements, function(a, b)
     return a.data.name < b.data.name  -- Sort alphabetically by name
 end)
 
-function tab_achievements(content)
+function WHC.Tab_Achievements(content)
     local title = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     title:SetPoint("TOP", content, "TOP", 0, -10) -- Adjust y-offset based on logo size
     title:SetText("Achievements")

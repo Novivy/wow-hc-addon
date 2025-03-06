@@ -5,8 +5,20 @@ UItab = {}
 tabKeys = { "General", "Achievements", "PVP", "Shop", "Support", "Settings" }
 
 
+function WHC.CheckedValue(value)
+    if RETAIL == 0 then
+        return value
+    end
+
+    if value == 1 then
+        return true
+    end
+
+    return false
+end
+
 -- Function to show the selected tab's content
-function UIShowTabContent(tabIndex, arg1)
+function WHC.UIShowTabContent(tabIndex, arg1)
     if tabIndex == 0 then
         UIframe:Hide()
     else
@@ -51,77 +63,11 @@ function UIShowTabContent(tabIndex, arg1)
                 SendChatMessage(msg);
             end
         elseif (tabIndex == "Settings") then
-            --    if (VARSLOADED) then
-            if (WhcAddonSettings.minimapicon == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.minimap:SetChecked(true)
-                else
-                    WHC_SETTINGS.minimap:SetChecked(1)
-                end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.minimap:SetChecked(false)
-                else
-                    WHC_SETTINGS.minimap:SetChecked(0)
-                end
-            end
-
-            if (WhcAddonSettings.achievementbtn == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.achievementbtn:SetChecked(true)
-                else
-                    WHC_SETTINGS.achievementbtn:SetChecked(1)
-                end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.achievementbtn:SetChecked(false)
-                else
-                    WHC_SETTINGS.achievementbtn:SetChecked(0)
-                end
-            end
-
-            if (WhcAddonSettings.recentDeaths == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.recentDeathsBtn:SetChecked(true)
-                else
-                    WHC_SETTINGS.recentDeathsBtn:SetChecked(1)
-                end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.recentDeathsBtn:SetChecked(false)
-                else
-                    WHC_SETTINGS.recentDeathsBtn:SetChecked(0)
-                end
-            end
-
-            if (WhcAddonSettings.blockInvites == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(true)
-                else
-                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(1)
-                end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(false)
-                else
-                    WHC_SETTINGS.blockInvitesCheckbox:SetChecked(0)
-                end
-            end
-
-            if (WhcAddonSettings.blockTrades == 1) then
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(true)
-                else
-                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(1)
-                end
-            else
-                if (RETAIL == 1) then
-                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(false)
-                else
-                    WHC_SETTINGS.blockTradesCheckbox:SetChecked(0)
-                end
-            end
-            -- end
+            WHC_SETTINGS.minimap:SetChecked(WHC.CheckedValue(WhcAddonSettings.minimapicon))
+            WHC_SETTINGS.achievementbtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementbtn))
+            WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
+            WHC_SETTINGS.blockInvitesCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockInvites))
+            WHC_SETTINGS.blockTradesCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockTrades))
         elseif (tabIndex == "General") then
             --
         end
@@ -151,9 +97,7 @@ function UIShowTabContent(tabIndex, arg1)
     end
 end
 
-function initUI()
-
-
+function WHC.InitializeUI()
     local frame = CreateFrame("Frame", "MyMultiTabFrame", UIParent, RETAIL_BACKDROP)
     UIframe = frame
     frame:SetWidth(500)
@@ -171,7 +115,7 @@ function initUI()
     frame:Hide()
 
 
-    closeFrame = CreateFrame("Button", "GMToolGUIClose", frame, "UIPanelCloseButton")
+    local closeFrame = CreateFrame("Button", "GMToolGUIClose", frame, "UIPanelCloseButton")
     closeFrame:SetWidth(30)
     closeFrame:SetHeight(30)
     closeFrame:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 7, 6)
@@ -250,8 +194,8 @@ function initUI()
 
         local index = value
         tabHeader:SetScript("OnClick", function()
-            --DebugPrint("click " .. index)
-            UIShowTabContent(index)
+            --WHC.DebugPrint("click " .. index)
+            WHC.UIShowTabContent(index)
         end)
 
         UItabHeader[value] = tabHeader
@@ -266,17 +210,17 @@ function initUI()
 
 
         if value == "Achievements" then
-            content = tab_achievements(content)
+            content = WHC.Tab_Achievements(content)
         elseif value == "Support" then
-            content = tab_support(content)
+            content = WHC.Tab_Support(content)
         elseif value == "PVP" then
-            content = tab_PVP(content)
+            content = WHC.Tab_PVP(content)
         elseif value == "General" then
-            content = tab_general(content)
+            content = WHC.Tab_General(content)
         elseif value == "Shop" then
-            content = tab_shop(content)
+            content = WHC.Tab_Shop(content)
         elseif value == "Settings" then
-            content = tab_settings(content)
+            content = WHC.Tab_settings(content)
         else
             local text = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             text:SetPoint("CENTER", content, "CENTER", 0, 0)
@@ -297,7 +241,7 @@ function initUI()
             UIframe:Hide()
         else
             UIframe:Show()
-            UIShowTabContent("General") -- Initialize with the first tab visible
+            WHC.UIShowTabContent("General") -- Initialize with the first tab visible
         end
     end
 end
