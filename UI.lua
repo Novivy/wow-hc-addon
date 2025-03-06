@@ -6,7 +6,7 @@ tabKeys = { "General", "Achievements", "PVP", "Shop", "Support", "Settings" }
 
 
 -- Function to show the selected tab's content
-function UIShowTabContent(tabIndex, arg1)
+function WHC.UIShowTabContent(tabIndex, arg1)
     if tabIndex == 0 then
         UIframe:Hide()
     else
@@ -97,9 +97,7 @@ function UIShowTabContent(tabIndex, arg1)
     end
 end
 
-function initUI()
-
-
+function WHC.InitializeUI()
     local frame = CreateFrame("Frame", "MyMultiTabFrame", UIParent, RETAIL_BACKDROP)
     UIframe = frame
     frame:SetWidth(500)
@@ -117,7 +115,7 @@ function initUI()
     frame:Hide()
 
 
-    closeFrame = CreateFrame("Button", "GMToolGUIClose", frame, "UIPanelCloseButton")
+    local closeFrame = CreateFrame("Button", "GMToolGUIClose", frame, "UIPanelCloseButton")
     closeFrame:SetWidth(30)
     closeFrame:SetHeight(30)
     closeFrame:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 7, 6)
@@ -196,8 +194,8 @@ function initUI()
 
         local index = value
         tabHeader:SetScript("OnClick", function()
-            --DebugPrint("click " .. index)
-            UIShowTabContent(index)
+            --WHC.DebugPrint("click " .. index)
+            WHC.UIShowTabContent(index)
         end)
 
         UItabHeader[value] = tabHeader
@@ -212,15 +210,15 @@ function initUI()
 
 
         if value == "Achievements" then
-            content = tab_achievements(content)
+            content = WHC.Tab_Achievements(content)
         elseif value == "Support" then
-            content = tab_support(content)
+            content = WHC.Tab_Support(content)
         elseif value == "PVP" then
-            content = tab_PVP(content)
+            content = WHC.Tab_PVP(content)
         elseif value == "General" then
-            content = tab_general(content)
+            content = WHC.Tab_General(content)
         elseif value == "Shop" then
-            content = tab_shop(content)
+            content = WHC.Tab_Shop(content)
         elseif value == "Settings" then
             content = tab_settings(content)
         else
@@ -243,7 +241,7 @@ function initUI()
             UIframe:Hide()
         else
             UIframe:Show()
-            UIShowTabContent("General") -- Initialize with the first tab visible
+            WHC.UIShowTabContent("General") -- Initialize with the first tab visible
         end
     end
 end

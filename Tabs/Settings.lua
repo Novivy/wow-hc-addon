@@ -1,9 +1,37 @@
 WHC_SETTINGS = {}
 
 local offsetY = 20
-function getNextOffsetY()
+local function getNextOffsetY()
     offsetY = offsetY - 30
     return offsetY
+end
+
+local function createTitle(contentFrame, text, fontSize)
+    local title = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    title:SetPoint("TOP", contentFrame, "TOP", 0, getNextOffsetY()) -- Adjust y-offset based on logo size
+    title:SetText(text)
+    title:SetFont("Fonts\\FRIZQT__.TTF", fontSize)
+    title:SetTextColor(0.933, 0.765, 0)
+end
+
+local function createSettingsCheckBox(contentFrame, text)
+    local settingsFrame = CreateFrame("Frame", "MySettingsFrame", contentFrame)
+    settingsFrame:SetWidth(200)
+    settingsFrame:SetHeight(100)
+    settingsFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 30, getNextOffsetY())
+
+    local checkBox = CreateFrame("CheckButton", "MyCheckBox", settingsFrame, "UICheckButtonTemplate")
+    checkBox:SetWidth(24)
+    checkBox:SetHeight(24)
+    checkBox:SetPoint("TOPLEFT", settingsFrame, "TOPLEFT", 10, -10)
+
+    local checkBoxTitle = checkBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    checkBoxTitle:SetPoint("TOPLEFT", checkBox, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
+    checkBoxTitle:SetText(text)
+    checkBoxTitle:SetFont("Fonts\\FRIZQT__.TTF", 12)
+    checkBoxTitle:SetTextColor(0.933, 0.765, 0)
+
+    return checkBox
 end
 
 function tab_settings(content)
@@ -50,42 +78,14 @@ function tab_settings(content)
     WHC_SETTINGS.blockInvitesCheckbox = createSettingsCheckBox(content, "[Lone Wolf] Achievement: Block invites")
     WHC_SETTINGS.blockInvitesCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockInvites = math.abs(WhcAddonSettings.blockInvites - 1)
-        Whc_SetBlockInvites()
+        WHC.SetBlockInvites()
     end)
 
     WHC_SETTINGS.blockTradesCheckbox = createSettingsCheckBox(content, "[My Precious!] Achievement: Block trades")
     WHC_SETTINGS.blockTradesCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockTrades = math.abs(WhcAddonSettings.blockTrades - 1)
-        Whc_SetBlockTrades()
+        WHC.SetBlockTrades()
     end)
 
     return content;
-end
-
-function createTitle(contentFrame, text, fontSize)
-    local title = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    title:SetPoint("TOP", contentFrame, "TOP", 0, getNextOffsetY()) -- Adjust y-offset based on logo size
-    title:SetText(text)
-    title:SetFont("Fonts\\FRIZQT__.TTF", fontSize)
-    title:SetTextColor(0.933, 0.765, 0)
-end
-
-function createSettingsCheckBox(contentFrame, text)
-    local settingsFrame = CreateFrame("Frame", "MySettingsFrame", contentFrame)
-    settingsFrame:SetWidth(200)
-    settingsFrame:SetHeight(100)
-    settingsFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 30, getNextOffsetY())
-
-    local checkBox = CreateFrame("CheckButton", "MyCheckBox", settingsFrame, "UICheckButtonTemplate")
-    checkBox:SetWidth(24)
-    checkBox:SetHeight(24)
-    checkBox:SetPoint("TOPLEFT", settingsFrame, "TOPLEFT", 10, -10)
-
-    local checkBoxTitle = checkBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    checkBoxTitle:SetPoint("TOPLEFT", checkBox, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
-    checkBoxTitle:SetText(text)
-    checkBoxTitle:SetFont("Fonts\\FRIZQT__.TTF", 12)
-    checkBoxTitle:SetTextColor(0.933, 0.765, 0)
-
-    return checkBox
 end

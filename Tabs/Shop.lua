@@ -1,4 +1,4 @@
-function tab_shop(content)
+function WHC.Tab_Shop(content)
     local title = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     title:SetPoint("TOP", content, "TOP", 0, -10) -- Adjust y-offset based on logo size
     title:SetText("Shop")

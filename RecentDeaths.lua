@@ -39,13 +39,59 @@ content:SetWidth(360)
 content:SetHeight(0)
 scrollFrame:SetScrollChild(content)
 
+local closeButton = CreateFrame("Button", nil, DeathLogFrame, "UIPanelCloseButton")
+closeButton:SetPoint("TOPRIGHT", DeathLogFrame, "TOPRIGHT", 2, 1)
+closeButton:SetWidth(36)
+closeButton:SetHeight(36)
+closeButton:SetText("Close")
+closeButton:SetScript("OnClick", function()
+    WhcAddonSettings.recentDeaths = 0
+    DeathLogFrame:Hide()
+end)
+
+
+local resizeButton = CreateFrame("Button", nil, DeathLogFrame)
+resizeButton:SetPoint("BOTTOMRIGHT", DeathLogFrame, "BOTTOMRIGHT", 2, -3)
+resizeButton:SetWidth(16)
+resizeButton:SetHeight(16)
+
+local function SetRotation(texture, angle)
+    local cos, sin = math.cos(angle), math.sin(angle)
+    texture:SetTexCoord(
+            0.5 - 0.5 * cos + 0.5 * sin, 0.5 - 0.5 * sin - 0.5 * cos,
+            0.5 + 0.5 * cos + 0.5 * sin, 0.5 + 0.5 * sin - 0.5 * cos,
+            0.5 - 0.5 * cos - 0.5 * sin, 0.5 - 0.5 * sin + 0.5 * cos,
+            0.5 + 0.5 * cos - 0.5 * sin, 0.5 + 0.5 * sin + 0.5 * cos
+    )
+end
+
+local resizeTexture = resizeButton:CreateTexture(nil, "BACKGROUND")
+resizeTexture:SetTexture("Interface\\ChatFrame\\ChatFrameExpandArrow")
+resizeTexture:SetWidth(9)
+resizeTexture:SetHeight(9)
+resizeTexture:SetPoint("CENTER", resizeButton, "CENTER", 0, 0)
+SetRotation(resizeTexture, math.rad(80))
+
+
+
+DeathLogFrame:SetResizable(true)
+DeathLogFrame:SetMinResize(10, 10)
+DeathLogFrame:SetMaxResize(800, 600)
+
+resizeButton:EnableMouse(true)
+resizeButton:SetScript("OnMouseDown", function(self, button)
+    DeathLogFrame:StartSizing("BOTTOMRIGHT")
+end)
+resizeButton:SetScript("OnMouseUp", function(self, button)
+    DeathLogFrame:StopMovingOrSizing()
+end)
 
 
 local deathMessages = {}
 local fontHeight = 14
 local messageRows = {} -- Table to store created font strings
 
-function logDeathMessage(msg)
+function WHC.LogDeathMessage(msg)
     if (WhcAddonSettings.recentDeaths == 1) then
         local serverTime = date("%H:%M")
         local formattedMessage = string.format("|cffFFFF00%s|r %s", serverTime, msg)
@@ -79,56 +125,3 @@ function logDeathMessage(msg)
         content:SetHeight(fontHeight * countRows)
     end
 end
-
-
-
-
-
-
-
-local closeButton = CreateFrame("Button", nil, DeathLogFrame, "UIPanelCloseButton")
-closeButton:SetPoint("TOPRIGHT", DeathLogFrame, "TOPRIGHT", 2, 1)
-closeButton:SetWidth(36)
-closeButton:SetHeight(36)
-closeButton:SetText("Close")
-closeButton:SetScript("OnClick", function()
-    WhcAddonSettings.recentDeaths = 0
-    DeathLogFrame:Hide()
-end)
-
-
-local resizeButton = CreateFrame("Button", nil, DeathLogFrame)
-resizeButton:SetPoint("BOTTOMRIGHT", DeathLogFrame, "BOTTOMRIGHT", 2, -3)
-resizeButton:SetWidth(16)
-resizeButton:SetHeight(16)
-
-local function SetRotation(texture, angle)
-    local cos, sin = math.cos(angle), math.sin(angle)
-    texture:SetTexCoord(
-        0.5 - 0.5 * cos + 0.5 * sin, 0.5 - 0.5 * sin - 0.5 * cos,
-        0.5 + 0.5 * cos + 0.5 * sin, 0.5 + 0.5 * sin - 0.5 * cos,
-        0.5 - 0.5 * cos - 0.5 * sin, 0.5 - 0.5 * sin + 0.5 * cos,
-        0.5 + 0.5 * cos - 0.5 * sin, 0.5 + 0.5 * sin + 0.5 * cos
-    )
-end
-
-local resizeTexture = resizeButton:CreateTexture(nil, "BACKGROUND")
-resizeTexture:SetTexture("Interface\\ChatFrame\\ChatFrameExpandArrow")
-resizeTexture:SetWidth(9)
-resizeTexture:SetHeight(9)
-resizeTexture:SetPoint("CENTER", resizeButton, "CENTER", 0, 0)
-SetRotation(resizeTexture, math.rad(80))
-
-
-
-DeathLogFrame:SetResizable(true)
-DeathLogFrame:SetMinResize(10, 10)
-DeathLogFrame:SetMaxResize(800, 600)
-
-resizeButton:EnableMouse(true)
-resizeButton:SetScript("OnMouseDown", function(self, button)
-    DeathLogFrame:StartSizing("BOTTOMRIGHT")
-end)
-resizeButton:SetScript("OnMouseUp", function(self, button)
-    DeathLogFrame:StopMovingOrSizing()
-end)
