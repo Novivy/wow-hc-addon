@@ -17,9 +17,9 @@ end
 
 
 
-local eventFrame1 = CreateFrame("Frame")
-eventFrame1:RegisterEvent("ADDON_LOADED")
-eventFrame1:SetScript("OnEvent", function(self, event, addonName)
+WHC = CreateFrame("Frame")
+WHC:RegisterEvent("ADDON_LOADED")
+WHC:SetScript("OnEvent", function(self, event, addonName)
     addonName = addonName or arg1
     if addonName ~= "WOW_HC" then
         return
@@ -39,18 +39,18 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
         RETAIL_BACKDROP = nil
     end
 
-    initUI()
+    WHC.InitializeUI()
 
 
     if (RETAIL == 1) then
         -- todo (low prio since ticket status block not displayed on retail)
     else
         StaticPopupDialogs["HELP_TICKET"].OnAccept = function()
-            UIShowTabContent("Support")
+            WHC.UIShowTabContent("Support")
         end
 
         StaticPopupDialogs["HELP_TICKET"].OnCancel = function()
-            UIShowTabContent("Support")
+            WHC.UIShowTabContent("Support")
         end
     end
 
@@ -93,20 +93,20 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
     if (WhcAddonSettings.splash == 0) then
         WhcAddonSettings.splash = 1
 
-        UIShowTabContent("General")
+        WHC.UIShowTabContent("General")
     end
 
     if WhcAddonSettings.blockInvites == 1 then
-        Whc_SetBlockInvites()
+        WHC.SetBlockInvites()
     end
 
     if WhcAddonSettings.blockTrades == 1 then
-        Whc_SetBlockTrades()
+        WHC.SetBlockTrades()
     end
 
     if WhcAddonSettings.blockAuctionSell == 1 then
-        Whc_SetBlockAuctionSell()
+        WHC.SetBlockauctionSell()
     end
 
-  --    UIShowTabContent("PVP") -- todo remove
+  --    WHC.UIShowTabContent("PVP") -- todo remove
 end)

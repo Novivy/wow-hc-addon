@@ -43,9 +43,6 @@ hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, n
 end)
 
 --region ====== Lone Wolf ======
-BlizzardFunctions.AcceptGroup = AcceptGroup
-BlizzardFunctions.InviteUnit = InviteUnit -- Retail
-BlizzardFunctions.InviteByName = InviteByName -- 1.12
 local loneWolfLink = achievementLink(TabAchievements[ACHIEVEMENT_LONE_WOLF])
 
 -- Disables friend list "Group Invite" button
@@ -79,7 +76,10 @@ inviteEventHandler:SetScript("OnEvent", function(self, event, name)
     SendChatMessage("I am on the "..loneWolfLink.." achievement. I cannot group with other players.", "WHISPER", GetDefaultLanguage(), name)
 end)
 
-function Whc_SetBlockInvites()
+BlizzardFunctions.AcceptGroup = AcceptGroup
+BlizzardFunctions.InviteUnit = InviteUnit -- Retail
+BlizzardFunctions.InviteByName = InviteByName -- 1.12
+function WHC.SetBlockInvites()
     inviteEventHandler:UnregisterEvent("PARTY_INVITE_REQUEST")
     AcceptGroup = BlizzardFunctions.AcceptGroup
     InviteUnit = BlizzardFunctions.InviteUnit
@@ -102,9 +102,10 @@ end
 --endregion
 
 --region ====== My precious! ======
-BlizzardFunctions.InitiateTrade = InitiateTrade
 local myPreciousLink = achievementLink(TabAchievements[ACHIEVEMENT_MY_PRECIOUS])
-function Whc_SetBlockTrades()
+
+BlizzardFunctions.InitiateTrade = InitiateTrade
+function WHC.SetBlockTrades()
     InitiateTrade = BlizzardFunctions.InitiateTrade
 
     -- Block incoming trade via Blizzard interface checkbox
@@ -129,7 +130,7 @@ hooksecurefunc("AuctionsFrameAuctions_ValidateAuction", function()
 end)
 
 BlizzardFunctions.StartAuction = StartAuction
-function Whc_SetBlockAuctionSell()
+function WHC.SetBlockauctionSell()
     StartAuction = BlizzardFunctions.StartAuction
     if WhcAddonSettings.blockAuctionSell == 1 then
         StartAuction = function()

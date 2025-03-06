@@ -1,4 +1,4 @@
-function tab_support(content)
+function WHC.Tab_Support(content)
     local title = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     title:SetPoint("TOP", content, "TOP", 0, -10) -- Adjust y-offset based on logo size
     title:SetText("Support")
@@ -84,7 +84,7 @@ function tab_support(content)
         else
             SendChatMessage(msg);
         end
-            UIShowTabContent(0)
+            WHC.UIShowTabContent(0)
         end
     end)
 
@@ -104,7 +104,7 @@ function tab_support(content)
         else
             SendChatMessage(msg);
         end
-        UIShowTabContent(0)
+        WHC.UIShowTabContent(0)
 
     end)
     content.closeButton = closeButton;
