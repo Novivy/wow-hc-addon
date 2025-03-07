@@ -214,16 +214,32 @@ end
 local ironBonesLink = achievementLink(TabAchievements[ACHIEVEMENT_IRON_BONES])
 
 -- Disable repair buttons from Blizzard interface
-hooksecurefunc("MerchantFrame_UpdateRepairButtons", function()
-    if WhcAddonSettings.blockRepair == 1 then
-        MerchantRepairAllButton:Disable()
-        MerchantRepairItemButton:Disable()
+local disableRepairButtons = function()
+    local repairItemIcon
+    if MerchantRepairItemButton then
+        repairItemIcon = MerchantRepairItemButton:GetRegions()
+        SetDesaturation(repairItemIcon, nil)
+        MerchantRepairItemButton:Enable()
     end
-end)
+
+    if WhcAddonSettings.blockRepair == 1 then
+        if MerchantRepairItemButton and repairItemIcon then
+            SetDesaturation(repairItemIcon, 1)
+            MerchantRepairItemButton:Disable()
+        end
+
+        if MerchantRepairAllButton then
+            SetDesaturation(MerchantRepairAllIcon, 1)
+            MerchantRepairAllButton:Disable()
+        end
+    end
+end
+hooksecurefunc("MerchantFrame_UpdateRepairButtons", disableRepairButtons) -- Retail
+hooksecurefunc("MerchantFrame_OnShow", disableRepairButtons) -- 1.12
 
 BlizzardFunctions.RepairAllItems = RepairAllItems
 BlizzardFunctions.ShowRepairCursor = ShowRepairCursor
-function Whc_SetBlockRepair()
+function WHC.SetBlockRepair()
     RepairAllItems = BlizzardFunctions.RepairAllItems
     ShowRepairCursor = BlizzardFunctions.ShowRepairCursor
 

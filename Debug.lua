@@ -32,7 +32,7 @@ function WHC.DebugDump(o)
         return s .. '} '
     end
 
-    return WHC.DebugPrint(tostring(o))
+    return tostring(o)
 end
 
 -- Print message when the addon is loaded

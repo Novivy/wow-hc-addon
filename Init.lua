@@ -115,7 +115,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     end
   --    WHC.UIShowTabContent("PVP") -- todo remove
     if WhcAddonSettings.blockRepair == 1 then
-        Whc_SetBlockRepair()
+        WHC.SetBlockRepair()
     end
 
   --    UIShowTabContent("PVP") -- todo remove

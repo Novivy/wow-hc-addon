@@ -99,10 +99,10 @@ function WHC.Tab_settings(content)
         WHC.SetBlockAuctionBuy()
     end)
 
-    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(content, "[Iron Bones] Achievement: Blocking reparing items")
+    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(content, "[Iron Bones] Achievement: Block repairing items")
     WHC_SETTINGS.blockRepairCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockRepair = math.abs(WhcAddonSettings.blockRepair - 1)
-        Whc_SetBlockRepair()
+        WHC.SetBlockRepair()
     end)
 
     return content;
