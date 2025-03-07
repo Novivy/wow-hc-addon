@@ -224,7 +224,7 @@ function WHC.SetBlockTaxiService()
     taxiServiceEventHandler:UnregisterEvent("TAXIMAP_OPENED")
     TakeTaxiNode = BlizzardFunctions.TakeTaxiNode
 
-    if WhcAddonSettings.blockTrades == 1 then
+    if WhcAddonSettings.blockTaxiService == 1 then
         -- block user from opening the taxi map
         taxiServiceEventHandler:RegisterEvent("TAXIMAP_OPENED")
         -- Block addons from taking flights
