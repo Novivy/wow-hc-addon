@@ -69,6 +69,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blockInvites = WhcAddonSettings.blockInvites or 0
     WhcAddonSettings.blockTrades = WhcAddonSettings.blockTrades or 0
     WhcAddonSettings.blockAuctionSell = WhcAddonSettings.blockAuctionSell or 0
+    WhcAddonSettings.blockAuctionBuy = WhcAddonSettings.blockAuctionBuy or 0
 
 
     if (WhcAddonSettings.minimapicon == 1) then
@@ -108,5 +109,8 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         WHC.SetBlockAuctionSell()
     end
 
+    if WhcAddonSettings.blockAuctionBuy == 1 then
+        WHC.SetBlockAuctionBuy()
+    end
   --    WHC.UIShowTabContent("PVP") -- todo remove
 end)
