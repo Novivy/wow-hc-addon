@@ -99,6 +99,12 @@ function WHC.Tab_settings(content)
         WHC.SetBlockAuctionBuy()
     end)
 
+    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(content, "[Iron Bones] Achievement: Block repairing items")
+    WHC_SETTINGS.blockRepairCheckbox:SetScript("OnClick", function(self)
+        WhcAddonSettings.blockRepair = math.abs(WhcAddonSettings.blockRepair - 1)
+        WHC.SetBlockRepair()
+    end)
+
     WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsCheckBox(content, "[Grounded] Achievement: Block flying service")
     WHC_SETTINGS.blockTaxiServiceCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockTaxiService = math.abs(WhcAddonSettings.blockTaxiService - 1)

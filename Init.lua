@@ -70,6 +70,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blockTrades = WhcAddonSettings.blockTrades or 0
     WhcAddonSettings.blockAuctionSell = WhcAddonSettings.blockAuctionSell or 0
     WhcAddonSettings.blockAuctionBuy = WhcAddonSettings.blockAuctionBuy or 0
+    WhcAddonSettings.blockRepair = WhcAddonSettings.blockRepair or 0
     WhcAddonSettings.blockTaxiService = WhcAddonSettings.blockTaxiService or 0
 
 
@@ -113,10 +114,12 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     if WhcAddonSettings.blockAuctionBuy == 1 then
         WHC.SetBlockAuctionBuy()
     end
-  --    WHC.UIShowTabContent("PVP") -- todo remove
+
+    if WhcAddonSettings.blockRepair == 1 then
+        WHC.SetBlockRepair()
+    end
+
     if WhcAddonSettings.blockTaxiService == 1 then
         WHC.SetBlockTaxiService()
     end
-
-  --    UIShowTabContent("PVP") -- todo remove
 end)

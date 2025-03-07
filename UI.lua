@@ -70,6 +70,7 @@ function WHC.UIShowTabContent(tabIndex, arg1)
             WHC_SETTINGS.blockTradesCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockTrades))
             WHC_SETTINGS.blockAuctionSellCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockAuctionSell))
             WHC_SETTINGS.blockAuctionBuyCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockAuctionBuy))
+            WHC_SETTINGS.blockRepairCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockRepair))
             WHC_SETTINGS.blockTaxiServiceCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockTaxiService))
         elseif (tabIndex == "General") then
             --
