@@ -8,12 +8,12 @@ SlashCmdList["ReloadUI"] = function(msg, editbox)
 end
 
 -- Function to print debug messages
-function DebugPrint(message)
+function WHC.DebugPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage(message)
 end
 
 -- Function to print table key values
-function DebugDump(o)
+function WHC.DebugDump(o)
     if type(o) == 'table' then
         local s = '{ '
         local idx = 0
@@ -26,17 +26,17 @@ function DebugDump(o)
             if idx > 0 then
                 s = s .. ', '
             end
-            s = s .. '['..key..'] = ' .. DebugDump(v)
+            s = s .. '['..key..'] = ' .. WHC.DebugDump(v)
             idx = idx + 1
         end
         return s .. '} '
     end
 
-    return DebugPrint(tostring(o))
+    return WHC.DebugPrint(tostring(o))
 end
 
 -- Print message when the addon is loaded
--- DebugPrint("ReleaseSpiritMod loaded.")
+-- WHC.DebugPrint("ReleaseSpiritMod loaded.")
 
 -- ChatFrame_AddMessageEventFilter(evt,myChatFilter)
 

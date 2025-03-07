@@ -162,14 +162,12 @@ playerLogin:SetScript("OnEvent", function(self, event)
 
         local inInstance, instanceType = IsInInstance()
         if (instanceType == "PVP") then
-            WHC_updateDeathWindow(true)
+            WHC.UpdateDeathWindow(true)
         else
-            WHC_updateDeathWindow(false)
+            WHC.UpdateDeathWindow(false)
         end
     end
 end)
-
-
 
 
 ACHBtn = nil
@@ -211,9 +209,9 @@ local function characterSheetWOWHCbutton(frame, name)
         local index = value
         viewAchButton:SetScript("OnClick", function()
             if (name == "character") then
-                UIShowTabContent("Achievements")
+                WHC.UIShowTabContent("Achievements")
             else
-                UIShowTabContent("Achievements", UnitName("target"))
+                WHC.UIShowTabContent("Achievements", UnitName("target"))
             end
         end)
 
@@ -243,7 +241,6 @@ local function characterSheetWOWHCbutton(frame, name)
         end
     end
 end
-
 
 
 local auctionHouseEvents = CreateFrame("Frame")
@@ -292,9 +289,9 @@ mapChangeEventHandler:SetScript("OnEvent", function(self, event)
     local inInstance, instanceType = IsInInstance()
     -- message(instanceType)
     if (instanceType == "pvp") then
-        WHC_updateDeathWindow(true)
+        WHC.UpdateDeathWindow(true)
     else
-        WHC_updateDeathWindow(false)
+        WHC.UpdateDeathWindow(false)
     end
 end)
 
@@ -310,7 +307,7 @@ if (RETAIL == 1) then
         characterSheetWOWHCbutton(getglobal("CharacterFrame"), "character")
     end)
     CharacterFrame:HookScript("OnHide", function(self)
-        UIShowTabContent(0)
+        WHC.UIShowTabContent(0)
     end)
 else
     xx_CharacterFrame_ShowSubFrame = CharacterFrame_ShowSubFrame
@@ -328,13 +325,13 @@ else
 
     xx_CharacterFrame_OnHide = CharacterFrame_OnHide
     function CharacterFrame_OnHide()
-        UIShowTabContent(0)
+        WHC.UIShowTabContent(0)
         xx_CharacterFrame_OnHide()
     end
 end
 
 
-function handleChatEvent(arg1)
+local function handleChatEvent(arg1)
     if strfind(string.lower(arg1), string.lower("::whc::ticket:")) then
         local result = string.gsub(arg1, "::whc::ticket:", "")
 
@@ -572,10 +569,10 @@ function handleChatEvent(arg1)
     end
 end
 
-function handleMonsterChatEvent(arg1)
+local function handleMonsterChatEvent(arg1)
     if (strfind(string.lower(arg1), string.lower("has died at level"))) then
 
-        logDeathMessage(arg1)
+        WHC.LogDeathMessage(arg1)
         return 0
     else
         return 1

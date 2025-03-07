@@ -17,8 +17,10 @@ local function hooksecurefunc(arg1, arg2, arg3)
     end
     local orig = arg1[arg2]
     arg1[arg2] = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+        --WHC.DebugPrint("Original "..arg2)
         local x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20 = orig(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
 
+        --WHC.DebugPrint("Hook "..arg2)
         arg3(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
 
         return x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20
@@ -43,9 +45,6 @@ hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, n
 end)
 
 --region ====== Lone Wolf ======
-BlizzardFunctions.AcceptGroup = AcceptGroup
-BlizzardFunctions.InviteUnit = InviteUnit -- Retail
-BlizzardFunctions.InviteByName = InviteByName -- 1.12
 local loneWolfLink = achievementLink(TabAchievements[ACHIEVEMENT_LONE_WOLF])
 
 -- Disables friend list "Group Invite" button
@@ -79,7 +78,10 @@ inviteEventHandler:SetScript("OnEvent", function(self, event, name)
     SendChatMessage("I am on the "..loneWolfLink.." achievement. I cannot group with other players.", "WHISPER", GetDefaultLanguage(), name)
 end)
 
-function Whc_SetBlockInvites()
+BlizzardFunctions.AcceptGroup = AcceptGroup
+BlizzardFunctions.InviteUnit = InviteUnit -- Retail
+BlizzardFunctions.InviteByName = InviteByName -- 1.12
+function WHC.SetBlockInvites()
     inviteEventHandler:UnregisterEvent("PARTY_INVITE_REQUEST")
     AcceptGroup = BlizzardFunctions.AcceptGroup
     InviteUnit = BlizzardFunctions.InviteUnit
@@ -102,9 +104,10 @@ end
 --endregion
 
 --region ====== My precious! ======
-BlizzardFunctions.InitiateTrade = InitiateTrade
 local myPreciousLink = achievementLink(TabAchievements[ACHIEVEMENT_MY_PRECIOUS])
-function Whc_SetBlockTrades()
+
+BlizzardFunctions.InitiateTrade = InitiateTrade
+function WHC.SetBlockTrades()
     InitiateTrade = BlizzardFunctions.InitiateTrade
 
     -- Block incoming trade via Blizzard interface checkbox
@@ -118,18 +121,65 @@ function Whc_SetBlockTrades()
 end
 --endregion
 
+
+--region ====== Killer Trader ======
+local killerTraderLink = achievementLink(TabAchievements[ACHIEVEMENT_KILLER_TRADER])
+
+local killerTraderEventListener = CreateFrame("Frame")
+killerTraderEventListener:RegisterEvent("ADDON_LOADED")
+killerTraderEventListener:SetScript("OnEvent", function(self, event, addonName)
+    addonName = addonName or arg1
+    if addonName ~= "Blizzard_AuctionUI" then
+        return
+    end
+
+    local blockAuctionSell = function()
+        if WhcAddonSettings.blockAuctionSell == 1 and AuctionsCreateAuctionButton then
+            AuctionsCreateAuctionButton:Disable()
+        end
+    end
+
+    hooksecurefunc("AuctionsFrameAuctions_ValidateAuction", blockAuctionSell)
+    hooksecurefunc("MoneyInputFrame_OnTextChanged", blockAuctionSell)
+end)
+
+BlizzardFunctions.PostAuction  = PostAuction -- Retail
+BlizzardFunctions.StartAuction = StartAuction -- 1.12
+function WHC.SetBlockAuctionSell()
+    PostAuction  = BlizzardFunctions.PostAuction
+    StartAuction = BlizzardFunctions.StartAuction
+
+    if WhcAddonSettings.blockAuctionSell == 1 then
+        local blockAuctionSell = function()
+            printAchievementInfo(killerTraderLink, "Selling items on the auction house is blocked.")
+        end
+        PostAuction  = blockAuctionSell
+        StartAuction = blockAuctionSell
+    end
+end
+--endregion
+
 --region ====== Time is Money ======
 local timeIsMoneyLink = achievementLink(TabAchievements[ACHIEVEMENT_TIME_IS_MONEY])
 
-BlizzardFunctions.PlaceAuctionBid = PlaceAuctionBid
-
-hooksecurefunc("AuctionFrameBid_Update", function()
-    if WhcAddonSettings.blockAuctionBuy == 1 then
-        BidBidButton:Disable()
-        BidBuyoutButton:Disable()
+local timeIsMoneyEventListener = CreateFrame("Frame")
+timeIsMoneyEventListener:RegisterEvent("ADDON_LOADED")
+timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
+    addonName = addonName or arg1
+    if addonName ~= "Blizzard_AuctionUI" then
+        return
     end
+
+    hooksecurefunc("AuctionFrameBid_Update", function()
+        if WhcAddonSettings.blockAuctionBuy == 1 then
+            BidBidButton:Disable()
+            BidBuyoutButton:Disable()
+        end
+    end)
 end)
-function Whc_SetBlockAuctionBuy()
+
+BlizzardFunctions.PlaceAuctionBid = PlaceAuctionBid
+function WHC.SetBlockAuctionBuy()
     PlaceAuctionBid = BlizzardFunctions.PlaceAuctionBid
 
     if WhcAddonSettings.blockAuctionBuy == 1 then
