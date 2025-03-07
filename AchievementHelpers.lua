@@ -176,15 +176,23 @@ timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
 
     hooksecurefunc("AuctionFrameBrowse_Update", function()
         if WhcAddonSettings.blockAuctionBuy == 1 then
-            BrowseBidButton:Disable()
-            BrowseBuyoutButton:Disable()
+            if BrowseBidButton then
+                BrowseBidButton:Disable()
+            end
+            if BrowseBuyoutButton then
+                BrowseBuyoutButton:Disable()
+            end
         end
     end)
 
     hooksecurefunc("AuctionFrameBid_Update", function()
         if WhcAddonSettings.blockAuctionBuy == 1 then
-            BidBidButton:Disable()
-            BidBuyoutButton:Disable()
+            if BidBidButton then
+                BidBidButton:Disable()
+            end
+            if BidBuyoutButton then
+                BidBuyoutButton:Disable()
+            end
         end
     end)
 end)
