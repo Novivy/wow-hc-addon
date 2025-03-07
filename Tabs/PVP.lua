@@ -146,7 +146,7 @@ UIspecialEvent = nil
 UIWS = nil
 UIAB = nil
 UIAV = nil
-function tab_PVP(content)
+function WHC.Tab_PVP(content)
     bgSlot(content, 0, "warsong", "Warsong Gulch",
         "As a 10 vs 10 capture-the-flag battleground, the first faction to capture three flags is victorious")
 
