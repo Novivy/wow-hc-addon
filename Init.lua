@@ -105,7 +105,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     end
 
     if WhcAddonSettings.blockAuctionSell == 1 then
-        WHC.SetBlockauctionSell()
+        WHC.SetBlockAuctionSell()
     end
 
   --    WHC.UIShowTabContent("PVP") -- todo remove
