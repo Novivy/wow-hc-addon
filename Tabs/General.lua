@@ -1,5 +1,4 @@
-
-function mathMod(a, b)
+local function mathMod(a, b)
     return a - b * math.floor(a / b)
 end
 
@@ -66,7 +65,7 @@ local tabInfos = {
     { id = 5, icon = "mag",    name = "Mak'gora",           desc = "Challenge players to a Duel to the Death by typing the |cffffd200.makgora|r command\n\nIf the challenged player accepts, you will fight to the death until only one remains.\n\nFleeing a Mak'gora will result in your immediate execution." },
 }
 
-function tab_general(content)
+function WHC.Tab_General(content)
     local wowhclinkbtn = CreateFrame("Button", "WowhcBtn", content)
 
     wowhclinkbtn:SetWidth(28)

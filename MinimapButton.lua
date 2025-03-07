@@ -1,4 +1,4 @@
-minimapIcon = CreateFrame('Button', "minimapIcon", Minimap)
+local minimapIcon = CreateFrame('Button', "minimapIcon", Minimap)
 
 minimapIcon:RegisterForDrag('LeftButton')
 minimapIcon:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
@@ -16,9 +16,9 @@ minimapIcon:SetClampedToScreen(true)
 
 minimapIcon:SetScript("OnClick", function()
     if (UIframe:IsVisible()) then
-        UIShowTabContent(0)
+        WHC.UIShowTabContent(0)
     else
-        UIShowTabContent("General")
+        WHC.UIShowTabContent("General")
     end
 end)
 
