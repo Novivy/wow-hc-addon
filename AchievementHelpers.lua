@@ -85,11 +85,13 @@ end)
 BlizzardFunctions.AcceptGroup = AcceptGroup
 BlizzardFunctions.InviteUnit = InviteUnit -- Retail
 BlizzardFunctions.InviteByName = InviteByName -- 1.12
+BlizzardFunctions.InviteToParty = InviteToParty -- 1.12
 function WHC.SetBlockInvites()
     inviteEventHandler:UnregisterEvent("PARTY_INVITE_REQUEST")
     AcceptGroup = BlizzardFunctions.AcceptGroup
     InviteUnit = BlizzardFunctions.InviteUnit
     InviteByName = BlizzardFunctions.InviteByName
+    InviteToParty = BlizzardFunctions.InviteToParty
 
     if WhcAddonSettings.blockInvites == 1 then
         -- Blocks incoming invites
@@ -103,6 +105,7 @@ function WHC.SetBlockInvites()
         end
         InviteUnit = blockInvites
         InviteByName = blockInvites
+        InviteToParty = blockInvites
     end
 end
 --endregion
