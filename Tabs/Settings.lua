@@ -101,8 +101,8 @@ function WHC.Tab_settings(content)
 
     WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsCheckBox(content, "[Grounded] Achievement: Block flying service")
     WHC_SETTINGS.blockTaxiServiceCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockTrades = math.abs(WhcAddonSettings.blockTrades - 1)
-        Whc_SetBlockTrades()
+        WhcAddonSettings.blockTaxiService = math.abs(WhcAddonSettings.blockTaxiService - 1)
+        WHC.SetBlockTaxiService()
     end)
 
     return content;
