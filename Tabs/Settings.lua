@@ -87,5 +87,11 @@ function WHC.Tab_settings(content)
         WHC.SetBlockTrades()
     end)
 
+    WHC_SETTINGS.blockAuctionSellCheckbox = createSettingsCheckBox(content, "[Killer Trader] Achievement: Block auction house posts")
+    WHC_SETTINGS.blockAuctionSellCheckbox:SetScript("OnClick", function(self)
+        WhcAddonSettings.blockAuctionSell = math.abs(WhcAddonSettings.blockAuctionSell - 1)
+        WHC.SetBlockAuctionSell()
+    end)
+
     return content;
 end
