@@ -247,7 +247,7 @@ function WHC.SetBlockRepair()
         local blockRepair = function()
             printAchievementInfo(ironBonesLink, "Repairing items are blocked.")
         end
-        -- Block other addons from repairing
+        -- Block other addons like LazyPig from auto repairing
         RepairAllItems = blockRepair
         ShowRepairCursor = blockRepair
     end
