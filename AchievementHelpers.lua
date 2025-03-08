@@ -278,3 +278,17 @@ function WHC.SetBlockTaxiService()
     end
 end
 --endregion
+
+--region ====== Mister White & Only Fan & Self-made ======
+function WHC.SetBlockMagicItems()
+
+end
+
+function WHC.SetBlockArmorItems()
+
+end
+
+function WHC.SetBlockNonSelfMadeItems()
+
+end
+--endregion

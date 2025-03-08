@@ -72,7 +72,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blockAuctionBuy = WhcAddonSettings.blockAuctionBuy or 0
     WhcAddonSettings.blockRepair = WhcAddonSettings.blockRepair or 0
     WhcAddonSettings.blockTaxiService = WhcAddonSettings.blockTaxiService or 0
-
+    WhcAddonSettings.blockMagicItems = WhcAddonSettings.blockMagicItems or 0
+    WhcAddonSettings.blockArmorItems = WhcAddonSettings.blockArmorItems or 0
+    WhcAddonSettings.blockNonSelfMadeItems = WhcAddonSettings.blockNonSelfMadeItems or 0
 
     if (WhcAddonSettings.minimapicon == 1) then
         MapIcon:Show()
@@ -121,5 +123,17 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
 
     if WhcAddonSettings.blockTaxiService == 1 then
         WHC.SetBlockTaxiService()
+    end
+
+    if WhcAddonSettings.blockMagicItems == 1 then
+        WHC.SetBlockMagicItems()
+    end
+
+    if WhcAddonSettings.blockArmorItems == 1 then
+        WHC.SetBlockArmorItems()
+    end
+
+    if WhcAddonSettings.blockNonSelfMadeItems == 1 then
+        WHC.SetBlockNonSelfMadeItems()
     end
 end)
