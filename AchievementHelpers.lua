@@ -209,3 +209,47 @@ function WHC.SetBlockAuctionBuy()
     end
 end
 --endregion
+
+--region ====== Iron Bones ======
+local ironBonesLink = achievementLink(TabAchievements[ACHIEVEMENT_IRON_BONES])
+
+-- Disable repair buttons from Blizzard interface
+local disableRepairButtons = function()
+    local repairItemIcon
+    if MerchantRepairItemButton then
+        repairItemIcon = MerchantRepairItemButton:GetRegions()
+        SetDesaturation(repairItemIcon, nil)
+        MerchantRepairItemButton:Enable()
+    end
+
+    if WhcAddonSettings.blockRepair == 1 then
+        if MerchantRepairItemButton and repairItemIcon then
+            SetDesaturation(repairItemIcon, 1)
+            MerchantRepairItemButton:Disable()
+        end
+
+        if MerchantRepairAllButton then
+            SetDesaturation(MerchantRepairAllIcon, 1)
+            MerchantRepairAllButton:Disable()
+        end
+    end
+end
+hooksecurefunc("MerchantFrame_UpdateRepairButtons", disableRepairButtons) -- Retail
+hooksecurefunc("MerchantFrame_OnShow", disableRepairButtons) -- 1.12
+
+BlizzardFunctions.RepairAllItems = RepairAllItems
+BlizzardFunctions.ShowRepairCursor = ShowRepairCursor
+function WHC.SetBlockRepair()
+    RepairAllItems = BlizzardFunctions.RepairAllItems
+    ShowRepairCursor = BlizzardFunctions.ShowRepairCursor
+
+    if WhcAddonSettings.blockRepair == 1 then
+        local blockRepair = function()
+            printAchievementInfo(ironBonesLink, "Repairing items are blocked.")
+        end
+        -- Block other addons like LazyPig from auto repairing
+        RepairAllItems = blockRepair
+        ShowRepairCursor = blockRepair
+    end
+end
+--endregion
