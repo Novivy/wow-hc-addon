@@ -280,6 +280,109 @@ end
 --endregion
 
 --region ====== Mister White & Only Fan & Self-made ======
+local misterWhiteLink = achievementLink(TabAchievements[ACHIEVEMENT_MISTER_WHITE])
+local onlyFanLink = achievementLink(TabAchievements[ACHIEVEMENT_ONLY_FAN])
+local selfMadeLink = achievementLink(TabAchievements[ACHIEVEMENT_SELF_MADE])
+
+local onlyFanAllowedItems = {}
+onlyFanAllowedItems.INVTYPE_WEAPON = true
+onlyFanAllowedItems.INVTYPE_2HWEAPON = true
+onlyFanAllowedItems.INVTYPE_WEAPONMAINHAND = true
+onlyFanAllowedItems.INVTYPE_WEAPONOFFHAND = true
+onlyFanAllowedItems.INVTYPE_SHIELD = true
+onlyFanAllowedItems.INVTYPE_THROWN = true
+onlyFanAllowedItems.INVTYPE_RANGED = true
+onlyFanAllowedItems.INVTYPE_AMMO = true
+onlyFanAllowedItems.INVTYPE_RANGEDRIGHT = true -- Wands
+onlyFanAllowedItems.INVTYPE_HOLDABLE = true -- Held in offhand
+onlyFanAllowedItems.INVTYPE_TABARD = true
+onlyFanAllowedItems.INVTYPE_BAG = true
+
+local function getItemIDFromLink(itemLink)
+    if not itemLink then
+        return
+    end
+
+    local foundID, _ , itemID = string.find(itemLink, "item:(%d+)")
+    if not foundID then
+        return
+    end
+
+    return tonumber(itemID)
+end
+
+-- TODO Make this more robust
+-- This can fail is player 1 is named "Dave" and player 2 is named "Davedos"
+-- The player "Dave" will get a false positive match on an item from "Davedos"
+-- To correctly handle this I need to know the format of the <Made by ...> text in every translation.
+local function isSelfMade()
+    for i=1, GameTooltip:NumLines() do
+        local left = getglobal("GameTooltipTextLeft"..i)
+        local lineText = left:GetText()
+        local nameMatch = string.find(lineText, "<.*("..WHC.player.name..").*>")
+        if nameMatch then
+            return true
+        end
+    end
+
+    return false
+end
+
+hooksecurefunc(GameTooltip, "SetBagItem", function(tip, bag, slot)
+    local link = GetContainerItemLink(bag, slot)
+    local itemId = getItemIDFromLink(link)
+    if itemId == nil then
+        return
+    end
+
+    -- 1.12
+    local itemName, itemLink, itemRarity, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture = GetItemInfo(itemId)
+    --WHC.DebugPrint(" ")
+    --WHC.DebugPrint("bag "..bag.." slot "..slot)
+    --WHC.DebugPrint("link: "..link)
+    --WHC.DebugPrint("itemName: "..tostring(itemName))
+    --WHC.DebugPrint("itemLink: "..tostring(itemLink))
+    --WHC.DebugPrint("itemRarity: "..tostring(itemRarity))
+    --WHC.DebugPrint("itemLevel: "..tostring(itemLevel))
+    --WHC.DebugPrint("itemMinLevel: "..tostring(itemMinLevel))
+    WHC.DebugPrint("itemType: "..tostring(itemType))
+    WHC.DebugPrint("itemSubType: "..tostring(itemSubType))
+    --WHC.DebugPrint("itemStackCount: "..tostring(itemStackCount))
+    --WHC.DebugPrint("itemTexture: "..tostring(itemTexture))
+
+    if itemEquipLoc == "" then
+        return
+    end
+
+    if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 then
+        if itemEquipLoc == "INVTYPE_BAG" then
+            GameTooltip:AddLine("<Mister White: Bags of any quality can be equipped>", 0, 1, 0)
+        else
+            GameTooltip:AddLine("<Mister White: Cannot equip magic items>", 1, 0, 0)
+        end
+    end
+
+    if WhcAddonSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+        GameTooltip:AddLine("<Only Fan: Cannot equip armor items>", 1, 0, 0)
+    end
+
+    if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() then
+        if itemSubType == "Fishing Pole" then
+            GameTooltip:AddLine("<Self-made: Fishing Poles can be equipped>", 0, 1, 0)
+        elseif itemEquipLoc == "INVTYPE_BAG" then
+            GameTooltip:AddLine("<Self-made: All bags from everywhere can be equipped>", 0, 1, 0)
+        else
+            GameTooltip:AddLine("<Self-made: Cannot equip items you did not craft>", 1, 0, 0)
+        end
+    end
+
+    -- Resize the tooltip to match the new lines added
+    GameTooltip:Show()
+    --WHC.DebugPrint(misterWhiteLink)
+    --WHC.DebugPrint(onlyFanLink)
+    WHC.DebugPrint(selfMadeLink)
+end)
+
 function WHC.SetBlockMagicItems()
 
 end
@@ -288,6 +391,7 @@ function WHC.SetBlockArmorItems()
 
 end
 
+-- bag, bank, trade
 function WHC.SetBlockNonSelfMadeItems()
 
 end

@@ -25,6 +25,10 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         return
     end
 
+    WHC.player = {
+        name = UnitName("player"),
+    }
+
     local version = GetBuildInfo()
     if (version == "1.12.0" or version == "1.12.1") then
         RETAIL = 0
