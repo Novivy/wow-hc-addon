@@ -17,13 +17,13 @@ local function hooksecurefunc(arg1, arg2, arg3)
     end
     local orig = arg1[arg2]
     arg1[arg2] = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
-        if arg2 ~= "UnitPopup_OnUpdate" then
-            --WHC.DebugPrint("Original "..arg2)
+        if arg2 ~= "UnitPopup_OnUpdate" and arg2 ~= "SetBagItem" then
+            WHC.DebugPrint("Original "..arg2)
         end
         local x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20 = orig(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
 
-        if arg2 ~= "UnitPopup_OnUpdate" then
-            --WHC.DebugPrint("Hook "..arg2)
+        if arg2 ~= "UnitPopup_OnUpdate" and arg2 ~= "SetBagItem" then
+            WHC.DebugPrint("Hook "..arg2)
         end
         arg3(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
 
@@ -328,27 +328,17 @@ local function isSelfMade()
     return false
 end
 
-hooksecurefunc(GameTooltip, "SetBagItem", function(tip, bag, slot)
-    local link = GetContainerItemLink(bag, slot)
-    local itemId = getItemIDFromLink(link)
+local function setEquipmentInfo(itemLink)
+    local itemId = getItemIDFromLink(itemLink)
     if itemId == nil then
         return
     end
 
     -- 1.12
-    local itemName, itemLink, itemRarity, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture = GetItemInfo(itemId)
-    --WHC.DebugPrint(" ")
-    --WHC.DebugPrint("bag "..bag.." slot "..slot)
-    --WHC.DebugPrint("link: "..link)
-    --WHC.DebugPrint("itemName: "..tostring(itemName))
-    --WHC.DebugPrint("itemLink: "..tostring(itemLink))
-    --WHC.DebugPrint("itemRarity: "..tostring(itemRarity))
-    --WHC.DebugPrint("itemLevel: "..tostring(itemLevel))
-    --WHC.DebugPrint("itemMinLevel: "..tostring(itemMinLevel))
-    WHC.DebugPrint("itemType: "..tostring(itemType))
-    WHC.DebugPrint("itemSubType: "..tostring(itemSubType))
-    --WHC.DebugPrint("itemStackCount: "..tostring(itemStackCount))
-    --WHC.DebugPrint("itemTexture: "..tostring(itemTexture))
+    local _, _, itemRarity, _, _, itemSubType, _, itemEquipLoc = GetItemInfo(itemId)
+    if RETAIL == 1 then
+        _, _, itemRarity, _, _, _, itemSubType, _, itemEquipLoc = GetItemInfo(itemId)
+    end
 
     if itemEquipLoc == "" then
         return
@@ -367,7 +357,7 @@ hooksecurefunc(GameTooltip, "SetBagItem", function(tip, bag, slot)
     end
 
     if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() then
-        if itemSubType == "Fishing Pole" then
+        if itemSubType == "Fishing Pole" then -- localized according to documentation. Will need a static value for proper matching
             GameTooltip:AddLine("<Self-made: Fishing Poles can be equipped>", 0, 1, 0)
         elseif itemEquipLoc == "INVTYPE_BAG" then
             GameTooltip:AddLine("<Self-made: All bags from everywhere can be equipped>", 0, 1, 0)
@@ -378,10 +368,47 @@ hooksecurefunc(GameTooltip, "SetBagItem", function(tip, bag, slot)
 
     -- Resize the tooltip to match the new lines added
     GameTooltip:Show()
-    --WHC.DebugPrint(misterWhiteLink)
-    --WHC.DebugPrint(onlyFanLink)
-    WHC.DebugPrint(selfMadeLink)
+end
+
+-- Update bag items
+hooksecurefunc(GameTooltip, "SetBagItem", function(tip, bag, slot)
+    local itemLink = GetContainerItemLink(bag, slot)
+    setEquipmentInfo(itemLink)
 end)
+
+-- Update bank items
+hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
+    if slot > 19 then
+        local itemLink = GetInventoryItemLink(unit, slot)
+        setEquipmentInfo(itemLink)
+    end
+end)
+
+-- Update trade window items
+hooksecurefunc(GameTooltip, "SetTradePlayerItem", function(tip, tradeSlot)
+    local itemLink = GetTradePlayerItemLink(tradeSlot)
+    setEquipmentInfo(itemLink)
+end)
+
+hooksecurefunc(GameTooltip, "SetTradeTargetItem", function(tip, tradeSlot)
+    local itemLink = GetTradeTargetItemLink(tradeSlot)
+    setEquipmentInfo(itemLink)
+end)
+
+hooksecurefunc("AutoEquipCursorItem", function()  end)
+hooksecurefunc("EquipCursorItem", function()  end)
+hooksecurefunc("EquipPendingItem", function()  end)
+hooksecurefunc("UseContainerItem", function()  end)
+hooksecurefunc("PickupContainerItem", function()  end)
+hooksecurefunc("CursorHasItem", function()  end)
+
+BlizzardFunctions.AutoEquipCursorItem = AutoEquipCursorItem
+BlizzardFunctions.EquipCursorItem = EquipCursorItem
+BlizzardFunctions.EquipPendingItem = EquipPendingItem
+BlizzardFunctions.UseContainerItem = UseContainerItem
+function WHC.SetBlockEquipItems()
+
+end
 
 function WHC.SetBlockMagicItems()
 
