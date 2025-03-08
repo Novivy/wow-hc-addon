@@ -71,6 +71,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blockAuctionSell = WhcAddonSettings.blockAuctionSell or 0
     WhcAddonSettings.blockAuctionBuy = WhcAddonSettings.blockAuctionBuy or 0
     WhcAddonSettings.blockRepair = WhcAddonSettings.blockRepair or 0
+    WhcAddonSettings.blockTaxiService = WhcAddonSettings.blockTaxiService or 0
 
 
     if (WhcAddonSettings.minimapicon == 1) then
@@ -118,4 +119,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         WHC.SetBlockRepair()
     end
 
+    if WhcAddonSettings.blockTaxiService == 1 then
+        WHC.SetBlockTaxiService()
+    end
 end)
