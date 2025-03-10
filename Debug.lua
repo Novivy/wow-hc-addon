@@ -9,7 +9,7 @@ end
 
 -- Function to print debug messages
 function WHC.DebugPrint(message)
-    DEFAULT_CHAT_FRAME:AddMessage(message)
+    DEFAULT_CHAT_FRAME:AddMessage(tostring(message))
 end
 
 -- Function to print table key values

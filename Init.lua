@@ -130,14 +130,14 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     end
 
     if WhcAddonSettings.blockMagicItems == 1 then
-        WHC.SetBlockMagicItems()
+        WHC.SetBlockEquipItems()
     end
 
     if WhcAddonSettings.blockArmorItems == 1 then
-        WHC.SetBlockArmorItems()
+        WHC.SetBlockEquipItems()
     end
 
     if WhcAddonSettings.blockNonSelfMadeItems == 1 then
-        WHC.SetBlockNonSelfMadeItems()
+        WHC.SetBlockEquipItems()
     end
 end)

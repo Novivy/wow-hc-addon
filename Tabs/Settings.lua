@@ -114,19 +114,19 @@ function WHC.Tab_settings(content)
     WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(content, "[Mister White] Achievement: Block equipping magic items")
     WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockMagicItems = math.abs(WhcAddonSettings.blockMagicItems - 1)
-        WHC.SetBlockMagicItems()
+        WHC.SetBlockEquipItems()
     end)
 
     WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(content, "[Only Fan] Achievement: Block equipping armor items")
     WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockArmorItems = math.abs(WhcAddonSettings.blockArmorItems - 1)
-        WHC.SetBlockArmorItems()
+        WHC.SetBlockEquipItems()
     end)
 
     WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(content, "[Self-made] Achievement: Block equipping items you did not craft")
     WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockNonSelfMadeItems = math.abs(WhcAddonSettings.blockNonSelfMadeItems - 1)
-        WHC.SetBlockNonSelfMadeItems()
+        WHC.SetBlockEquipItems()
     end)
 
     return content;
