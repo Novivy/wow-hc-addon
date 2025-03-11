@@ -410,6 +410,12 @@ hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
     end
 end)
 
+-- Update vendor items
+hooksecurefunc(GameTooltip, "SetMerchantItem", function(tip, index)
+    local itemLink = GetMerchantItemLink(index)
+    setTooltipInfo(itemLink)
+end)
+
 -- Update trade window items
 hooksecurefunc(GameTooltip, "SetTradePlayerItem", function(tip, tradeSlot)
     local itemLink = GetTradePlayerItemLink(tradeSlot)
