@@ -20,12 +20,18 @@ local function hooksecurefunc(arg1, arg2, arg3)
     end
     local orig = arg1[arg2]
     arg1[arg2] = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
-        if arg2 ~= "UnitPopup_OnUpdate" and arg2 ~= "SetBagItem" and arg2 ~= "SetInventoryItem" then
+        local silence = {
+            ["UnitPopup_OnUpdate"] = true,
+            ["SetBagItem"] = true,
+            ["SetInventoryItem"] = true,
+            ["SetMerchantItem"] = true,
+        }
+        if not silence[arg2] then
             --WHC.DebugPrint("Original "..arg2)
         end
         local x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20 = orig(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
 
-        if arg2 ~= "UnitPopup_OnUpdate" and arg2 ~= "SetBagItem" and arg2 ~= "SetInventoryItem" then
+        if not silence[arg2] then
             --WHC.DebugPrint("Hook "..arg2)
         end
         arg3(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
@@ -458,11 +464,6 @@ local function printEquipBlockers()
     end
 end
 
-hooksecurefunc("PickupMerchantItem", function(index)
-    local itemLink = GetMerchantItemLink(index)
-    canEquipItem(itemLink)
-end)
-
 hooksecurefunc("PickupContainerItem", function(bagId, slot)
     if not CursorHasItem() then
         errorMessages = {}
@@ -477,12 +478,14 @@ BlizzardFunctions.AutoEquipCursorItem = AutoEquipCursorItem
 BlizzardFunctions.EquipCursorItem     = EquipCursorItem
 BlizzardFunctions.EquipPendingItem    = EquipPendingItem
 BlizzardFunctions.PickupInventoryItem = PickupInventoryItem
+BlizzardFunctions.PickupMerchantItem  = PickupMerchantItem
 BlizzardFunctions.UseContainerItem    = UseContainerItem
 function WHC.SetBlockEquipItems()
     AutoEquipCursorItem = BlizzardFunctions.AutoEquipCursorItem
     EquipCursorItem     = BlizzardFunctions.EquipCursorItem
     EquipPendingItem    = BlizzardFunctions.EquipPendingItem
     PickupInventoryItem = BlizzardFunctions.PickupInventoryItem
+    PickupMerchantItem  = BlizzardFunctions.PickupMerchantItem
     UseContainerItem    = BlizzardFunctions.UseContainerItem
 
     if WhcAddonSettings.blockMagicItems == 1 or WhcAddonSettings.blockArmorItems == 1 or WhcAddonSettings.blockNonSelfMadeItems == 1 then
@@ -508,13 +511,44 @@ function WHC.SetBlockEquipItems()
             printEquipBlockers()
         end
 
+        -- Left-clicking a merchant item does not trigger CursorHasItem() to become true, so we only allow right-click buying,
+        -- to prevent the user from left-clicking and immediate equipping the item.
+        -- When the user tries to equip the item from the backpack, then we can validate with CursorHasItem()
+        PickupMerchantItem = function(index)
+            local itemLink = GetMerchantItemLink(index)
+            local itemId = getItemIDFromLink(itemLink)
+            local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
+            if not itemEquipLoc or itemEquipLoc == "" or itemEquipLoc == "INVTYPE_BAG" then
+                return BlizzardFunctions.PickupMerchantItem(index)
+            end
+
+            if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 then
+                local msg = "Buying ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." equipment must be done using right-click."
+                printAchievementInfo(misterWhiteLink, msg)
+            end
+
+            if WhcAddonSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+                printAchievementInfo(onlyFanLink, "Buying armor must be done using right-click.")
+            end
+
+            if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and
+                    not selfMadeAllowedItems[itemSubType] and not selfMadeAllowedItems[itemEquipLoc] then
+                printAchievementInfo(selfMadeLink, "Buying equipment you did not craft must be done using right-click,")
+            end
+        end
+
         -- Block pick up and place on character
         -- Block drag and place on character
         -- Note: This endpoint is both being used when placing an item onto the character and equipment page
         -- and when an item is being pickup from the character equipment page.
-        PickupInventoryItem = function(slot)
+        PickupInventoryItem = function(invSlot)
+            if not CursorHasItem() then
+                errorMessages = {}
+                return BlizzardFunctions.PickupInventoryItem(invSlot)
+            end
+
             if not errorMessages[1] then
-                return BlizzardFunctions.PickupInventoryItem(slot)
+                return BlizzardFunctions.PickupInventoryItem(invSlot)
             end
 
             printEquipBlockers()
@@ -530,18 +564,18 @@ function WHC.SetBlockEquipItems()
         end
 
         -- Block other addons
-        EquipCursorItem = function()
+        EquipCursorItem = function(invSlot)
             if not errorMessages[1] then
-                return BlizzardFunctions.EquipCursorItem()
+                return BlizzardFunctions.EquipCursorItem(invSlot)
             end
 
             printEquipBlockers()
         end
 
         -- Block Bind-on-Equip pop up
-        EquipPendingItem = function()
+        EquipPendingItem = function(invSlot)
             if not errorMessages[1] then
-                return BlizzardFunctions.EquipCursorItem()
+                return BlizzardFunctions.EquipCursorItem(invSlot)
             end
 
             printEquipBlockers()
