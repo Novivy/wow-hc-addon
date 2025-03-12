@@ -1,9 +1,10 @@
 WHC_SETTINGS = {}
 
-local offsetY = 20
+local offsetY = -10
 local function getNextOffsetY()
+    local nextOffsetY = offsetY
     offsetY = offsetY - 30
-    return offsetY
+    return nextOffsetY
 end
 
 local function createTitle(contentFrame, text, fontSize)
@@ -12,6 +13,8 @@ local function createTitle(contentFrame, text, fontSize)
     title:SetText(text)
     title:SetFont("Fonts\\FRIZQT__.TTF", fontSize)
     title:SetTextColor(0.933, 0.765, 0)
+
+    return title
 end
 
 local function createSettingsCheckBox(contentFrame, text)
@@ -28,16 +31,34 @@ local function createSettingsCheckBox(contentFrame, text)
     local checkBoxTitle = checkBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     checkBoxTitle:SetPoint("TOPLEFT", checkBox, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
     checkBoxTitle:SetText(text)
+    checkBoxTitle:SetWidth(400)
     checkBoxTitle:SetFont("Fonts\\FRIZQT__.TTF", 12)
+    checkBoxTitle:SetJustifyH("LEFT")
     checkBoxTitle:SetTextColor(0.933, 0.765, 0)
 
     return checkBox
 end
 
 function WHC.Tab_settings(content)
-    createTitle(content, "Settings", 18)
+    local title = createTitle(content, "Settings", 18)
 
-    WHC_SETTINGS.minimap = createSettingsCheckBox(content, "Display minimap button")
+    content.desc1 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    content.desc1:SetPoint("TOP", title, "TOP", 0, -25) -- Adjust y-offset based on logo size
+    content.desc1:SetText("Change display settings and select achievements you are going for on this character")
+    content.desc1:SetWidth(320)
+
+    local scrollFrame = CreateFrame("ScrollFrame", "ScrollFrameSettings", content, "UIPanelScrollFrameTemplate")
+    scrollFrame:SetWidth(466)
+    scrollFrame:SetHeight(318)
+    scrollFrame:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -80)
+
+    local scrollContent = CreateFrame("Frame", "ScrollFrameContentSettings", scrollFrame)
+    scrollContent:SetWidth(500)
+    scrollContent:SetHeight(500)
+    scrollFrame:SetScrollChild(scrollContent) -- Attach the content frame to the scroll frame
+
+    offsetY = 0 -- reset for scroll frame
+    WHC_SETTINGS.minimap = createSettingsCheckBox(scrollContent, "Display minimap button")
     WHC_SETTINGS.minimap:SetScript("OnClick", function(self)
         WhcAddonSettings.minimapicon = math.abs(WhcAddonSettings.minimapicon - 1)
         MapIcon:Hide()
@@ -46,7 +67,7 @@ function WHC.Tab_settings(content)
         end
     end)
 
-    WHC_SETTINGS.achievementbtn = createSettingsCheckBox(content, "Display achievement button on inspect & character sheet")
+    WHC_SETTINGS.achievementbtn = createSettingsCheckBox(scrollContent, "Display achievement button on inspect & character sheet")
     WHC_SETTINGS.achievementbtn:SetScript("OnClick", function(self)
         WhcAddonSettings.achievementbtn = math.abs(WhcAddonSettings.achievementbtn - 1)
         if (ACHBtn) then
@@ -59,7 +80,7 @@ function WHC.Tab_settings(content)
         end
     end)
 
-    WHC_SETTINGS.recentDeathsBtn = createSettingsCheckBox(content, "Display Recent deaths frame")
+    WHC_SETTINGS.recentDeathsBtn = createSettingsCheckBox(scrollContent, "Display Recent deaths frame")
     WHC_SETTINGS.recentDeathsBtn:SetScript("OnClick", function(self)
         WhcAddonSettings.recentDeaths = math.abs(WhcAddonSettings.recentDeaths - 1)
         if (DeathLogFrame) then
@@ -73,57 +94,57 @@ function WHC.Tab_settings(content)
     end)
 
     getNextOffsetY()
-    createTitle(content, "Achievement Settings", 14)
+    createTitle(scrollContent, "Achievement Settings", 14)
 
-    WHC_SETTINGS.blockInvitesCheckbox = createSettingsCheckBox(content, "[Lone Wolf] Achievement: Block invites")
+    WHC_SETTINGS.blockInvitesCheckbox = createSettingsCheckBox(scrollContent, "[Lone Wolf] Achievement: Block invites")
     WHC_SETTINGS.blockInvitesCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockInvites = math.abs(WhcAddonSettings.blockInvites - 1)
         WHC.SetBlockInvites()
     end)
 
-    WHC_SETTINGS.blockTradesCheckbox = createSettingsCheckBox(content, "[My Precious!] Achievement: Block trades")
+    WHC_SETTINGS.blockTradesCheckbox = createSettingsCheckBox(scrollContent, "[My Precious!] Achievement: Block trades")
     WHC_SETTINGS.blockTradesCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockTrades = math.abs(WhcAddonSettings.blockTrades - 1)
         WHC.SetBlockTrades()
     end)
 
-    WHC_SETTINGS.blockAuctionSellCheckbox = createSettingsCheckBox(content, "[Killer Trader] Achievement: Block auction house selling")
+    WHC_SETTINGS.blockAuctionSellCheckbox = createSettingsCheckBox(scrollContent, "[Killer Trader] Achievement: Block auction house selling")
     WHC_SETTINGS.blockAuctionSellCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockAuctionSell = math.abs(WhcAddonSettings.blockAuctionSell - 1)
         WHC.SetBlockAuctionSell()
     end)
 
-    WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(content, "[Time is Money] Achievement: Block auction house buying")
+    WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(scrollContent, "[Time is Money] Achievement: Block auction house buying")
     WHC_SETTINGS.blockAuctionBuyCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockAuctionBuy = math.abs(WhcAddonSettings.blockAuctionBuy - 1)
         WHC.SetBlockAuctionBuy()
     end)
 
-    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(content, "[Iron Bones] Achievement: Block repairing items")
+    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(scrollContent, "[Iron Bones] Achievement: Block repairing items")
     WHC_SETTINGS.blockRepairCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockRepair = math.abs(WhcAddonSettings.blockRepair - 1)
         WHC.SetBlockRepair()
     end)
 
-    WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsCheckBox(content, "[Grounded] Achievement: Block flying service")
+    WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsCheckBox(scrollContent, "[Grounded] Achievement: Block flying service")
     WHC_SETTINGS.blockTaxiServiceCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockTaxiService = math.abs(WhcAddonSettings.blockTaxiService - 1)
         WHC.SetBlockTaxiService()
     end)
 
-    WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(content, "[Mister White] Achievement: Block equipping magic items")
+    WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, "[Mister White] Achievement: Block equipping magic items")
     WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockMagicItems = math.abs(WhcAddonSettings.blockMagicItems - 1)
         WHC.SetBlockEquipItems()
     end)
 
-    WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(content, "[Only Fan] Achievement: Block equipping armor items")
+    WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(scrollContent, "[Only Fan] Achievement: Block equipping armor items")
     WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockArmorItems = math.abs(WhcAddonSettings.blockArmorItems - 1)
         WHC.SetBlockEquipItems()
     end)
 
-    WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(content, "[Self-made] Achievement: Block equipping items you did not craft")
+    WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, "[Self-made] Achievement: Block equipping items you did not craft")
     WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockNonSelfMadeItems = math.abs(WhcAddonSettings.blockNonSelfMadeItems - 1)
         WHC.SetBlockEquipItems()
