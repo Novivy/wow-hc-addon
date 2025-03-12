@@ -408,10 +408,29 @@ hooksecurefunc(GameTooltip, "SetBagItem", function(tip, bagId, slot)
     setTooltipInfo(itemLink)
 end)
 
--- Update bank items
+-- Update inventory and bank items
 hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
+    local itemLink = GetInventoryItemLink(unit, slot)
+    if slot <= 19 then
+        local itemId = getItemIDFromLink(itemLink)
+        local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
+
+        if not itemEquipLoc or itemEquipLoc == "" then
+            return
+        end
+
+        if WhcAddonSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+            GameTooltip:AddLine("<Only Fan: Unequipping this item will block you from equipping it again>", 1, 0, 0)
+        end
+
+        if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() then
+            GameTooltip:AddLine("<Self-made: Unequipping this item will block you from equipping it again>", 1, 0, 0)
+        end
+
+        -- Resize the tooltip to match the new lines added
+        GameTooltip:Show()
+    end
     if slot > 19 then
-        local itemLink = GetInventoryItemLink(unit, slot)
         setTooltipInfo(itemLink)
     end
 end)
@@ -543,7 +562,8 @@ function WHC.SetBlockEquipItems()
         -- and when an item is being pickup from the character equipment page.
         PickupInventoryItem = function(invSlot)
             if not CursorHasItem() then
-                errorMessages = {}
+                local itemLink = GetInventoryItemLink("player", invSlot)
+                canEquipItem(itemLink)
                 return BlizzardFunctions.PickupInventoryItem(invSlot)
             end
 
