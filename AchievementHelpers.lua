@@ -309,6 +309,7 @@ local onlyFanAllowedItems = {
     INVTYPE_AMMO = true,
     INVTYPE_RANGEDRIGHT = true, -- Wands
     INVTYPE_HOLDABLE = true, -- Held in offhand
+    INVTYPE_BODY = true,
     INVTYPE_TABARD = true,
     INVTYPE_BAG = true,
 }
@@ -389,8 +390,12 @@ local function setTooltipInfo(itemLink)
         end
     end
 
-    if WhcAddonSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
-        GameTooltip:AddLine("<Only Fan: Cannot equip armor items>", 1, 0, 0)
+    if WhcAddonSettings.blockArmorItems == 1 then
+        if itemEquipLoc == "INVTYPE_BODY" then
+            GameTooltip:AddLine("<Only Fan: All shirts can be equipped>", 0, 1, 0)
+        elseif not onlyFanAllowedItems[itemEquipLoc] then
+            GameTooltip:AddLine("<Only Fan: Cannot equip armor items>", 1, 0, 0)
+        end
     end
 
     if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() then
