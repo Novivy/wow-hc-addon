@@ -293,6 +293,11 @@ local misterWhiteLink = achievementLink(TabAchievements[ACHIEVEMENT_MISTER_WHITE
 local onlyFanLink = achievementLink(TabAchievements[ACHIEVEMENT_ONLY_FAN])
 local selfMadeLink = achievementLink(TabAchievements[ACHIEVEMENT_SELF_MADE])
 
+local misterWhiteLinkAllowedItems = {
+    INVTYPE_BAG = true,
+    INVTYPE_AMMO = true,
+}
+
 local onlyFanAllowedItems = {
     INVTYPE_WEAPON = true,
     INVTYPE_2HWEAPON = true,
@@ -374,7 +379,9 @@ local function setTooltipInfo(itemLink)
     end
 
     if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 then
-        if itemEquipLoc == "INVTYPE_BAG" then
+        if itemEquipLoc == "INVTYPE_AMMO" then
+            GameTooltip:AddLine("<Mister White: Ammunition of any quality can be equipped>", 0, 1, 0)
+        elseif itemEquipLoc == "INVTYPE_BAG" then
             GameTooltip:AddLine("<Mister White: Bags of any quality can be equipped>", 0, 1, 0)
         else
             local msg = "Cannot equip ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items>"
@@ -411,10 +418,10 @@ end)
 -- Update inventory and bank items
 hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
     local itemLink = GetInventoryItemLink(unit, slot)
-    if slot <= 19 then
+    -- Inventory slots
+    if slot < 20 then
         local itemId = getItemIDFromLink(itemLink)
         local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
-
         if not itemEquipLoc or itemEquipLoc == "" then
             return
         end
@@ -423,14 +430,16 @@ hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
             GameTooltip:AddLine("<Only Fan: Unequipping this item will block you from equipping it again>", 1, 0, 0)
         end
 
-        if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() then
+        if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and not selfMadeAllowedItems[itemSubType] then
             GameTooltip:AddLine("<Self-made: Unequipping this item will block you from equipping it again>", 1, 0, 0)
         end
 
         -- Resize the tooltip to match the new lines added
         GameTooltip:Show()
     end
-    if slot > 19 then
+    -- slot 20-23 are bag slots
+    -- Bank slots
+    if slot > 23 then
         setTooltipInfo(itemLink)
     end
 end)
@@ -462,7 +471,7 @@ local function canEquipItem(itemLink)
         return
     end
 
-    if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 then
+    if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
         local msg = "Equipping ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items are blocked."
         table.insert(errorMessages, achievementErrorMessage(misterWhiteLink, msg))
     end
@@ -541,7 +550,7 @@ function WHC.SetBlockEquipItems()
                 return BlizzardFunctions.PickupMerchantItem(index)
             end
 
-            if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 then
+            if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
                 local msg = "Buying ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." equipment must be done using right-click."
                 printAchievementInfo(misterWhiteLink, msg)
             end
@@ -550,8 +559,7 @@ function WHC.SetBlockEquipItems()
                 printAchievementInfo(onlyFanLink, "Buying armor must be done using right-click.")
             end
 
-            if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and
-                    not selfMadeAllowedItems[itemSubType] and not selfMadeAllowedItems[itemEquipLoc] then
+            if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and not selfMadeAllowedItems[itemSubType] and not selfMadeAllowedItems[itemEquipLoc] then
                 printAchievementInfo(selfMadeLink, "Buying equipment you did not craft must be done using right-click,")
             end
         end
