@@ -139,10 +139,10 @@ TabAchievements = {
     [256]   = { icon = "inv_gizmo_rocketboot_01",             itemId = "707010", name = "Marathon Runner",        desc = "Reach level 60 without ever learning a riding skill." },
     [128]   = { icon = "inv_shirt_white_01",                  itemId = "707007", name = "Mister White",           desc = "Reach level 60 without ever equipping an uncommon or greater quality item (only white/grey items allowed. All ammunition and bags allowed)." },
     [8]     = { icon = "inv_box_01",                          itemId = "707003", name = "My precious!",           desc = "Reach level 60 without ever trading goods or money with another player." },
-    [32]    = { icon = "inv_pants_wolf",                      itemId = "707005", name = "Only Fan",               desc = "Reach level 60 without ever equipping anything other than weapons, shields, ammos, shirts, tabards or bags." },
-    [8192]  = { icon = "inv_hammer_20",                       itemId = "707015", name = "Self-made",              desc = "Reach level 60 without ever equipping items that you did not craft yourself (all fishing poles, ammunition, and bags allowed)" },
+    [32]    = { icon = "inv_pants_wolf",                      itemId = "707005", name = "Only Fan",               desc = "Reach level 60 without ever equipping anything other than weapons, shields, ammos, shirts, tabards and bags." },
+    [8192]  = { icon = "inv_hammer_20",                       itemId = "707015", name = "Self-made",              desc = "Reach level 60 without ever equipping items that you did not craft yourself (all fishing poles, ammunition, and bags allowed)." },
     [1024]  = { icon = "spell_holy_layonhands",               itemId = "707012", name = "Soft Hands",             desc = "Reach level 60 without ever learning any primary profession." },
-    [16]    = { icon = "inv_crate_03",                        itemId = "707004", name = "Special Deliveries",     desc = "Reach level 60 without ever getting goods or money from the mail (Simple letters and NPC quest/items are allowed)." },
+    [16]    = { icon = "inv_crate_03",                        itemId = "707004", name = "Special Deliveries",     desc = "Reach level 60 without ever getting goods or money from the mail (simple letters, NPC and GM quest/items allowed)." },
     [512]   = { icon = "ability_hunter_pet_boar",             itemId = "707011", name = "That Which Has No Life", desc = "Reach level 60 only by killing boars or quilboars." },
     [2]     = { icon = "inv_misc_coin_05",                    itemId = "707001", name = "Time is money",          desc = "Reach level 60 without ever using the auction house to buy an item." },
 }

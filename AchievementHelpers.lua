@@ -345,7 +345,14 @@ end
 -- The <Made by xxx> is localized.
 -- This pattern works for English, German, French, Spanish, Portuguese, Italian, Russian
 -- This pattern will break for Korean, Chinese
-local function isSelfMade()
+local function isSelfMade(itemSubType, itemEquipLoc)
+    if selfMadeAllowedItems[itemSubType] then
+        return true
+    end
+    if selfMadeAllowedItems[itemEquipLoc] then
+        return true
+    end
+
     for i=1, GameTooltip:NumLines() do
         local left = _G["GameTooltipTextLeft"..i]
         local lineText = left:GetText()
@@ -379,35 +386,17 @@ local function setTooltipInfo(itemLink)
         return
     end
 
-    if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 then
-        if itemEquipLoc == "INVTYPE_AMMO" then
-            GameTooltip:AddLine("<Mister White: Ammunition of any quality can be equipped>", 0, 1, 0)
-        elseif itemEquipLoc == "INVTYPE_BAG" then
-            GameTooltip:AddLine("<Mister White: Bags of any quality can be equipped>", 0, 1, 0)
-        else
-            local msg = "Cannot equip ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items>"
-            GameTooltip:AddLine("<Mister White: "..msg, 1, 0, 0)
-        end
+    if WhcAddonSettings.blockMagicItemsTooltip == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
+        local msg = "Cannot equip ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items>"
+        GameTooltip:AddLine("<Mister White: "..msg, 1, 0, 0)
     end
 
-    if WhcAddonSettings.blockArmorItems == 1 then
-        if itemEquipLoc == "INVTYPE_BODY" then
-            GameTooltip:AddLine("<Only Fan: All shirts can be equipped>", 0, 1, 0)
-        elseif not onlyFanAllowedItems[itemEquipLoc] then
-            GameTooltip:AddLine("<Only Fan: Cannot equip armor items>", 1, 0, 0)
-        end
+    if WhcAddonSettings.blockArmorItemsTooltip == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+        GameTooltip:AddLine("<Only Fan: Cannot equip armor items>", 1, 0, 0)
     end
 
-    if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() then
-        if selfMadeAllowedItems[itemSubType] then
-            GameTooltip:AddLine("<Self-made: Fishing Poles can be equipped>", 0, 1, 0)
-        elseif itemEquipLoc == "INVTYPE_BAG" then
-            GameTooltip:AddLine("<Self-made: All bags can be equipped>", 0, 1, 0)
-        elseif itemEquipLoc == "INVTYPE_AMMO" then
-            GameTooltip:AddLine("<Self-made: All ammunition can be equipped>", 0, 1, 0)
-        else
-            GameTooltip:AddLine("<Self-made: Cannot equip items you did not craft>", 1, 0, 0)
-        end
+    if WhcAddonSettings.blockNonSelfMadeItemsTooltip == 1 and not isSelfMade(itemSubType, itemEquipLoc) then
+        GameTooltip:AddLine("<Self-made: Cannot equip items you did not craft>", 1, 0, 0)
     end
 
     -- Resize the tooltip to match the new lines added
@@ -431,11 +420,11 @@ hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
             return
         end
 
-        if WhcAddonSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+        if WhcAddonSettings.blockArmorItemsTooltip == 1 and not onlyFanAllowedItems[itemEquipLoc] then
             GameTooltip:AddLine("<Only Fan: Unequipping this item will block you from equipping it again>", 1, 0, 0)
         end
 
-        if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and not selfMadeAllowedItems[itemSubType] then
+        if WhcAddonSettings.blockNonSelfMadeItemsTooltip == 1 and not isSelfMade(itemSubType, itemEquipLoc) then
             GameTooltip:AddLine("<Self-made: Unequipping this item will block you from equipping it again>", 1, 0, 0)
         end
 

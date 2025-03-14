@@ -81,7 +81,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blockArmorItems = WhcAddonSettings.blockArmorItems or 0
     WhcAddonSettings.blockArmorItemsTooltip = WhcAddonSettings.blockArmorItemsTooltip or 0
     WhcAddonSettings.blockNonSelfMadeItems = WhcAddonSettings.blockNonSelfMadeItems or 0
-    WhcAddonSettings.blockNonSelfMadeItemsToolTip = WhcAddonSettings.blockNonSelfMadeItemsToolTip or 0
+    WhcAddonSettings.blockNonSelfMadeItemsTooltip = WhcAddonSettings.blockNonSelfMadeItemsTooltip or 0
 
     if (WhcAddonSettings.minimapicon == 1) then
         MapIcon:Show()

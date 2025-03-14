@@ -12,7 +12,7 @@ local function createTitle(contentFrame, text, fontSize)
     title:SetPoint("TOP", contentFrame, "TOP", 0, getNextOffsetY()) -- Adjust y-offset based on logo size
     title:SetText(text)
     title:SetFont("Fonts\\FRIZQT__.TTF", fontSize)
-    title:SetTextColor(0.933, 0.765, 0)
+    title:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 
     return title
 end
@@ -34,7 +34,41 @@ local function createSettingsCheckBox(contentFrame, text)
     checkBoxTitle:SetWidth(400)
     checkBoxTitle:SetFont("Fonts\\FRIZQT__.TTF", 12)
     checkBoxTitle:SetJustifyH("LEFT")
-    checkBoxTitle:SetTextColor(0.933, 0.765, 0)
+    checkBoxTitle:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+
+    return checkBox
+end
+
+local function createSettingsSubCheckBox(contentFrame, text)
+    local settingsFrame = CreateFrame("Frame", "MySettingsFrame", contentFrame)
+    settingsFrame:SetWidth(200)
+    settingsFrame:SetHeight(100)
+    settingsFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 30, getNextOffsetY())
+
+    local checkBox = CreateFrame("CheckButton", "MyCheckBox", settingsFrame, "UICheckButtonTemplate")
+    checkBox:SetWidth(24)
+    checkBox:SetHeight(24)
+    checkBox:SetPoint("TOPLEFT", settingsFrame, "TOPLEFT", 20, -10)
+
+    local checkBoxTitle = checkBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    checkBoxTitle:SetPoint("TOPLEFT", checkBox, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
+    checkBoxTitle:SetText(text)
+    checkBoxTitle:SetWidth(390)
+    checkBoxTitle:SetFont("Fonts\\FRIZQT__.TTF", 12)
+    checkBoxTitle:SetJustifyH("LEFT")
+    checkBoxTitle:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+
+    function checkBox:setEnabled(checked) -- Lowercase to avoid overwriting Blizzard function added in Patch 5.0.4
+        local color = NORMAL_FONT_COLOR
+        if checked == 1 then
+            self:Enable()
+        else
+            self:Disable()
+            color = GRAY_FONT_COLOR
+        end
+
+        checkBoxTitle:SetTextColor(color.r, color.g, color.b)
+    end
 
     return checkBox
 end
@@ -58,7 +92,7 @@ function WHC.Tab_settings(content)
     scrollFrame:SetScrollChild(scrollContent) -- Attach the content frame to the scroll frame
 
     offsetY = 0 -- reset for scroll frame
-    WHC_SETTINGS.minimap = createSettingsCheckBox(scrollContent, "Display minimap button")
+    WHC_SETTINGS.minimap = createSettingsSubCheckBox(scrollContent, "Display minimap button")
     WHC_SETTINGS.minimap:SetScript("OnClick", function(self)
         WhcAddonSettings.minimapicon = math.abs(WhcAddonSettings.minimapicon - 1)
         MapIcon:Hide()
@@ -67,7 +101,7 @@ function WHC.Tab_settings(content)
         end
     end)
 
-    WHC_SETTINGS.achievementbtn = createSettingsCheckBox(scrollContent, "Display achievement button on inspect & character sheet")
+    WHC_SETTINGS.achievementbtn = createSettingsSubCheckBox(scrollContent, "Display achievement button on inspect & character sheet")
     WHC_SETTINGS.achievementbtn:SetScript("OnClick", function(self)
         WhcAddonSettings.achievementbtn = math.abs(WhcAddonSettings.achievementbtn - 1)
         if (ACHBtn) then
@@ -80,7 +114,7 @@ function WHC.Tab_settings(content)
         end
     end)
 
-    WHC_SETTINGS.recentDeathsBtn = createSettingsCheckBox(scrollContent, "Display Recent deaths frame")
+    WHC_SETTINGS.recentDeathsBtn = createSettingsSubCheckBox(scrollContent, "Display Recent deaths frame")
     WHC_SETTINGS.recentDeathsBtn:SetScript("OnClick", function(self)
         WhcAddonSettings.recentDeaths = math.abs(WhcAddonSettings.recentDeaths - 1)
         if (DeathLogFrame) then
@@ -135,19 +169,55 @@ function WHC.Tab_settings(content)
     WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, "[Mister White] Achievement: Block equipping magic items")
     WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockMagicItems = math.abs(WhcAddonSettings.blockMagicItems - 1)
+        WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockMagicItems)
+        if WhcAddonSettings.blockMagicItems == 0 then
+            WhcAddonSettings.blockMagicItemsTooltip = 0
+            WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItemsTooltip))
+        end
+
         WHC.SetBlockEquipItems()
+    end)
+
+    WHC_SETTINGS.blockMagicItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
+    WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockMagicItems)
+    WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetScript("OnClick", function(self)
+        WhcAddonSettings.blockMagicItemsTooltip = math.abs(WhcAddonSettings.blockMagicItemsTooltip - 1)
     end)
 
     WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(scrollContent, "[Only Fan] Achievement: Block equipping armor items")
     WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockArmorItems = math.abs(WhcAddonSettings.blockArmorItems - 1)
+        WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockArmorItems)
+        if WhcAddonSettings.blockArmorItems == 0 then
+            WhcAddonSettings.blockArmorItemsTooltip = 0
+            WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItemsTooltip))
+        end
+
         WHC.SetBlockEquipItems()
+    end)
+
+    WHC_SETTINGS.blockArmorItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
+    WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockArmorItems)
+    WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetScript("OnClick", function(self)
+        WhcAddonSettings.blockArmorItemsTooltip = math.abs(WhcAddonSettings.blockArmorItemsTooltip - 1)
     end)
 
     WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, "[Self-made] Achievement: Block equipping items you did not craft")
     WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockNonSelfMadeItems = math.abs(WhcAddonSettings.blockNonSelfMadeItems - 1)
+        WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockNonSelfMadeItems)
+        if WhcAddonSettings.blockNonSelfMadeItems == 0 then
+            WhcAddonSettings.blockNonSelfMadeItemsTooltip = 0
+            WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItemsTooltip))
+        end
+
         WHC.SetBlockEquipItems()
+    end)
+
+    WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
+    WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockNonSelfMadeItems)
+    WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetScript("OnClick", function(self)
+        WhcAddonSettings.blockNonSelfMadeItemsTooltip = math.abs(WhcAddonSettings.blockNonSelfMadeItemsTooltip - 1)
     end)
 
     return content;
