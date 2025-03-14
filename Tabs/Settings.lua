@@ -49,6 +49,13 @@ local function createSettingsSubCheckBox(contentFrame, text)
     checkBox:SetWidth(20)
     checkBox:SetHeight(20)
     checkBox:SetPoint("TOPLEFT", settingsFrame, "TOPLEFT", 20, -10)
+    function checkBox:setEnabled(checked) -- Lowercase to avoid overwriting Blizzard function added in Patch 5.0.4
+        if checked == 1 then
+            self:Enable()
+        else
+            self:Disable()
+        end
+    end
 
     local checkBoxTitle = checkBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     checkBoxTitle:SetPoint("TOPLEFT", checkBox, "TOPLEFT", 25, -5) -- Adjust y-offset based on logo size
@@ -60,7 +67,6 @@ local function createSettingsSubCheckBox(contentFrame, text)
 
     return checkBox
 end
-
 
 function WHC.Tab_settings(content)
     local title = createTitle(content, "Settings", 18)
@@ -119,45 +125,46 @@ function WHC.Tab_settings(content)
     getNextOffsetY()
     createTitle(scrollContent, "Achievement Settings", 14)
 
-    WHC_SETTINGS.blockInvitesCheckbox = createSettingsSubCheckBox(scrollContent, "[Lone Wolf] Achievement: Block invites")
+    WHC_SETTINGS.blockInvitesCheckbox = createSettingsCheckBox(scrollContent, "[Lone Wolf] Achievement: Block invites")
     WHC_SETTINGS.blockInvitesCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockInvites = math.abs(WhcAddonSettings.blockInvites - 1)
         WHC.SetBlockInvites()
     end)
 
-    WHC_SETTINGS.blockTradesCheckbox = createSettingsSubCheckBox(scrollContent, "[My Precious!] Achievement: Block trades")
+    WHC_SETTINGS.blockTradesCheckbox = createSettingsCheckBox(scrollContent, "[My Precious!] Achievement: Block trades")
     WHC_SETTINGS.blockTradesCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockTrades = math.abs(WhcAddonSettings.blockTrades - 1)
         WHC.SetBlockTrades()
     end)
 
-    WHC_SETTINGS.blockAuctionSellCheckbox = createSettingsSubCheckBox(scrollContent, "[Killer Trader] Achievement: Block auction house selling")
+    WHC_SETTINGS.blockAuctionSellCheckbox = createSettingsCheckBox(scrollContent, "[Killer Trader] Achievement: Block auction house selling")
     WHC_SETTINGS.blockAuctionSellCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockAuctionSell = math.abs(WhcAddonSettings.blockAuctionSell - 1)
         WHC.SetBlockAuctionSell()
     end)
 
-    WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsSubCheckBox(scrollContent, "[Time is Money] Achievement: Block auction house buying")
+    WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(scrollContent, "[Time is Money] Achievement: Block auction house buying")
     WHC_SETTINGS.blockAuctionBuyCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockAuctionBuy = math.abs(WhcAddonSettings.blockAuctionBuy - 1)
         WHC.SetBlockAuctionBuy()
     end)
 
-    WHC_SETTINGS.blockRepairCheckbox = createSettingsSubCheckBox(scrollContent, "[Iron Bones] Achievement: Block repairing items")
+    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(scrollContent, "[Iron Bones] Achievement: Block repairing items")
     WHC_SETTINGS.blockRepairCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockRepair = math.abs(WhcAddonSettings.blockRepair - 1)
         WHC.SetBlockRepair()
     end)
 
-    WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsSubCheckBox(scrollContent, "[Grounded] Achievement: Block flying service")
+    WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsCheckBox(scrollContent, "[Grounded] Achievement: Block flying service")
     WHC_SETTINGS.blockTaxiServiceCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockTaxiService = math.abs(WhcAddonSettings.blockTaxiService - 1)
         WHC.SetBlockTaxiService()
     end)
 
-    WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsSubCheckBox(scrollContent, "[Mister White] Achievement: Block equipping magic items")
+    WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, "[Mister White] Achievement: Block equipping magic items")
     WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockMagicItems = math.abs(WhcAddonSettings.blockMagicItems - 1)
+        WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockMagicItems)
         if WhcAddonSettings.blockMagicItems == 0 then
             WhcAddonSettings.blockMagicItemsTooltip = 0
             WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItemsTooltip))
@@ -171,12 +178,14 @@ function WHC.Tab_settings(content)
         WhcAddonSettings.blockMagicItemsTooltip = math.abs(WhcAddonSettings.blockMagicItemsTooltip - 1)
     end)
 
-    WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsSubCheckBox(scrollContent, "[Only Fan] Achievement: Block equipping armor items")
+    WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(scrollContent, "[Only Fan] Achievement: Block equipping armor items")
     WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockArmorItems = math.abs(WhcAddonSettings.blockArmorItems - 1)
+        WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockArmorItems)
         if WhcAddonSettings.blockArmorItems == 0 then
             WhcAddonSettings.blockArmorItemsTooltip = 0
             WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItemsTooltip))
+            WHC_SETTINGS.blockArmorItemsTooltipCheckbox:Enable()
         end
 
         WHC.SetBlockEquipItems()
@@ -187,9 +196,10 @@ function WHC.Tab_settings(content)
         WhcAddonSettings.blockArmorItemsTooltip = math.abs(WhcAddonSettings.blockArmorItemsTooltip - 1)
     end)
 
-    WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsSubCheckBox(scrollContent, "[Self-made] Achievement: Block equipping items you did not craft")
+    WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, "[Self-made] Achievement: Block equipping items you did not craft")
     WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockNonSelfMadeItems = math.abs(WhcAddonSettings.blockNonSelfMadeItems - 1)
+        WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockNonSelfMadeItems)
         if WhcAddonSettings.blockNonSelfMadeItems == 0 then
             WhcAddonSettings.blockNonSelfMadeItemsTooltip = 0
             WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItemsTooltip))
