@@ -77,8 +77,11 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blockRepair = WhcAddonSettings.blockRepair or 0
     WhcAddonSettings.blockTaxiService = WhcAddonSettings.blockTaxiService or 0
     WhcAddonSettings.blockMagicItems = WhcAddonSettings.blockMagicItems or 0
+    WhcAddonSettings.blockMagicItemsTooltip = WhcAddonSettings.blockMagicItemsTooltip or 0
     WhcAddonSettings.blockArmorItems = WhcAddonSettings.blockArmorItems or 0
+    WhcAddonSettings.blockArmorItemsTooltip = WhcAddonSettings.blockArmorItemsTooltip or 0
     WhcAddonSettings.blockNonSelfMadeItems = WhcAddonSettings.blockNonSelfMadeItems or 0
+    WhcAddonSettings.blockNonSelfMadeItemsTooltip = WhcAddonSettings.blockNonSelfMadeItemsTooltip or 0
 
     if (WhcAddonSettings.minimapicon == 1) then
         MapIcon:Show()
