@@ -18,6 +18,7 @@ end
 
 
 WHC = CreateFrame("Frame")
+WHC.Frames = {}
 WHC:RegisterEvent("ADDON_LOADED")
 WHC:SetScript("OnEvent", function(self, event, addonName)
     addonName = addonName or arg1
@@ -44,7 +45,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     end
 
     WHC.InitializeUI()
-
+    WHC.InitializeMinimapIcon()
 
     if (RETAIL == 1) then
         -- todo (low prio since ticket status block not displayed on retail)
@@ -84,9 +85,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blockNonSelfMadeItemsTooltip = WhcAddonSettings.blockNonSelfMadeItemsTooltip or 0
 
     if (WhcAddonSettings.minimapicon == 1) then
-        MapIcon:Show()
+        WHC.Frames.MapIcon:Show()
     else
-        MapIcon:Hide()
+        WHC.Frames.MapIcon:Hide()
     end
 
     if (WhcAddonSettings.recentDeaths == 1) then
@@ -108,39 +109,13 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         WHC.UIShowTabContent("General")
     end
 
-    if WhcAddonSettings.blockInvites == 1 then
-        WHC.SetBlockInvites()
-    end
-
-    if WhcAddonSettings.blockTrades == 1 then
-        WHC.SetBlockTrades()
-    end
-
-    if WhcAddonSettings.blockAuctionSell == 1 then
-        WHC.SetBlockAuctionSell()
-    end
-
-    if WhcAddonSettings.blockAuctionBuy == 1 then
-        WHC.SetBlockAuctionBuy()
-    end
-
-    if WhcAddonSettings.blockRepair == 1 then
-        WHC.SetBlockRepair()
-    end
-
-    if WhcAddonSettings.blockTaxiService == 1 then
-        WHC.SetBlockTaxiService()
-    end
-
-    if WhcAddonSettings.blockMagicItems == 1 then
-        WHC.SetBlockEquipItems()
-    end
-
-    if WhcAddonSettings.blockArmorItems == 1 then
-        WHC.SetBlockEquipItems()
-    end
-
-    if WhcAddonSettings.blockNonSelfMadeItems == 1 then
-        WHC.SetBlockEquipItems()
-    end
+    WHC.SetBlockInvites()
+    WHC.SetBlockTrades()
+    WHC.SetBlockAuctionSell()
+    WHC.SetBlockAuctionBuy()
+    WHC.SetBlockRepair()
+    WHC.SetBlockTaxiService()
+    WHC.SetBlockEquipItems()
+    WHC.SetBlockEquipItems()
+    WHC.SetBlockEquipItems()
 end)

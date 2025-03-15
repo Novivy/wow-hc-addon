@@ -81,7 +81,7 @@ local function playCheckedSound(checked)
     PlaySound(sound)
 end
 
-function WHC.Tab_settings(content)
+function WHC.Tab_Settings(content)
     local title = createTitle(content, "Settings", 18)
 
     content.desc1 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -104,9 +104,9 @@ function WHC.Tab_settings(content)
     WHC_SETTINGS.minimap:SetScript("OnClick", function(self)
         WhcAddonSettings.minimapicon = math.abs(WhcAddonSettings.minimapicon - 1)
         playCheckedSound(WhcAddonSettings.minimapicon)
-        MapIcon:Hide()
+        WHC.Frames.MapIcon:Hide()
         if (WhcAddonSettings.minimapicon == 1) then
-            MapIcon:Show()
+            WHC.Frames.MapIcon:Show()
         end
     end)
 
