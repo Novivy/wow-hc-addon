@@ -72,6 +72,9 @@ function WHC.UIShowTabContent(tabIndex, arg1)
             WHC_SETTINGS.blockAuctionBuyCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockAuctionBuy))
             WHC_SETTINGS.blockRepairCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockRepair))
             WHC_SETTINGS.blockTaxiServiceCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockTaxiService))
+            WHC_SETTINGS.blockMagicItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItems))
+            WHC_SETTINGS.blockArmorItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItems))
+            WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItems))
         elseif (tabIndex == "General") then
             --
         end

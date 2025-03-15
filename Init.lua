@@ -25,6 +25,10 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         return
     end
 
+    WHC.player = {
+        name = UnitName("player"),
+    }
+
     local version = GetBuildInfo()
     if (version == "1.12.0" or version == "1.12.1") then
         RETAIL = 0
@@ -72,7 +76,12 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blockAuctionBuy = WhcAddonSettings.blockAuctionBuy or 0
     WhcAddonSettings.blockRepair = WhcAddonSettings.blockRepair or 0
     WhcAddonSettings.blockTaxiService = WhcAddonSettings.blockTaxiService or 0
-
+    WhcAddonSettings.blockMagicItems = WhcAddonSettings.blockMagicItems or 0
+    WhcAddonSettings.blockMagicItemsTooltip = WhcAddonSettings.blockMagicItemsTooltip or 0
+    WhcAddonSettings.blockArmorItems = WhcAddonSettings.blockArmorItems or 0
+    WhcAddonSettings.blockArmorItemsTooltip = WhcAddonSettings.blockArmorItemsTooltip or 0
+    WhcAddonSettings.blockNonSelfMadeItems = WhcAddonSettings.blockNonSelfMadeItems or 0
+    WhcAddonSettings.blockNonSelfMadeItemsTooltip = WhcAddonSettings.blockNonSelfMadeItemsTooltip or 0
 
     if (WhcAddonSettings.minimapicon == 1) then
         MapIcon:Show()
@@ -121,5 +130,17 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
 
     if WhcAddonSettings.blockTaxiService == 1 then
         WHC.SetBlockTaxiService()
+    end
+
+    if WhcAddonSettings.blockMagicItems == 1 then
+        WHC.SetBlockEquipItems()
+    end
+
+    if WhcAddonSettings.blockArmorItems == 1 then
+        WHC.SetBlockEquipItems()
+    end
+
+    if WhcAddonSettings.blockNonSelfMadeItems == 1 then
+        WHC.SetBlockEquipItems()
     end
 end)

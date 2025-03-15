@@ -1,13 +1,16 @@
-local ACHIEVEMENT_COLOR_CODE = "|cffff8000";
-local addonPrefix = ACHIEVEMENT_COLOR_CODE.."[WOW-HC.com]: "..FONT_COLOR_CODE_CLOSE
+local addonPrefix = ITEM_QUALITY_COLORS[5].hex.."[WOW-HC.com]: "..FONT_COLOR_CODE_CLOSE
 
 local function achievementLink(achievement)
-    return ACHIEVEMENT_COLOR_CODE.."|Hitem:"..achievement.itemId..":0:0:0|h["..achievement.name.."]|h"..FONT_COLOR_CODE_CLOSE
+    return ITEM_QUALITY_COLORS[5].hex.."|Hitem:"..achievement.itemId..":0:0:0|h["..achievement.name.."]|h"..FONT_COLOR_CODE_CLOSE
+end
+
+local function achievementErrorMessage(link, message)
+    local achievementMsg = link..HIGHLIGHT_FONT_COLOR_CODE.." Achievement active. "
+    return addonPrefix..achievementMsg..message..FONT_COLOR_CODE_CLOSE
 end
 
 local function printAchievementInfo(link, message)
-    local achievementMsg = link..HIGHLIGHT_FONT_COLOR_CODE.." Achievement active. "
-    DEFAULT_CHAT_FRAME:AddMessage(addonPrefix..achievementMsg..message..FONT_COLOR_CODE_CLOSE)
+    DEFAULT_CHAT_FRAME:AddMessage(achievementErrorMessage(link, message))
 end
 
 local _G = getfenv(0);
@@ -17,12 +20,18 @@ local function hooksecurefunc(arg1, arg2, arg3)
     end
     local orig = arg1[arg2]
     arg1[arg2] = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
-        if arg2 ~= "UnitPopup_OnUpdate" then
+        local silence = {
+            ["UnitPopup_OnUpdate"] = true,
+            ["SetBagItem"] = true,
+            ["SetInventoryItem"] = true,
+            ["SetMerchantItem"] = true,
+        }
+        if not silence[arg2] then
             --WHC.DebugPrint("Original "..arg2)
         end
         local x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20 = orig(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
 
-        if arg2 ~= "UnitPopup_OnUpdate" then
+        if not silence[arg2] then
             --WHC.DebugPrint("Hook "..arg2)
         end
         arg3(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
@@ -277,6 +286,324 @@ function WHC.SetBlockTaxiService()
         -- Block addons from taking flights
         TakeTaxiNode = function()
             printAchievementInfo(groundedLink, "Flying services are blocked.")
+        end
+    end
+end
+--endregion
+
+--region ====== Mister White & Only Fan & Self-made ======
+local misterWhiteLink = achievementLink(TabAchievements[ACHIEVEMENT_MISTER_WHITE])
+local onlyFanLink = achievementLink(TabAchievements[ACHIEVEMENT_ONLY_FAN])
+local selfMadeLink = achievementLink(TabAchievements[ACHIEVEMENT_SELF_MADE])
+
+local misterWhiteLinkAllowedItems = {
+    INVTYPE_BAG = true,
+    INVTYPE_AMMO = true,
+}
+
+local onlyFanAllowedItems = {
+    INVTYPE_WEAPON = true,
+    INVTYPE_2HWEAPON = true,
+    INVTYPE_WEAPONMAINHAND = true,
+    INVTYPE_WEAPONOFFHAND = true,
+    INVTYPE_SHIELD = true,
+    INVTYPE_THROWN = true,
+    INVTYPE_RANGED = true,
+    INVTYPE_AMMO = true,
+    INVTYPE_RANGEDRIGHT = true, -- Wands
+    INVTYPE_HOLDABLE = true, -- Held in offhand
+    INVTYPE_BODY = true,
+    INVTYPE_TABARD = true,
+    INVTYPE_BAG = true,
+}
+
+local selfMadeAllowedItems = {
+    INVTYPE_BAG = true,
+    INVTYPE_AMMO = true,
+    ["Fishing Pole"] = true,   -- English
+    ["Angelrute"] = true,      -- German
+    ["Caña de pescar"] = true, -- Spanish
+    ["Canne à pêche"] = true,  -- French
+    ["Canna da pesca"] = true, -- Italian
+    ["Vara de pescar"] = true, -- Portuguese
+    ["Удочка"] = true,         -- Russian
+    ["낚싯대"] = true,          -- Korean
+    ["钓鱼竿"] = true,          -- Chinese
+}
+
+local function getItemIDFromLink(itemLink)
+    if not itemLink then
+        return
+    end
+
+    local foundID, _ , itemID = string.find(itemLink, "item:(%d+)")
+    if not foundID then
+        return
+    end
+
+    return tonumber(itemID)
+end
+
+-- TODO Make this more robust
+-- The <Made by xxx> is localized.
+-- This pattern works for English, German, French, Spanish, Portuguese, Italian, Russian
+-- This pattern will break for Korean, Chinese
+local function isSelfMade(itemSubType, itemEquipLoc)
+    if selfMadeAllowedItems[itemSubType] then
+        return true
+    end
+    if selfMadeAllowedItems[itemEquipLoc] then
+        return true
+    end
+
+    for i=1, GameTooltip:NumLines() do
+        local left = _G["GameTooltipTextLeft"..i]
+        local lineText = left:GetText()
+        local nameMatch = string.find(lineText, "<.* ("..WHC.player.name..")>")
+        if nameMatch then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function getItemInfo(itemId)
+    if not itemId then
+        return
+    end
+
+    local _, _, itemRarity, _, _, itemSubType, _, itemEquipLoc = GetItemInfo(itemId)
+    if RETAIL == 1 then
+        _, _, itemRarity, _, _, _, itemSubType, _, itemEquipLoc = GetItemInfo(itemId)
+    end
+
+    return itemRarity, itemSubType, itemEquipLoc
+end
+
+local function setTooltipInfo(itemLink)
+    local itemId = getItemIDFromLink(itemLink)
+    local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
+
+    if not itemEquipLoc or itemEquipLoc == "" then
+        return
+    end
+
+    if WhcAddonSettings.blockMagicItemsTooltip == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
+        local msg = "Cannot equip ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items>"
+        GameTooltip:AddLine("<Mister White: "..msg, 1, 0, 0)
+    end
+
+    if WhcAddonSettings.blockArmorItemsTooltip == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+        GameTooltip:AddLine("<Only Fan: Cannot equip armor items>", 1, 0, 0)
+    end
+
+    if WhcAddonSettings.blockNonSelfMadeItemsTooltip == 1 and not isSelfMade(itemSubType, itemEquipLoc) then
+        GameTooltip:AddLine("<Self-made: Cannot equip items you did not craft>", 1, 0, 0)
+    end
+
+    -- Resize the tooltip to match the new lines added
+    GameTooltip:Show()
+end
+
+-- Update bag items
+hooksecurefunc(GameTooltip, "SetBagItem", function(tip, bagId, slot)
+    local itemLink = GetContainerItemLink(bagId, slot)
+    setTooltipInfo(itemLink)
+end)
+
+-- Update inventory and bank items
+hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
+    local itemLink = GetInventoryItemLink(unit, slot)
+    -- Inventory slots
+    if slot < 20 then
+        local itemId = getItemIDFromLink(itemLink)
+        local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
+        if not itemEquipLoc or itemEquipLoc == "" then
+            return
+        end
+
+        if WhcAddonSettings.blockArmorItemsTooltip == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+            GameTooltip:AddLine("<Only Fan: Unequipping this item will block you from equipping it again>", 1, 0, 0)
+        end
+
+        if WhcAddonSettings.blockNonSelfMadeItemsTooltip == 1 and not isSelfMade(itemSubType, itemEquipLoc) then
+            GameTooltip:AddLine("<Self-made: Unequipping this item will block you from equipping it again>", 1, 0, 0)
+        end
+
+        -- Resize the tooltip to match the new lines added
+        GameTooltip:Show()
+    end
+    -- slot 20-23 are bag slots
+    -- Bank slots
+    if slot > 23 then
+        setTooltipInfo(itemLink)
+    end
+end)
+
+-- Update vendor items
+hooksecurefunc(GameTooltip, "SetMerchantItem", function(tip, index)
+    local itemLink = GetMerchantItemLink(index)
+    setTooltipInfo(itemLink)
+end)
+
+-- Update trade window items
+hooksecurefunc(GameTooltip, "SetTradePlayerItem", function(tip, tradeSlot)
+    local itemLink = GetTradePlayerItemLink(tradeSlot)
+    setTooltipInfo(itemLink)
+end)
+
+hooksecurefunc(GameTooltip, "SetTradeTargetItem", function(tip, tradeSlot)
+    local itemLink = GetTradeTargetItemLink(tradeSlot)
+    setTooltipInfo(itemLink)
+end)
+
+local errorMessages = {}
+local function canEquipItem(itemLink)
+    errorMessages = {}
+
+    local itemId = getItemIDFromLink(itemLink)
+    local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
+    if not itemEquipLoc or itemEquipLoc == "" or itemEquipLoc == "INVTYPE_BAG" then
+        return
+    end
+
+    if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
+        local msg = "Equipping ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items are blocked."
+        table.insert(errorMessages, achievementErrorMessage(misterWhiteLink, msg))
+    end
+
+    if WhcAddonSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+        table.insert(errorMessages, achievementErrorMessage(onlyFanLink, "Equipping armor items are blocked."))
+    end
+
+    if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and
+            not selfMadeAllowedItems[itemSubType] and not selfMadeAllowedItems[itemEquipLoc] then
+        table.insert(errorMessages, achievementErrorMessage(selfMadeLink, "Equipping items you did not craft are blocked."))
+    end
+end
+
+local function printEquipBlockers()
+    for _, value in ipairs(errorMessages) do
+        DEFAULT_CHAT_FRAME:AddMessage(value)
+    end
+end
+
+hooksecurefunc("PickupContainerItem", function(bagId, slot)
+    if not CursorHasItem() then
+        errorMessages = {}
+        return
+    end
+
+    local itemLink = GetContainerItemLink(bagId, slot)
+    canEquipItem(itemLink)
+end)
+
+BlizzardFunctions.AutoEquipCursorItem = AutoEquipCursorItem
+BlizzardFunctions.EquipCursorItem     = EquipCursorItem
+BlizzardFunctions.EquipPendingItem    = EquipPendingItem
+BlizzardFunctions.PickupInventoryItem = PickupInventoryItem
+BlizzardFunctions.PickupMerchantItem  = PickupMerchantItem
+BlizzardFunctions.UseContainerItem    = UseContainerItem
+function WHC.SetBlockEquipItems()
+    AutoEquipCursorItem = BlizzardFunctions.AutoEquipCursorItem
+    EquipCursorItem     = BlizzardFunctions.EquipCursorItem
+    EquipPendingItem    = BlizzardFunctions.EquipPendingItem
+    PickupInventoryItem = BlizzardFunctions.PickupInventoryItem
+    PickupMerchantItem  = BlizzardFunctions.PickupMerchantItem
+    UseContainerItem    = BlizzardFunctions.UseContainerItem
+
+    if WhcAddonSettings.blockMagicItems == 1 or WhcAddonSettings.blockArmorItems == 1 or WhcAddonSettings.blockNonSelfMadeItems == 1 then
+        -- Block right-click equip
+        UseContainerItem = function(bagId, slot, onSelf)
+            if BankFrame:IsVisible() or MerchantFrame:IsVisible() then
+                return BlizzardFunctions.UseContainerItem(bagId, slot, onSelf)
+            end
+
+            if RETAIL == 1 then
+                local auctionsTabVisible = AuctionFrameAuctions and AuctionFrameAuctions:IsVisible()
+                if TradeFrame:IsVisible() or SendMailFrame:IsVisible() or auctionsTabVisible then
+                    return BlizzardFunctions.UseContainerItem(bagId, slot, onSelf)
+                end
+            end
+
+            local itemLink = GetContainerItemLink(bagId, slot)
+            canEquipItem(itemLink)
+            if not errorMessages[1] then
+                return BlizzardFunctions.UseContainerItem(bagId, slot, onSelf)
+            end
+
+            printEquipBlockers()
+        end
+
+        -- Left-clicking a merchant item does not trigger CursorHasItem() to become true, so we only allow right-click buying,
+        -- to prevent the user from left-clicking and immediate equipping the item.
+        -- When the user tries to equip the item from the backpack, then we can validate with CursorHasItem()
+        PickupMerchantItem = function(index)
+            local itemLink = GetMerchantItemLink(index)
+            local itemId = getItemIDFromLink(itemLink)
+            local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
+            if not itemEquipLoc or itemEquipLoc == "" or itemEquipLoc == "INVTYPE_BAG" then
+                return BlizzardFunctions.PickupMerchantItem(index)
+            end
+
+            if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
+                local msg = "Buying ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." equipment must be done using right-click."
+                printAchievementInfo(misterWhiteLink, msg)
+            end
+
+            if WhcAddonSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+                printAchievementInfo(onlyFanLink, "Buying armor must be done using right-click.")
+            end
+
+            if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and not selfMadeAllowedItems[itemSubType] and not selfMadeAllowedItems[itemEquipLoc] then
+                printAchievementInfo(selfMadeLink, "Buying equipment you did not craft must be done using right-click,")
+            end
+        end
+
+        -- Block pick up and place on character
+        -- Block drag and place on character
+        -- Note: This endpoint is both being used when placing an item onto the character and equipment page
+        -- and when an item is being pickup from the character equipment page.
+        PickupInventoryItem = function(invSlot)
+            if not CursorHasItem() then
+                local itemLink = GetInventoryItemLink("player", invSlot)
+                canEquipItem(itemLink)
+                return BlizzardFunctions.PickupInventoryItem(invSlot)
+            end
+
+            if not errorMessages[1] then
+                return BlizzardFunctions.PickupInventoryItem(invSlot)
+            end
+
+            printEquipBlockers()
+        end
+
+        -- Block other addons
+        AutoEquipCursorItem = function()
+            if not errorMessages[1] then
+                return BlizzardFunctions.AutoEquipCursorItem()
+            end
+
+            printEquipBlockers()
+        end
+
+        -- Block other addons
+        EquipCursorItem = function(invSlot)
+            if not errorMessages[1] then
+                return BlizzardFunctions.EquipCursorItem(invSlot)
+            end
+
+            printEquipBlockers()
+        end
+
+        -- Block Bind-on-Equip pop up
+        EquipPendingItem = function(invSlot)
+            if not errorMessages[1] then
+                return BlizzardFunctions.EquipCursorItem(invSlot)
+            end
+
+            printEquipBlockers()
         end
     end
 end
