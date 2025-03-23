@@ -1,19 +1,19 @@
 function WHC.InitializeDeathLogFrame()
-    WHC.Frames.DeathLogFrame = CreateFrame("Frame", "MyAddonFrame", UIParent, RETAIL_BACKDROP)
-    WHC.Frames.DeathLogFrame:SetWidth(400)
-    WHC.Frames.DeathLogFrame:SetHeight(300)
-    WHC.Frames.DeathLogFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    WHC.Frames.DeathLogFrame:SetMovable(true)
-    WHC.Frames.DeathLogFrame:EnableMouse(true)
-    WHC.Frames.DeathLogFrame:SetScript("OnMouseDown", function()
-        WHC.Frames.DeathLogFrame:StartMoving()
+    local deathLogFrame = CreateFrame("Frame", "MyAddonFrame", UIParent, RETAIL_BACKDROP)
+    deathLogFrame:SetWidth(400)
+    deathLogFrame:SetHeight(300)
+    deathLogFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    deathLogFrame:SetMovable(true)
+    deathLogFrame:EnableMouse(true)
+    deathLogFrame:SetScript("OnMouseDown", function()
+        deathLogFrame:StartMoving()
     end)
 
-    WHC.Frames.DeathLogFrame:SetScript("OnMouseUp", function()
-        WHC.Frames.DeathLogFrame:StopMovingOrSizing()
+    deathLogFrame:SetScript("OnMouseUp", function()
+        deathLogFrame:StopMovingOrSizing()
     end)
 
-    WHC.Frames.DeathLogFrame:SetBackdrop({
+    deathLogFrame:SetBackdrop({
         bgFile = "Interface/Tooltips/UI-Tooltip-Background",
         edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
         tile = true,
@@ -21,37 +21,37 @@ function WHC.InitializeDeathLogFrame()
         edgeSize = 16,
         insets = { left = 4, right = 4, top = 4, bottom = 4 }
     })
-    WHC.Frames.DeathLogFrame:SetBackdropColor(0, 0, 0, 0.8)
-    WHC.Frames.DeathLogFrame:SetBackdropBorderColor(.5, .5, .5, 1)
+    deathLogFrame:SetBackdropColor(0, 0, 0, 0.8)
+    deathLogFrame:SetBackdropBorderColor(.5, .5, .5, 1)
 
-    local title = WHC.Frames.DeathLogFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    title:SetPoint("TOP", WHC.Frames.DeathLogFrame, "TOP", 0, -10)
+    local title = deathLogFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    title:SetPoint("TOP", deathLogFrame, "TOP", 0, -10)
     title:SetText("Recent Deaths")
     title:SetTextColor(0.933, 0.765, 0)
 
-    local scrollFrame = CreateFrame("ScrollFrame", "MyAddonScrollFrame", WHC.Frames.DeathLogFrame, "UIPanelScrollFrameTemplate")
-    scrollFrame:SetPoint("TOPLEFT", WHC.Frames.DeathLogFrame, "TOPLEFT", 10, -30)
-    scrollFrame:SetPoint("BOTTOMRIGHT", WHC.Frames.DeathLogFrame, "BOTTOMRIGHT", -30, 10)
+    local scrollFrame = CreateFrame("ScrollFrame", "MyAddonScrollFrame", deathLogFrame, "UIPanelScrollFrameTemplate")
+    scrollFrame:SetPoint("TOPLEFT", deathLogFrame, "TOPLEFT", 10, -30)
+    scrollFrame:SetPoint("BOTTOMRIGHT", deathLogFrame, "BOTTOMRIGHT", -30, 10)
 
     local content = CreateFrame("Frame", "MyAddonScrollContent", scrollFrame)
     content:SetWidth(360)
     content:SetHeight(0)
     scrollFrame:SetScrollChild(content)
-    WHC.DeathLogFrame.content = content
+    deathLogFrame.content = content
 
-    local closeButton = CreateFrame("Button", nil, WHC.Frames.DeathLogFrame, "UIPanelCloseButton")
-    closeButton:SetPoint("TOPRIGHT", WHC.Frames.DeathLogFrame, "TOPRIGHT", 2, 1)
+    local closeButton = CreateFrame("Button", nil, deathLogFrame, "UIPanelCloseButton")
+    closeButton:SetPoint("TOPRIGHT", deathLogFrame, "TOPRIGHT", 2, 1)
     closeButton:SetWidth(36)
     closeButton:SetHeight(36)
     closeButton:SetText("Close")
     closeButton:SetScript("OnClick", function()
         WhcAddonSettings.recentDeaths = 0
         WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
-        WHC.Frames.DeathLogFrame:Hide()
+        deathLogFrame:Hide()
     end)
 
-    local resizeButton = CreateFrame("Button", nil, WHC.Frames.DeathLogFrame)
-    resizeButton:SetPoint("BOTTOMRIGHT", WHC.Frames.DeathLogFrame, "BOTTOMRIGHT", 2, -3)
+    local resizeButton = CreateFrame("Button", nil, deathLogFrame)
+    resizeButton:SetPoint("BOTTOMRIGHT", deathLogFrame, "BOTTOMRIGHT", 2, -3)
     resizeButton:SetWidth(16)
     resizeButton:SetHeight(16)
 
@@ -72,17 +72,19 @@ function WHC.InitializeDeathLogFrame()
     resizeTexture:SetPoint("CENTER", resizeButton, "CENTER", 0, 0)
     SetRotation(resizeTexture, math.rad(80))
 
-    WHC.Frames.DeathLogFrame:SetResizable(true)
-    WHC.Frames.DeathLogFrame:SetMinResize(10, 10)
-    WHC.Frames.DeathLogFrame:SetMaxResize(800, 600)
+    deathLogFrame:SetResizable(true)
+    deathLogFrame:SetMinResize(10, 10)
+    deathLogFrame:SetMaxResize(800, 600)
 
     resizeButton:EnableMouse(true)
     resizeButton:SetScript("OnMouseDown", function(self, button)
-        WHC.Frames.DeathLogFrame:StartSizing("BOTTOMRIGHT")
+        deathLogFrame:StartSizing("BOTTOMRIGHT")
     end)
     resizeButton:SetScript("OnMouseUp", function(self, button)
-        WHC.Frames.DeathLogFrame:StopMovingOrSizing()
+        deathLogFrame:StopMovingOrSizing()
     end)
+
+    WHC.Frames.DeathLogFrame = deathLogFrame
 end
 
 local deathMessages = {}
@@ -110,8 +112,8 @@ function WHC.LogDeathMessage(msg)
 
         local countRows = 0
         for i, message in ipairs(deathMessages) do
-            local rowString = WHC.DeathLogFrame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-            rowString:SetPoint("TOPLEFT", WHC.DeathLogFrame.content, "TOPLEFT", 0, -fontHeight * (i - 1))
+            local rowString = WHC.Frames.DeathLogFrame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            rowString:SetPoint("TOPLEFT", WHC.Frames.DeathLogFrame.content, "TOPLEFT", 0, -fontHeight * (i - 1))
             rowString:SetFont("Fonts\\FRIZQT__.TTF", fontHeight - 2, "OUTLINE")
             rowString:SetText(message)
 
@@ -120,6 +122,6 @@ function WHC.LogDeathMessage(msg)
             countRows = countRows + 1
         end
 
-        WHC.DeathLogFrame.content:SetHeight(fontHeight * countRows)
+        WHC.Frames.DeathLogFrame.content:SetHeight(fontHeight * countRows)
     end
 end
