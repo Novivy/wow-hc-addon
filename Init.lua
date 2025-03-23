@@ -15,8 +15,6 @@ else
     RETAIL_BACKDROP = nil
 end
 
-
-
 WHC = CreateFrame("Frame")
 WHC.Frames = {}
 WHC:RegisterEvent("ADDON_LOADED")
@@ -46,6 +44,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
 
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
+    WHC.InitializeDeathLogFrame()
 
     if (RETAIL == 1) then
         -- todo (low prio since ticket status block not displayed on retail)
@@ -91,9 +90,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     end
 
     if (WhcAddonSettings.recentDeaths == 1) then
-        DeathLogFrame:Show()
+        WHC.Frames.DeathLogFrame:Show()
     else
-        DeathLogFrame:Hide()
+        WHC.Frames.DeathLogFrame:Hide()
     end
 
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")

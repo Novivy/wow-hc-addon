@@ -128,13 +128,9 @@ function WHC.Tab_Settings(content)
     WHC_SETTINGS.recentDeathsBtn:SetScript("OnClick", function(self)
         WhcAddonSettings.recentDeaths = math.abs(WhcAddonSettings.recentDeaths - 1)
         playCheckedSound(WhcAddonSettings.recentDeaths)
-        if (DeathLogFrame) then
-            DeathLogFrame:Hide()
-        end
+        WHC.Frames.DeathLogFrame:Hide()
         if (WhcAddonSettings.recentDeaths == 1) then
-            if (DeathLogFrame) then
-                DeathLogFrame:Show()
-            end
+            WHC.Frames.DeathLogFrame:Show()
         end
     end)
 
