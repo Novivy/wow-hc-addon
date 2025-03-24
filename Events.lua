@@ -169,20 +169,11 @@ playerLogin:SetScript("OnEvent", function(self, event)
     end
 end)
 
-local inspectEventHandler2 = CreateFrame("Frame")
-inspectEventHandler2:RegisterEvent("INSPECT_READY")
-inspectEventHandler2:SetScript("OnEvent", function(self, event, arg1)
-    WHC.DebugPrint("INSPECT_READY")
-    WHC.InitializeAchievementButtonInspect()
-end)
-
 function WHC.InitializeAchievementButtonLogic()
     if (RETAIL == 1) then
-        WHC.DebugPrint("test")
         local inspectEventHandler = CreateFrame("Frame")
         inspectEventHandler:RegisterEvent("INSPECT_READY")
         inspectEventHandler:SetScript("OnEvent", function(self, event, arg1)
-            WHC.DebugPrint("INSPECT_READY")
             WHC.InitializeAchievementButtonInspect()
         end)
 
