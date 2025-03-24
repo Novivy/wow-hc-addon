@@ -111,6 +111,7 @@ function WHC.Tab_Settings(content)
     WHC_SETTINGS.minimap:SetScript("OnClick", function(self)
         WhcAddonSettings.minimapicon = math.abs(WhcAddonSettings.minimapicon - 1)
         playCheckedSound(WhcAddonSettings.minimapicon)
+
         WHC.Frames.MapIcon:Hide()
         if (WhcAddonSettings.minimapicon == 1) then
             WHC.Frames.MapIcon:Show()
@@ -121,12 +122,16 @@ function WHC.Tab_Settings(content)
     WHC_SETTINGS.achievementbtn:SetScript("OnClick", function(self)
         WhcAddonSettings.achievementbtn = math.abs(WhcAddonSettings.achievementbtn - 1)
         playCheckedSound(WhcAddonSettings.achievementbtn)
-        if (ACHBtn) then
-            ACHBtn:Hide()
-        end
+
+        WHC.Frames.AchievementButtonCharacter:Hide()
         if (WhcAddonSettings.achievementbtn == 1) then
-            if (ACHBtn) then
-                ACHBtn:Show()
+            WHC.Frames.AchievementButtonCharacter:Show()
+        end
+
+        if WHC.Frames.AchievementButtonInspect then
+            WHC.Frames.AchievementButtonInspect:Hide()
+            if (WhcAddonSettings.achievementbtn == 1) then
+                WHC.Frames.AchievementButtonInspect:Show()
             end
         end
     end)
@@ -135,6 +140,7 @@ function WHC.Tab_Settings(content)
     WHC_SETTINGS.recentDeathsBtn:SetScript("OnClick", function(self)
         WhcAddonSettings.recentDeaths = math.abs(WhcAddonSettings.recentDeaths - 1)
         playCheckedSound(WhcAddonSettings.recentDeaths)
+
         WHC.Frames.DeathLogFrame:Hide()
         if (WhcAddonSettings.recentDeaths == 1) then
             WHC.Frames.DeathLogFrame:Show()
