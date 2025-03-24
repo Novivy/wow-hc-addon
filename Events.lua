@@ -169,32 +169,6 @@ playerLogin:SetScript("OnEvent", function(self, event)
     end
 end)
 
-function WHC.InitializeAchievementButtonLogic()
-    if (RETAIL == 1) then
-        local inspectEventHandler = CreateFrame("Frame")
-        inspectEventHandler:RegisterEvent("INSPECT_READY")
-        inspectEventHandler:SetScript("OnEvent", function(self, event, arg1)
-            WHC.InitializeAchievementButtonInspect()
-        end)
-
-        CharacterFrame:HookScript("OnHide", function(self)
-            WHC.UIShowTabContent(0)
-        end)
-    else
-        xx_InspectFrame_OnEvent = NotifyInspect
-        function NotifyInspect(unit)
-            xx_InspectFrame_OnEvent(unit)
-            WHC.InitializeAchievementButtonInspect()
-        end
-
-        xx_CharacterFrame_OnHide = CharacterFrame_OnHide
-        function CharacterFrame_OnHide()
-            xx_CharacterFrame_OnHide()
-            WHC.UIShowTabContent(0)
-        end
-    end
-end
-
 local function createAchievementButton(frame, name)
     local viewAchButton = CreateFrame("Button", "TabCharFrame" .. name, frame)
 
@@ -251,6 +225,32 @@ end
 function WHC.InitializeAchievementButtonInspect()
     if not WHC.Frames.AchievementButtonInspect then
         WHC.Frames.AchievementButtonInspect = createAchievementButton(getglobal("InspectFrame"), "inspect")
+    end
+end
+
+function WHC.InitializeAchievementButtonLogic()
+    if (RETAIL == 1) then
+        local inspectEventHandler = CreateFrame("Frame")
+        inspectEventHandler:RegisterEvent("INSPECT_READY")
+        inspectEventHandler:SetScript("OnEvent", function(self, event, arg1)
+            WHC.InitializeAchievementButtonInspect()
+        end)
+
+        CharacterFrame:HookScript("OnHide", function(self)
+            WHC.UIShowTabContent(0)
+        end)
+    else
+        xx_InspectFrame_OnEvent = NotifyInspect
+        function NotifyInspect(unit)
+            xx_InspectFrame_OnEvent(unit)
+            WHC.InitializeAchievementButtonInspect()
+        end
+
+        xx_CharacterFrame_OnHide = CharacterFrame_OnHide
+        function CharacterFrame_OnHide()
+            xx_CharacterFrame_OnHide()
+            WHC.UIShowTabContent(0)
+        end
     end
 end
 
