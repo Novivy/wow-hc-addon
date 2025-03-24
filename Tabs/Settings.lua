@@ -111,6 +111,7 @@ function WHC.Tab_Settings(content)
     WHC_SETTINGS.minimap:SetScript("OnClick", function(self)
         WhcAddonSettings.minimapicon = math.abs(WhcAddonSettings.minimapicon - 1)
         playCheckedSound(WhcAddonSettings.minimapicon)
+
         WHC.Frames.MapIcon:Hide()
         if (WhcAddonSettings.minimapicon == 1) then
             WHC.Frames.MapIcon:Show()
