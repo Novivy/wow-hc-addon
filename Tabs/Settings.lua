@@ -78,6 +78,13 @@ local function playCheckedSound(checked)
     if checked == 1 then
         sound = "igMainMenuOptionCheckBoxOn"
     end
+
+    if RETAIL == 1 then
+        sound = 857
+        if checked == 1 then
+            sound = 856
+        end
+    end
     PlaySound(sound)
 end
 
