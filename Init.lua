@@ -16,6 +16,7 @@ else
 end
 
 WHC = CreateFrame("Frame")
+WHC.Frames = {}
 WHC:RegisterEvent("ADDON_LOADED")
 WHC:SetScript("OnEvent", function(self, event, addonName)
     addonName = addonName or arg1
@@ -23,7 +24,6 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         return
     end
 
-    WHC.Frames = {}
     WHC.player = {
         name = UnitName("player"),
     }

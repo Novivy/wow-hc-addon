@@ -36,8 +36,8 @@ function WHC.UIShowTabContent(tabIndex, arg1)
                 SendChatMessage(msg);
             end
         elseif (tabIndex == "Achievements") then
-            for key, value in pairs(UIachievements) do
-                toggleAchievement(value, true)
+            for key, value in pairs(WHC.Frames.Achievements) do
+                WHC.ToggleAchievement(value, true)
             end
 
             local msg = ".whc achievements"
