@@ -137,7 +137,7 @@ for key, value in pairs(WHC.Achievements) do
     table.insert(sortedAchievements, value)
 end
 table.sort(sortedAchievements, function(a, b)
-    return a.data.name < b.data.name  -- Sort alphabetically by name
+    return a.name < b.name  -- Sort alphabetically by name
 end)
 
 function WHC.Tab_Achievements(content)
