@@ -45,8 +45,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
     WHC.InitializeDeathLogFrame()
-    WHC.InitializeAchievementButtonCharacter()
-    WHC.InitializeAchievementButtonLogic()
+    WHC.InitializeAchievementButtons()
 
     if (RETAIL == 1) then
         -- todo (low prio since ticket status block not displayed on retail)
