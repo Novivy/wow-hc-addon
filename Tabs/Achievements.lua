@@ -1,4 +1,4 @@
-local function itemSlot(block, x, y, name, desc, icon, id)
+local function itemSlot(block, x, y, achievement)
     local MerchantItemTemplate = CreateFrame("Frame", "MerchantItemTemplate", block)
     MerchantItemTemplate:SetWidth(350)
     MerchantItemTemplate:SetHeight(37)
@@ -23,7 +23,7 @@ local function itemSlot(block, x, y, name, desc, icon, id)
 
     -- Name FontString
     local labelTitle = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
-    labelTitle:SetText(name)
+    labelTitle:SetText(achievement.name)
     labelTitle:SetJustifyH("LEFT")
     labelTitle:SetWidth(350)
     labelTitle:SetHeight(30)
@@ -44,7 +44,7 @@ local function itemSlot(block, x, y, name, desc, icon, id)
 
     -- Desc FontString
     local labelDesc = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
-    labelDesc:SetText(desc)
+    labelDesc:SetText(achievement.desc)
     labelDesc:SetJustifyH("LEFT")
     labelDesc:SetWidth(350)
     labelDesc:SetHeight(30)
@@ -54,7 +54,7 @@ local function itemSlot(block, x, y, name, desc, icon, id)
 
 
     local iconFrame = MerchantItemTemplate:CreateTexture("$parentNameFrame", "BACKGROUND")
-    iconFrame:SetTexture("Interface\\Icons\\" .. icon) -- INV_Misc_QuestionMark")
+    iconFrame:SetTexture("Interface\\Icons\\" .. achievement.icon) -- INV_Misc_QuestionMark")
     iconFrame:SetWidth(39)
     iconFrame:SetHeight(39)
     iconFrame:SetPoint("TOPLEFT", SlotTexture, "TOPLEFT", 12, -12)
@@ -67,10 +67,8 @@ local function itemSlot(block, x, y, name, desc, icon, id)
     ItemButton:SetNormalTexture(nil)
     ItemButton:SetPushedTexture(nil)
     ItemButton:SetHighlightTexture(nil)
-
     ItemButton:SetWidth(414)
     ItemButton:SetHeight(50)
-
 
     --  ItemButton:SetScript("OnEnter", function(self)
     --     -- display why achievement is disabled or not  in a tooltip
@@ -84,13 +82,11 @@ local function itemSlot(block, x, y, name, desc, icon, id)
     --       ResetCursor()
     --  end)
 
-
-
-    UIachievements[id] = MerchantItemTemplate;
+    WHC.Frames.Achievements[achievement.id] = MerchantItemTemplate;
 end
 
 
-function toggleAchievement(itemAch, failed)
+function WHC.ToggleAchievement(itemAch, failed)
     if (failed) then
         itemAch.iconFrame:SetVertexColor(0.45, 0.45, 0.45)
         itemAch.SlotTexture:SetVertexColor(0.45, 0.45, 0.45)
@@ -110,48 +106,38 @@ function toggleAchievement(itemAch, failed)
     end
 end
 
-UIachievements = {}
+WHC.Frames.Achievements = {}
 
-ACHIEVEMENT_DEMON_SLAYER           = 16384
-ACHIEVEMENT_GROUNDED               = 4096
-ACHIEVEMENT_HELP_YOURSELF          = 64
-ACHIEVEMENT_IRON_BONES             = 1
-ACHIEVEMENT_KILLER_TRADER          = 4
-ACHIEVEMENT_LIGHTBRINGER           = 32768
-ACHIEVEMENT_LONE_WOLF              = 2048
-ACHIEVEMENT_MARATHON_RUNNER        = 256
-ACHIEVEMENT_MISTER_WHITE           = 128
-ACHIEVEMENT_MY_PRECIOUS            = 8
-ACHIEVEMENT_ONLY_FAN               = 32
-ACHIEVEMENT_SELF_MADE              = 8192
-ACHIEVEMENT_SOFT_HANDS             = 1024
-ACHIEVEMENT_SPECIAL_DELIVERIES     = 16
-ACHIEVEMENT_THAT_WHICH_HAS_NO_LIFE = 512
-ACHIEVEMENT_TIME_IS_MONEY          = 2
-TabAchievements = {
-    [16384] = { icon = "spell_shadow_unsummonbuilding",       itemId = "707016", name = "Demon Slayer",           desc = "Reach level 60 only by killing demons." },
-    [4096]  = { icon = "spell_nature_strengthofearthtotem02", itemId = "707014", name = "Grounded",               desc = "Reach level 60 without ever using flying services." },
-    [64]    = { icon = "inv_misc_note_02",                    itemId = "707006", name = "Help Yourself",          desc = "Reach level 60 without ever turning in a quest (class and profession quests allowed)." },
-    [1]     = { icon = "trade_blacksmithing",                 itemId = "707000", name = "Iron Bones",             desc = "Reach level 60 without ever repairing the durability of an item." },
-    [4]     = { icon = "inv_misc_coin_03",                    itemId = "707002", name = "Killer Trader",          desc = "Reach level 60 without ever using the auction house to sell an item." },
-    [32768] = { icon = "spell_holy_holynova",                 itemId = "707017", name = "Lightbringer",           desc = "Reach level 60 only by killing undead creatures." },
-    [2048]  = { icon = "spell_nature_spiritwolf",             itemId = "707013", name = "Lone Wolf",              desc = "Reach level 60 without ever grouping with other players." },
-    [256]   = { icon = "inv_gizmo_rocketboot_01",             itemId = "707010", name = "Marathon Runner",        desc = "Reach level 60 without ever learning a riding skill." },
-    [128]   = { icon = "inv_shirt_white_01",                  itemId = "707007", name = "Mister White",           desc = "Reach level 60 without ever equipping an uncommon or greater quality item (only white/grey items allowed. All ammunition and bags allowed)." },
-    [8]     = { icon = "inv_box_01",                          itemId = "707003", name = "My precious!",           desc = "Reach level 60 without ever trading goods or money with another player." },
-    [32]    = { icon = "inv_pants_wolf",                      itemId = "707005", name = "Only Fan",               desc = "Reach level 60 without ever equipping anything other than weapons, shields, ammos, shirts, tabards and bags." },
-    [8192]  = { icon = "inv_hammer_20",                       itemId = "707015", name = "Self-made",              desc = "Reach level 60 without ever equipping items that you did not craft yourself (all fishing poles, ammunition, and bags allowed)." },
-    [1024]  = { icon = "spell_holy_layonhands",               itemId = "707012", name = "Soft Hands",             desc = "Reach level 60 without ever learning any primary profession." },
-    [16]    = { icon = "inv_crate_03",                        itemId = "707004", name = "Special Deliveries",     desc = "Reach level 60 without ever getting goods or money from the mail (simple letters, NPC and GM quest/items allowed)." },
-    [512]   = { icon = "ability_hunter_pet_boar",             itemId = "707011", name = "That Which Has No Life", desc = "Reach level 60 only by killing boars or quilboars." },
-    [2]     = { icon = "inv_misc_coin_05",                    itemId = "707001", name = "Time is money",          desc = "Reach level 60 without ever using the auction house to buy an item." },
+WHC.Achievements = {
+    DEMON_SLAYER           = { id = 16384, icon = "spell_shadow_unsummonbuilding",       itemId = "707016", itemLink = "", name = "Demon Slayer",           desc = "Reach level 60 only by killing demons." },
+    GROUNDED               = { id = 4096,  icon = "spell_nature_strengthofearthtotem02", itemId = "707014", itemLink = "", name = "Grounded",               desc = "Reach level 60 without ever using flying services." },
+    HELP_YOURSELF          = { id = 64,    icon = "inv_misc_note_02",                    itemId = "707006", itemLink = "", name = "Help Yourself",          desc = "Reach level 60 without ever turning in a quest (class and profession quests allowed)." },
+    IRON_BONES             = { id = 1,     icon = "trade_blacksmithing",                 itemId = "707000", itemLink = "", name = "Iron Bones",             desc = "Reach level 60 without ever repairing the durability of an item." },
+    KILLER_TRADER          = { id = 4,     icon = "inv_misc_coin_03",                    itemId = "707002", itemLink = "", name = "Killer Trader",          desc = "Reach level 60 without ever using the auction house to sell an item." },
+    LIGHTBRINGER           = { id = 32768, icon = "spell_holy_holynova",                 itemId = "707017", itemLink = "", name = "Lightbringer",           desc = "Reach level 60 only by killing undead creatures." },
+    LONE_WOLF              = { id = 2048,  icon = "spell_nature_spiritwolf",             itemId = "707013", itemLink = "", name = "Lone Wolf",              desc = "Reach level 60 without ever grouping with other players." },
+    MARATHON_RUNNER        = { id = 256,   icon = "inv_gizmo_rocketboot_01",             itemId = "707010", itemLink = "", name = "Marathon Runner",        desc = "Reach level 60 without ever learning a riding skill." },
+    MISTER_WHITE           = { id = 128,   icon = "inv_shirt_white_01",                  itemId = "707007", itemLink = "", name = "Mister White",           desc = "Reach level 60 without ever equipping an uncommon or greater quality item (only white/grey items allowed. All ammunition and bags allowed)." },
+    MY_PRECIOUS            = { id = 8,     icon = "inv_box_01",                          itemId = "707003", itemLink = "", name = "My precious!",           desc = "Reach level 60 without ever trading goods or money with another player." },
+    ONLY_FAN               = { id = 32,    icon = "inv_pants_wolf",                      itemId = "707005", itemLink = "", name = "Only Fan",               desc = "Reach level 60 without ever equipping anything other than weapons, shields, ammos, shirts, tabards and bags." },
+    SELF_MADE              = { id = 8192,  icon = "inv_hammer_20",                       itemId = "707015", itemLink = "", name = "Self-made",              desc = "Reach level 60 without ever equipping items that you did not craft yourself (all fishing poles, ammunition, and bags allowed)." },
+    SOFT_HANDS             = { id = 1024,  icon = "spell_holy_layonhands",               itemId = "707012", itemLink = "", name = "Soft Hands",             desc = "Reach level 60 without ever learning any primary profession." },
+    SPECIAL_DELIVERIES     = { id = 16,    icon = "inv_crate_03",                        itemId = "707004", itemLink = "", name = "Special Deliveries",     desc = "Reach level 60 without ever getting goods or money from the mail (simple letters, NPC and GM quest/items allowed)." },
+    THAT_WHICH_HAS_NO_LIFE = { id = 512,   icon = "ability_hunter_pet_boar",             itemId = "707011", itemLink = "", name = "That Which Has No Life", desc = "Reach level 60 only by killing boars or quilboars." },
+    TIME_IS_MONEY          = { id = 2,     icon = "inv_misc_coin_05",                    itemId = "707001", itemLink = "", name = "Time is money",          desc = "Reach level 60 without ever using the auction house to buy an item." },
 }
+
+local function achievementLink(achievement)
+    return ITEM_QUALITY_COLORS[5].hex.."|Hitem:"..achievement.itemId..":0:0:0|h["..achievement.name.."]|h"..FONT_COLOR_CODE_CLOSE
+end
+
 local sortedAchievements = {}
-for id, data in pairs(TabAchievements) do
-    table.insert(sortedAchievements, { id = id, data = data })
+for key, value in pairs(WHC.Achievements) do
+    value.itemLink = achievementLink(value)
+    table.insert(sortedAchievements, value)
 end
 table.sort(sortedAchievements, function(a, b)
-    return a.data.name < b.data.name  -- Sort alphabetically by name
+    return a.name < b.name  -- Sort alphabetically by name
 end)
 
 function WHC.Tab_Achievements(content)
@@ -181,23 +167,20 @@ function WHC.Tab_Achievements(content)
         insets = { left = 4, right = 4, top = 4, bottom = 4 }
     })
 
-
     local scrollFrame = CreateFrame("ScrollFrame", "MyScrollFrame", content, "UIPanelScrollFrameTemplate")
     scrollFrame:SetWidth(420)
     scrollFrame:SetHeight(250)
     scrollFrame:SetPoint("TOPLEFT", content, "TOPLEFT", 30, -83)
-
-
 
     local scrollContent = CreateFrame("Frame", "MyScrollFrameContent", scrollFrame)
     scrollContent:SetWidth(300)
     scrollContent:SetHeight(800)
     scrollFrame:SetScrollChild(scrollContent) -- Attach the content frame to the scroll frame
 
-    for i, value in ipairs(sortedAchievements) do
+    for i, achievement in ipairs(sortedAchievements) do
         local y = -10 - 53 * (i-1)
 
-        itemSlot(scrollContent, 10, y, value.data.name, value.data.desc, value.data.icon, value.id);
+        itemSlot(scrollContent, 10, y, achievement);
     end
 
     local desc2 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")

@@ -1,9 +1,5 @@
 local addonPrefix = ITEM_QUALITY_COLORS[5].hex.."[WOW-HC.com]: "..FONT_COLOR_CODE_CLOSE
 
-local function achievementLink(achievement)
-    return ITEM_QUALITY_COLORS[5].hex.."|Hitem:"..achievement.itemId..":0:0:0|h["..achievement.name.."]|h"..FONT_COLOR_CODE_CLOSE
-end
-
 local function achievementErrorMessage(link, message)
     local achievementMsg = link..HIGHLIGHT_FONT_COLOR_CODE.." Achievement active. "
     return addonPrefix..achievementMsg..message..FONT_COLOR_CODE_CLOSE
@@ -58,7 +54,7 @@ hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, n
 end)
 
 --region ====== Lone Wolf ======
-local loneWolfLink = achievementLink(TabAchievements[ACHIEVEMENT_LONE_WOLF])
+local loneWolfLink = WHC.Achievements.LONE_WOLF.itemLink
 
 -- Disables friend list "Group Invite" button
 hooksecurefunc("FriendsList_Update", function()
@@ -120,7 +116,7 @@ end
 --endregion
 
 --region ====== My precious! ======
-local myPreciousLink = achievementLink(TabAchievements[ACHIEVEMENT_MY_PRECIOUS])
+local myPreciousLink = WHC.Achievements.MY_PRECIOUS.itemLink
 
 BlizzardFunctions.InitiateTrade = InitiateTrade
 function WHC.SetBlockTrades()
@@ -139,7 +135,7 @@ end
 
 
 --region ====== Killer Trader ======
-local killerTraderLink = achievementLink(TabAchievements[ACHIEVEMENT_KILLER_TRADER])
+local killerTraderLink = WHC.Achievements.KILLER_TRADER.itemLink
 
 local killerTraderEventListener = CreateFrame("Frame")
 killerTraderEventListener:RegisterEvent("ADDON_LOADED")
@@ -176,7 +172,7 @@ end
 --endregion
 
 --region ====== Time is Money ======
-local timeIsMoneyLink = achievementLink(TabAchievements[ACHIEVEMENT_TIME_IS_MONEY])
+local timeIsMoneyLink = WHC.Achievements.TIME_IS_MONEY.itemLink
 
 local timeIsMoneyEventListener = CreateFrame("Frame")
 timeIsMoneyEventListener:RegisterEvent("ADDON_LOADED")
@@ -223,7 +219,7 @@ end
 --endregion
 
 --region ====== Iron Bones ======
-local ironBonesLink = achievementLink(TabAchievements[ACHIEVEMENT_IRON_BONES])
+local ironBonesLink = WHC.Achievements.IRON_BONES.itemLink
 
 -- Disable repair buttons from Blizzard interface
 local disableRepairButtons = function()
@@ -267,7 +263,7 @@ end
 --endregion
 
 --region ====== Grounded ======
-local groundedLink = achievementLink(TabAchievements[ACHIEVEMENT_GROUNDED])
+local groundedLink = WHC.Achievements.GROUNDED.itemLink
 
 local taxiServiceEventHandler = CreateFrame("Frame")
 taxiServiceEventHandler:SetScript("OnEvent", function(self, event, name)
@@ -292,9 +288,9 @@ end
 --endregion
 
 --region ====== Mister White & Only Fan & Self-made ======
-local misterWhiteLink = achievementLink(TabAchievements[ACHIEVEMENT_MISTER_WHITE])
-local onlyFanLink = achievementLink(TabAchievements[ACHIEVEMENT_ONLY_FAN])
-local selfMadeLink = achievementLink(TabAchievements[ACHIEVEMENT_SELF_MADE])
+local misterWhiteLink = WHC.Achievements.MISTER_WHITE.itemLink
+local onlyFanLink = WHC.Achievements.ONLY_FAN.itemLink
+local selfMadeLink = WHC.Achievements.SELF_MADE.itemLink
 
 local misterWhiteLinkAllowedItems = {
     INVTYPE_BAG = true,

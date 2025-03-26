@@ -312,8 +312,8 @@ local function handleChatEvent(arg1)
         local result = string.gsub(arg1, "::whc::achievement:", "")
 
         result = tonumber(result)
-        if (UIachievements[result]) then
-            toggleAchievement(UIachievements[result], false)
+        if (WHC.Frames.Achievements[result]) then
+            WHC.ToggleAchievement(WHC.Frames.Achievements[result], false)
         else
             -- message("error")
         end
