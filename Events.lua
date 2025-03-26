@@ -218,34 +218,25 @@ local function createAchievementButton(frame, name)
     return viewAchButton
 end
 
-function WHC.InitializeAchievementButtonCharacter()
+function WHC.InitializeAchievementButtons()
     WHC.Frames.AchievementButtonCharacter = createAchievementButton(getglobal("CharacterFrame"), "character")
-end
 
-function WHC.InitializeAchievementButtonInspect()
-    if not WHC.Frames.AchievementButtonInspect then
+    local inspectUIEventListener = CreateFrame("Frame")
+    inspectUIEventListener:RegisterEvent("ADDON_LOADED")
+    inspectUIEventListener:SetScript("OnEvent", function(self, event, addonName)
+        addonName = addonName or arg1
+        if addonName ~= "Blizzard_InspectUI" then
+            return
+        end
+
         WHC.Frames.AchievementButtonInspect = createAchievementButton(getglobal("InspectFrame"), "inspect")
-    end
-end
+    end)
 
-function WHC.InitializeAchievementButtonLogic()
     if (RETAIL == 1) then
-        local inspectEventHandler = CreateFrame("Frame")
-        inspectEventHandler:RegisterEvent("INSPECT_READY")
-        inspectEventHandler:SetScript("OnEvent", function(self, event, arg1)
-            WHC.InitializeAchievementButtonInspect()
-        end)
-
         CharacterFrame:HookScript("OnHide", function(self)
             WHC.UIShowTabContent(0)
         end)
     else
-        xx_InspectFrame_OnEvent = NotifyInspect
-        function NotifyInspect(unit)
-            xx_InspectFrame_OnEvent(unit)
-            WHC.InitializeAchievementButtonInspect()
-        end
-
         xx_CharacterFrame_OnHide = CharacterFrame_OnHide
         function CharacterFrame_OnHide()
             xx_CharacterFrame_OnHide()
@@ -253,7 +244,6 @@ function WHC.InitializeAchievementButtonLogic()
         end
     end
 end
-
 
 local auctionHouseEvents = CreateFrame("Frame")
 auctionHouseEvents:RegisterEvent("AUCTION_HOUSE_SHOW")
