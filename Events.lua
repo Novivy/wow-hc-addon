@@ -162,89 +162,88 @@ playerLogin:SetScript("OnEvent", function(self, event)
 
         local inInstance, instanceType = IsInInstance()
         if (instanceType == "PVP") then
-            WHC_updateDeathWindow(true)
+            WHC.UpdateDeathWindow(true)
         else
-            WHC_updateDeathWindow(false)
+            WHC.UpdateDeathWindow(false)
         end
     end
 end)
 
+local function createAchievementButton(frame, name)
+    local viewAchButton = CreateFrame("Button", "TabCharFrame" .. name, frame)
 
+    viewAchButton:SetWidth(28)
+    viewAchButton:SetHeight(28)
 
+    viewAchButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -24, -41) -- Start position for the first tab
+    viewAchButton:SetNormalTexture("Interface\\AddOns\\WOW_HC\\Images\\wow-hardcore-logo-round")
 
-ACHBtn = nil
-ACHBtnInspect = nil
-local function characterSheetWOWHCbutton(frame, name)
-    if (name == "inspect" and ACHBtnInspect) then
-        if (WhcAddonSettings.achievementbtn == 1) then
-            ACHBtnInspect:Show()
-        else
-            ACHBtnInspect:Hide()
-        end
-    elseif (name == "character" and ACHBtn) then
-        if (WhcAddonSettings.achievementbtn == 1) then
-            ACHBtn:Show()
-        else
-            ACHBtn:Hide()
-        end
-    else
-        local viewAchButton = CreateFrame("Button", "TabCharFrame" .. name, frame)
+    viewAchButton:EnableMouse(true)
 
-        viewAchButton:SetWidth(28)
-        viewAchButton:SetHeight(28)
+    viewAchButton:SetFrameStrata("HIGH")
+    viewAchButton:SetFrameLevel(10)
 
-        viewAchButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -24, -41) -- Start position for the first tab
-        viewAchButton:SetNormalTexture("Interface\\AddOns\\WOW_HC\\Images\\wow-hardcore-logo-round")
+    local border = viewAchButton:CreateTexture(nil, "OVERLAY")
+    border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+    border:SetPoint("CENTER", viewAchButton, "CENTER", 13, -14)
+    border:SetWidth(64)
+    border:SetHeight(64)
 
-        viewAchButton:EnableMouse(true)
-
-        viewAchButton:SetFrameStrata("HIGH")
-        viewAchButton:SetFrameLevel(10)
-
-        local border = viewAchButton:CreateTexture(nil, "OVERLAY")
-        border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-        border:SetPoint("CENTER", viewAchButton, "CENTER", 13, -14)
-        border:SetWidth(64)
-        border:SetHeight(64)
-
-
-        local index = value
+    if (name == "character") then
         viewAchButton:SetScript("OnClick", function()
-            if (name == "character") then
-                UIShowTabContent("Achievements")
-            else
-                UIShowTabContent("Achievements", UnitName("target"))
-            end
+            WHC.UIShowTabContent("Achievements")
         end)
-
-
-        viewAchButton:SetScript("OnEnter", function(self)
-            GameTooltip:SetOwner(viewAchButton, "ANCHOR_CURSOR")
-            GameTooltip:SetText("View character achievements", 1, 1, 1)
-            GameTooltip:Show()
+    else
+        viewAchButton:SetScript("OnClick", function()
+            WHC.UIShowTabContent("Achievements", UnitName("target"))
         end)
+    end
 
-        viewAchButton:SetScript("OnLeave", function(self)
-            GameTooltip:Hide()
-            ResetCursor()
-        end)
+    viewAchButton:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(viewAchButton, "ANCHOR_CURSOR")
+        GameTooltip:SetText("View character achievements", 1, 1, 1)
+        GameTooltip:Show()
+    end)
 
+    viewAchButton:SetScript("OnLeave", function(self)
+        GameTooltip:Hide()
+        ResetCursor()
+    end)
 
-        if (WhcAddonSettings.achievementbtn == 1) then
-            viewAchButton:Show()
-        else
-            viewAchButton:Hide()
+    viewAchButton:Hide()
+    if (WhcAddonSettings.achievementbtn == 1) then
+        viewAchButton:Show()
+    end
+
+    return viewAchButton
+end
+
+function WHC.InitializeAchievementButtons()
+    WHC.Frames.AchievementButtonCharacter = createAchievementButton(getglobal("CharacterFrame"), "character")
+
+    local inspectUIEventListener = CreateFrame("Frame")
+    inspectUIEventListener:RegisterEvent("ADDON_LOADED")
+    inspectUIEventListener:SetScript("OnEvent", function(self, event, addonName)
+        addonName = addonName or arg1
+        if addonName ~= "Blizzard_InspectUI" then
+            return
         end
 
-        if (name == "character") then
-            ACHBtn = viewAchButton
-        else
-            ACHBtnInspect = viewAchButton
+        WHC.Frames.AchievementButtonInspect = createAchievementButton(getglobal("InspectFrame"), "inspect")
+    end)
+
+    if (RETAIL == 1) then
+        CharacterFrame:HookScript("OnHide", function(self)
+            WHC.UIShowTabContent(0)
+        end)
+    else
+        xx_CharacterFrame_OnHide = CharacterFrame_OnHide
+        function CharacterFrame_OnHide()
+            xx_CharacterFrame_OnHide()
+            WHC.UIShowTabContent(0)
         end
     end
 end
-
-
 
 local auctionHouseEvents = CreateFrame("Frame")
 auctionHouseEvents:RegisterEvent("AUCTION_HOUSE_SHOW")
@@ -292,49 +291,14 @@ mapChangeEventHandler:SetScript("OnEvent", function(self, event)
     local inInstance, instanceType = IsInInstance()
     -- message(instanceType)
     if (instanceType == "pvp") then
-        WHC_updateDeathWindow(true)
+        WHC.UpdateDeathWindow(true)
     else
-        WHC_updateDeathWindow(false)
+        WHC.UpdateDeathWindow(false)
     end
 end)
 
 
-if (RETAIL == 1) then
-    local inspectEventHandler = CreateFrame("Frame")
-    inspectEventHandler:RegisterEvent("INSPECT_READY")
-    inspectEventHandler:SetScript("OnEvent", function(self, event, arg1)
-        characterSheetWOWHCbutton(getglobal("InspectFrame"), "inspect")
-    end)
-
-    CharacterFrame:HookScript("OnShow", function(self)
-        characterSheetWOWHCbutton(getglobal("CharacterFrame"), "character")
-    end)
-    CharacterFrame:HookScript("OnHide", function(self)
-        UIShowTabContent(0)
-    end)
-else
-    xx_CharacterFrame_ShowSubFrame = CharacterFrame_ShowSubFrame
-    function CharacterFrame_ShowSubFrame(frameName)
-        xx_CharacterFrame_ShowSubFrame(frameName)
-        characterSheetWOWHCbutton(getglobal("CharacterFrame"), "character")
-    end
-
-    xx_InspectFrame_OnEvent = NotifyInspect
-    function NotifyInspect(unit)
-        xx_InspectFrame_OnEvent(unit)
-
-        characterSheetWOWHCbutton(getglobal("InspectFrame"), "inspect")
-    end
-
-    xx_CharacterFrame_OnHide = CharacterFrame_OnHide
-    function CharacterFrame_OnHide()
-        UIShowTabContent(0)
-        xx_CharacterFrame_OnHide()
-    end
-end
-
-
-function handleChatEvent(arg1)
+local function handleChatEvent(arg1)
     if strfind(string.lower(arg1), string.lower("::whc::ticket:")) then
         local result = string.gsub(arg1, "::whc::ticket:", "")
 
@@ -348,8 +312,8 @@ function handleChatEvent(arg1)
         local result = string.gsub(arg1, "::whc::achievement:", "")
 
         result = tonumber(result)
-        if (UIachievements[result]) then
-            toggleAchievement(UIachievements[result], false)
+        if (WHC.Frames.Achievements[result]) then
+            WHC.ToggleAchievement(WHC.Frames.Achievements[result], false)
         else
             -- message("error")
         end
@@ -572,10 +536,10 @@ function handleChatEvent(arg1)
     end
 end
 
-function handleMonsterChatEvent(arg1)
+local function handleMonsterChatEvent(arg1)
     if (strfind(string.lower(arg1), string.lower("has died at level"))) then
 
-        logDeathMessage(arg1)
+        WHC.LogDeathMessage(arg1)
         return 0
     else
         return 1

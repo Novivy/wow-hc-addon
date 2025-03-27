@@ -15,15 +15,18 @@ else
     RETAIL_BACKDROP = nil
 end
 
-
-
-local eventFrame1 = CreateFrame("Frame")
-eventFrame1:RegisterEvent("ADDON_LOADED")
-eventFrame1:SetScript("OnEvent", function(self, event, addonName)
+WHC = CreateFrame("Frame")
+WHC.Frames = {}
+WHC:RegisterEvent("ADDON_LOADED")
+WHC:SetScript("OnEvent", function(self, event, addonName)
     addonName = addonName or arg1
     if addonName ~= "WOW_HC" then
         return
     end
+
+    WHC.player = {
+        name = UnitName("player"),
+    }
 
     local version = GetBuildInfo()
     if (version == "1.12.0" or version == "1.12.1") then
@@ -39,18 +42,20 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
         RETAIL_BACKDROP = nil
     end
 
-    initUI()
-
+    WHC.InitializeUI()
+    WHC.InitializeMinimapIcon()
+    WHC.InitializeDeathLogFrame()
+    WHC.InitializeAchievementButtons()
 
     if (RETAIL == 1) then
         -- todo (low prio since ticket status block not displayed on retail)
     else
         StaticPopupDialogs["HELP_TICKET"].OnAccept = function()
-            UIShowTabContent("Support")
+            WHC.UIShowTabContent("Support")
         end
 
         StaticPopupDialogs["HELP_TICKET"].OnCancel = function()
-            UIShowTabContent("Support")
+            WHC.UIShowTabContent("Support")
         end
     end
 
@@ -68,19 +73,29 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
     WhcAddonSettings.blockInvites = WhcAddonSettings.blockInvites or 0
     WhcAddonSettings.blockTrades = WhcAddonSettings.blockTrades or 0
+    WhcAddonSettings.blockAuctionSell = WhcAddonSettings.blockAuctionSell or 0
+    WhcAddonSettings.blockAuctionBuy = WhcAddonSettings.blockAuctionBuy or 0
+    WhcAddonSettings.blockRepair = WhcAddonSettings.blockRepair or 0
+    WhcAddonSettings.blockTaxiService = WhcAddonSettings.blockTaxiService or 0
+    WhcAddonSettings.blockMagicItems = WhcAddonSettings.blockMagicItems or 0
+    WhcAddonSettings.blockMagicItemsTooltip = WhcAddonSettings.blockMagicItemsTooltip or 0
+    WhcAddonSettings.blockArmorItems = WhcAddonSettings.blockArmorItems or 0
+    WhcAddonSettings.blockArmorItemsTooltip = WhcAddonSettings.blockArmorItemsTooltip or 0
+    WhcAddonSettings.blockNonSelfMadeItems = WhcAddonSettings.blockNonSelfMadeItems or 0
+    WhcAddonSettings.blockNonSelfMadeItemsTooltip = WhcAddonSettings.blockNonSelfMadeItemsTooltip or 0
     WhcAddonSettings.blockMailItems = WhcAddonSettings.blockMailItems or 0
 
 
     if (WhcAddonSettings.minimapicon == 1) then
-        MapIcon:Show()
+        WHC.Frames.MapIcon:Show()
     else
-        MapIcon:Hide()
+        WHC.Frames.MapIcon:Hide()
     end
 
     if (WhcAddonSettings.recentDeaths == 1) then
-        DeathLogFrame:Show()
+        WHC.Frames.DeathLogFrame:Show()
     else
-        DeathLogFrame:Hide()
+        WHC.Frames.DeathLogFrame:Hide()
     end
 
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
@@ -93,20 +108,17 @@ eventFrame1:SetScript("OnEvent", function(self, event, addonName)
     if (WhcAddonSettings.splash == 0) then
         WhcAddonSettings.splash = 1
 
-        UIShowTabContent("General")
+        WHC.UIShowTabContent("General")
     end
 
-    if WhcAddonSettings.blockInvites == 1 then
-        Whc_SetBlockInvites()
-    end
-
-    if WhcAddonSettings.blockTrades == 1 then
-        Whc_SetBlockTrades()
-    end
-
-    if WhcAddonSettings.blockMailItems == 1 then
-        Whc_SetBlockMailItems()
-    end
-
-  --    UIShowTabContent("PVP") -- todo remove
+    WHC.SetBlockInvites()
+    WHC.SetBlockTrades()
+    WHC.SetBlockAuctionSell()
+    WHC.SetBlockAuctionBuy()
+    WHC.SetBlockRepair()
+    WHC.SetBlockTaxiService()
+    WHC.SetBlockEquipItems()
+    WHC.SetBlockEquipItems()
+    WHC.SetBlockEquipItems()
+    Whc_SetBlockMailItems()
 end)

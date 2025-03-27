@@ -1,4 +1,4 @@
-function WHC_updateDeathWindow(pvp)
+function WHC.UpdateDeathWindow(pvp)
 
     if (pvp) then
 
@@ -22,10 +22,10 @@ function WHC_updateDeathWindow(pvp)
     end
 end
 
--- WHC_updateDeathWindow(false);
+-- WHC.UpdateDeathWindow(false);
 
 
-function WHC_showDeathWindow(show)
+local function showDeathWindow(show)
     if (RETAIL == 1) then
         StaticPopupDialogs["DEATH"].OnButton2 = function(data, reason)
             if (reason == "override") then
@@ -90,7 +90,7 @@ function WHC_showDeathWindow(show)
             -- copyButton:SetScript("OnClick", function()
             --     urlEditBox:HighlightText()
             --    urlEditBox:SetFocus()
-            --    DebugPrint("URL text selected. Please use Ctrl+C to copy.")
+            --    WHC.DebugPrint("URL text selected. Please use Ctrl+C to copy.")
             --end)
 
             -- Cancel button
@@ -101,7 +101,7 @@ function WHC_showDeathWindow(show)
             cancelButton:SetText("Back")
             cancelButton:SetScript("OnClick", function()
                 urlFrame:Hide()
-                WHC_showDeathWindow(true);
+                showDeathWindow(true);
             end)
 
             -- Show the frame
@@ -171,7 +171,7 @@ function WHC_showDeathWindow(show)
                 -- copyButton:SetScript("OnClick", function()
                 --     urlEditBox:HighlightText()
                 --    urlEditBox:SetFocus()
-                --    DebugPrint("URL text selected. Please use Ctrl+C to copy.")
+                --    WHC.DebugPrint("URL text selected. Please use Ctrl+C to copy.")
                 --end)
 
                 -- Cancel button
@@ -182,7 +182,7 @@ function WHC_showDeathWindow(show)
                 cancelButton:SetText("Back")
                 cancelButton:SetScript("OnClick", function()
                     urlFrame:Hide()
-                    WHC_showDeathWindow(true);
+                    showDeathWindow(true);
                 end)
 
                 -- Show the frame
@@ -196,4 +196,4 @@ function WHC_showDeathWindow(show)
     end
 end
 
-WHC_showDeathWindow(false);
+showDeathWindow(false);
