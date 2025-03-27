@@ -608,38 +608,44 @@ end
 --region ====== Special Deliveries ======
 local specialDeliveriesLink = WHC.Achievements.SPECIAL_DELIVERIES.itemLink
 
+local isMailAllowed = function(index)
+    local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(index)
+    -- GM money is okay
+    if isGM then
+        return true
+    end
+
+    -- If the sender has a space in their name then it is a NPC
+    -- Players cannot use spaces when creating their characters
+    -- Note: This is not 100% fool proof. There might be NPCs without a space in their name
+    if sender and string.find(sender, " ") then
+        return true
+    end
+
+    return false
+end
+
+
 BlizzardFunctions.TakeInboxItem = TakeInboxItem
 BlizzardFunctions.TakeInboxMoney = TakeInboxMoney
 function WHC.SetBlockMailItems()
     TakeInboxMoney = BlizzardFunctions.TakeInboxMoney
     TakeInboxItem = BlizzardFunctions.TakeInboxItem
+
     if WhcAddonSettings.blockMailItems == 1 then
-        -- Block mail items and money
         local blockMailItemsFunc = function()
             printAchievementInfo(specialDeliveriesLink, "Taking mail items or money from another player is blocked.")
         end
-        TakeInboxMoney = function(index)
-            local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(index)
-            -- GM money is okay
-            if isGM then
-                return BlizzardFunctions.TakeInboxMoney(index)
-            end
 
-            if sender and string.find(sender, " ") then
+        TakeInboxMoney = function(index)
+            if isMailAllowed(index) then
                 return BlizzardFunctions.TakeInboxMoney(index)
             end
 
             blockMailItemsFunc()
         end
         TakeInboxItem = function(index, itemIndex)
-            local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(index)
-
-            -- GM items are okay
-            if isGM then
-                return BlizzardFunctions.TakeInboxItem(index, itemIndex)
-            end
-
-            if sender and string.find(sender, " ") then
+            if isMailAllowed(index) then
                 return BlizzardFunctions.TakeInboxItem(index, itemIndex)
             end
 
