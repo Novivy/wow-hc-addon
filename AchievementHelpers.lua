@@ -604,3 +604,58 @@ function WHC.SetBlockEquipItems()
     end
 end
 --endregion
+
+--region ====== Special Deliveries ======
+local specialDeliveriesLink = WHC.Achievements.SPECIAL_DELIVERIES.itemLink
+
+local isMailAllowed = function(index, itemIndex)
+    local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(index)
+    -- All GM items and gold allowed
+    if isGM then
+        return true
+    end
+
+    -- Plain Letter send as item can always be looted (only works on 1.14)
+    -- Making a copy of a mail works as normal
+    if GetInboxItemLink and itemIndex then
+        local itemLink = GetInboxItemLink(index, itemIndex)
+        local itemId = getItemIDFromLink(itemLink)
+        return 8383 == itemId -- Plain Letter
+    end
+
+    -- Only player mail can be replied to
+    -- Even mail that is returned back to the player can be replied to
+    -- GM and AH mail cannot be replied to
+    -- I have not tested other NPC mail as I do not have the quests
+    if canReply then
+        return false
+    end
+
+    return false
+end
+
+
+BlizzardFunctions.TakeInboxItem = TakeInboxItem
+BlizzardFunctions.TakeInboxMoney = TakeInboxMoney
+function WHC.SetBlockMailItems()
+    TakeInboxMoney = BlizzardFunctions.TakeInboxMoney
+    TakeInboxItem = BlizzardFunctions.TakeInboxItem
+
+    if WhcAddonSettings.blockMailItems == 1 then
+        TakeInboxMoney = function(index)
+            if isMailAllowed(index) then
+                return BlizzardFunctions.TakeInboxMoney(index)
+            end
+
+            printAchievementInfo(specialDeliveriesLink, "Taking money mailed from another player is blocked.")
+        end
+        TakeInboxItem = function(index, itemIndex)
+            if isMailAllowed(index, itemIndex) then
+                return BlizzardFunctions.TakeInboxItem(index, itemIndex)
+            end
+
+            printAchievementInfo(specialDeliveriesLink, "Taking items mailed from another player is blocked.")
+        end
+    end
+end
+--endregion

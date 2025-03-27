@@ -83,6 +83,8 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blockArmorItemsTooltip = WhcAddonSettings.blockArmorItemsTooltip or 0
     WhcAddonSettings.blockNonSelfMadeItems = WhcAddonSettings.blockNonSelfMadeItems or 0
     WhcAddonSettings.blockNonSelfMadeItemsTooltip = WhcAddonSettings.blockNonSelfMadeItemsTooltip or 0
+    WhcAddonSettings.blockMailItems = WhcAddonSettings.blockMailItems or 0
+
 
     if (WhcAddonSettings.minimapicon == 1) then
         WHC.Frames.MapIcon:Show()
@@ -118,4 +120,5 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.SetBlockEquipItems()
     WHC.SetBlockEquipItems()
     WHC.SetBlockEquipItems()
+    WHC.SetBlockMailItems()
 end)

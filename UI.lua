@@ -75,6 +75,7 @@ function WHC.UIShowTabContent(tabIndex, arg1)
             WHC_SETTINGS.blockMagicItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItems))
             WHC_SETTINGS.blockArmorItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItems))
             WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItems))
+            WHC_SETTINGS.blockMailItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMailItems))
         elseif (tabIndex == "General") then
             --
         end
