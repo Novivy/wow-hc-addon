@@ -252,7 +252,7 @@ function WHC.Tab_Settings(content)
         playCheckedSound(WhcAddonSettings.blockNonSelfMadeItemsTooltip)
     end)
 
-    WHC_SETTINGS.blockMailItemsCheckbox = createSettingsCheckBox(content, "[Special Deliveries] Achievement: Block mail items and money")
+    WHC_SETTINGS.blockMailItemsCheckbox = createSettingsCheckBox(scrollContent, "[Special Deliveries] Achievement: Block mail items and money")
     WHC_SETTINGS.blockMailItemsCheckbox:SetScript("OnClick", function(self)
         WhcAddonSettings.blockMailItems = math.abs(WhcAddonSettings.blockMailItems - 1)
         playCheckedSound(WhcAddonSettings.blockMailItems)
