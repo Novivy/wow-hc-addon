@@ -608,7 +608,7 @@ end
 --region ====== Special Deliveries ======
 local specialDeliveriesLink = WHC.Achievements.SPECIAL_DELIVERIES.itemLink
 
-local isMailAllowed = function(index)
+local isMailAllowed = function(index, itemIndex)
     local packageIcon, stationeryIcon, sender, subject, money, CODAmount, daysLeft, hasItem, wasRead, wasReturned, textCreated, canReply, isGM = GetInboxHeaderInfo(index)
     -- GM money is okay
     if isGM then
@@ -617,9 +617,18 @@ local isMailAllowed = function(index)
 
     -- If the sender has a space in their name then it is a NPC
     -- Players cannot use spaces when creating their characters
-    -- Note: This is not 100% fool proof. There might be NPCs without a space in their name
+    -- Note: This is not 100% fool proof. There might be NPCs without a space in their name / a last name.
     if sender and string.find(sender, " ") then
         return true
+    end
+
+    -- GetInboxItemLink only exists on 1.14
+    -- Making a copy of a mail works out of the box
+    -- This is only if a player actually sends the "Plain Letter" item to another player
+    if GetInboxItemLink and itemIndex then
+        local itemLink = GetInboxItemLink(index, itemIndex)
+        local itemId = getItemIDFromLink(itemLink)
+        return 8383 == itemId -- Plain Letter
     end
 
     return false
@@ -645,7 +654,7 @@ function WHC.SetBlockMailItems()
             blockMailItemsFunc()
         end
         TakeInboxItem = function(index, itemIndex)
-            if isMailAllowed(index) then
+            if isMailAllowed(index, itemIndex) then
                 return BlizzardFunctions.TakeInboxItem(index, itemIndex)
             end
 
