@@ -606,10 +606,11 @@ end
 --endregion
 
 --region ====== Special Deliveries ======
+local specialDeliveriesLink = WHC.Achievements.SPECIAL_DELIVERIES.itemLink
+
 BlizzardFunctions.TakeInboxItem = TakeInboxItem
 BlizzardFunctions.TakeInboxMoney = TakeInboxMoney
-local specialDeliveriesLink = achievementLink(TabAchievements[ACHIEVEMENT_SPECIAL_DELIVERIES])
-function Whc_SetBlockMailItems()
+function WHC.SetBlockMailItems()
     TakeInboxMoney = BlizzardFunctions.TakeInboxMoney
     TakeInboxItem = BlizzardFunctions.TakeInboxItem
     if WhcAddonSettings.blockMailItems == 1 then
