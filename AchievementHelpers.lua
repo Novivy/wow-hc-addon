@@ -615,20 +615,20 @@ local isMailAllowed = function(index, itemIndex)
         return true
     end
 
+    -- Mail from NPCs, AH and GM cannot be replied to and can be looted
+    -- Only player mail can be replied to
+    -- Even mail that is returned back to the player can be replied to
+    local isNPC = not canReply
+    if isNPC then
+        return true
+    end
+
     -- Plain Letter send as item can always be looted (only works on 1.14)
     -- Making a copy of a mail works as normal
     if GetInboxItemLink and itemIndex then
         local itemLink = GetInboxItemLink(index, itemIndex)
         local itemId = getItemIDFromLink(itemLink)
         return 8383 == itemId -- Plain Letter
-    end
-
-    -- Only player mail can be replied to
-    -- Even mail that is returned back to the player can be replied to
-    -- GM and AH mail cannot be replied to
-    -- I have not tested other NPC mail as I do not have the quests
-    if canReply then
-        return false
     end
 
     return false
