@@ -6,6 +6,7 @@
 
 
 ## Future versions:
+- Prevent/disable auto-run when you are on a flypath
 - /world join after a few seconds to prevent replacing general
 - settings checkbox to allow /creature say to only display death announcements
 - settings checkbox block trades
