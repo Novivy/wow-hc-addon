@@ -390,7 +390,7 @@ local function handleChatEvent(arg1)
             -- Create the URL frame
             local urlFrame = CreateFrame("Frame", "URLFrameUpdate", UIParent, RETAIL_BACKDROP)
             urlFrame:SetWidth(300)
-            urlFrame:SetHeight(160)
+            urlFrame:SetHeight(210)
             urlFrame:SetPoint("TOP", UIParent, "TOP", 0, -154)
             urlFrame:SetBackdrop({
                 bgFile = "Interface/RaidFrame/UI-RaidFrame-GroupBg",
@@ -408,7 +408,7 @@ local function handleChatEvent(arg1)
             local title = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             title:SetPoint("TOP", urlFrame, "TOP", 0, -20)
             title:SetText(
-                "The WOW-HC addon is out of date. Please update it to continue playing on this realm\n\nCopy and paste the following URL to your browser:")
+                "|cffff8000WOW-HC addon|r is out of date.\n\nPlease update it to keep things running smoothly.\n\nCopy and paste this URL\ninto your browser:")
             title:SetWidth(220)
 
             -- URL input box
@@ -428,6 +428,14 @@ local function handleChatEvent(arg1)
                 urlEditBox:SetFocus()
             end)
 
+            local closeButton = CreateFrame("Button", "CloseButton", urlFrame, "UIPanelButtonGrayTemplate")
+            closeButton:SetWidth(100)
+            closeButton:SetHeight(30)
+            closeButton:SetPoint("BOTTOMLEFT", urlFrame, "BOTTOMLEFT", 100, 24)
+            closeButton:SetText("Close")
+            closeButton:SetScript("OnClick", function()
+                WHC_ALERT_UPDATE:Hide()
+            end)
 
             urlFrame:Show()
             WHC_ALERT_UPDATE = urlFrame

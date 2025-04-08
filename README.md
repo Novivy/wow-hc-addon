@@ -1,6 +1,8 @@
 
 ## Changelog for next update
 
+- TODO changelog from Windcaller.
+- Popup box displayed when your addon is out of date. You can also now dismiss this alert in the last version of the addon if you do not wish to update it right away (previous version will prevent you from playing)
 
 - todo: Update clients on website
 
