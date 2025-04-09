@@ -20,7 +20,6 @@
 - Prevent/disable auto-run when you are on a flypath
 - /world join after a few seconds to prevent replacing general
 - settings checkbox to allow /creature say to only display death announcements
-
 - press ESC to close addon
 - Deathlog (beta version done)
 - account Family name (needs to be specified)
