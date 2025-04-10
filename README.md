@@ -1,7 +1,16 @@
 
 ## Changelog for next update
 
-- TODO changelog from Windcaller.
+- Settings checkbox for Grounded achievement, blocking Flight paths
+- Settings checkbox for Iron Bones achievement, blocking repairs
+- Settings checkbox for Killer Trader achievement, blocking selling items on the Auction house
+- Settings checkbox for Lone Wold achievement, blocking group invites
+- Settings checkbox for Mister White achievement, blocking equipping non white items
+- Settings checkbox for My Precious! achievement, blocking trading with other players
+- Settings checkbox for Only Fan achievement, blocking equipping armor and rings
+- Settings checkbox for Self Made achievement, blocking equipping items you did not craft
+- Settings checkbox for Special Deliveries achievement, blocking taking items and money from mail
+- Settings checkbox for Time is Money achievement, blocking buying items from the Auction house
 - Popup box displayed when your addon is out of date. You can also now dismiss this alert in the last version of the addon if you do not wish to update it right away (previous version will prevent you from playing)
 
 - todo: Update clients on website
@@ -11,9 +20,6 @@
 - Prevent/disable auto-run when you are on a flypath
 - /world join after a few seconds to prevent replacing general
 - settings checkbox to allow /creature say to only display death announcements
-- settings checkbox block trades
-- settings checkbox block repairs
-- settings checkbox block items loot from mails
 - press ESC to close addon
 - Deathlog (beta version done)
 - account Family name (needs to be specified)
