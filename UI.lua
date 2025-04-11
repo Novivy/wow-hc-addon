@@ -72,13 +72,15 @@ function WHC.UIShowTabContent(tabIndex, arg1)
             WHC_SETTINGS.blockAuctionBuyCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockAuctionBuy))
             WHC_SETTINGS.blockRepairCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockRepair))
             WHC_SETTINGS.blockTaxiServiceCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockTaxiService))
-            WHC_SETTINGS.blockMagicItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItems))
-            WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItemsTooltip))
-            WHC_SETTINGS.blockArmorItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItems))
-            WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItemsTooltip))
-            WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItems))
-            WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItemsTooltip))
             WHC_SETTINGS.blockMailItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMailItems))
+            if RETAIL == 0 then
+                WHC_SETTINGS.blockMagicItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItems))
+                WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItemsTooltip))
+                WHC_SETTINGS.blockArmorItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItems))
+                WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItemsTooltip))
+                WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItems))
+                WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItemsTooltip))
+            end
         elseif (tabIndex == "General") then
             --
         end

@@ -178,25 +178,27 @@ function WHC.Tab_Settings(content)
         WHC.SetBlockInvites()
     end)
 
-    WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, "[Mister White] Achievement: Block equipping magic items")
-    WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockMagicItems = math.abs(WhcAddonSettings.blockMagicItems - 1)
-        playCheckedSound(WhcAddonSettings.blockMagicItems)
+    if RETAIL == 0 then
+        WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, "[Mister White] Achievement: Block equipping magic items")
+        WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function(self)
+            WhcAddonSettings.blockMagicItems = math.abs(WhcAddonSettings.blockMagicItems - 1)
+            playCheckedSound(WhcAddonSettings.blockMagicItems)
+            WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockMagicItems)
+            if WhcAddonSettings.blockMagicItems == 0 then
+                WhcAddonSettings.blockMagicItemsTooltip = 0
+                WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItemsTooltip))
+            end
+
+            WHC.SetBlockEquipItems()
+        end)
+
+        WHC_SETTINGS.blockMagicItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
         WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockMagicItems)
-        if WhcAddonSettings.blockMagicItems == 0 then
-            WhcAddonSettings.blockMagicItemsTooltip = 0
-            WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItemsTooltip))
-        end
-
-        WHC.SetBlockEquipItems()
-    end)
-
-    WHC_SETTINGS.blockMagicItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
-    WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockMagicItems)
-    WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockMagicItemsTooltip = math.abs(WhcAddonSettings.blockMagicItemsTooltip - 1)
-        playCheckedSound(WhcAddonSettings.blockMagicItemsTooltip)
-    end)
+        WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetScript("OnClick", function(self)
+            WhcAddonSettings.blockMagicItemsTooltip = math.abs(WhcAddonSettings.blockMagicItemsTooltip - 1)
+            playCheckedSound(WhcAddonSettings.blockMagicItemsTooltip)
+        end)
+    end
 
     WHC_SETTINGS.blockTradesCheckbox = createSettingsCheckBox(scrollContent, "[My Precious!] Achievement: Block trades")
     WHC_SETTINGS.blockTradesCheckbox:SetScript("OnClick", function(self)
@@ -205,45 +207,47 @@ function WHC.Tab_Settings(content)
         WHC.SetBlockTrades()
     end)
 
-    WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(scrollContent, "[Only Fan] Achievement: Block equipping armor items")
-    WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockArmorItems = math.abs(WhcAddonSettings.blockArmorItems - 1)
-        playCheckedSound(WhcAddonSettings.blockArmorItems)
+    if RETAIL == 0 then
+        WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(scrollContent, "[Only Fan] Achievement: Block equipping armor items")
+        WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function(self)
+            WhcAddonSettings.blockArmorItems = math.abs(WhcAddonSettings.blockArmorItems - 1)
+            playCheckedSound(WhcAddonSettings.blockArmorItems)
+            WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockArmorItems)
+            if WhcAddonSettings.blockArmorItems == 0 then
+                WhcAddonSettings.blockArmorItemsTooltip = 0
+                WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItemsTooltip))
+            end
+
+            WHC.SetBlockEquipItems()
+        end)
+
+        WHC_SETTINGS.blockArmorItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
         WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockArmorItems)
-        if WhcAddonSettings.blockArmorItems == 0 then
-            WhcAddonSettings.blockArmorItemsTooltip = 0
-            WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItemsTooltip))
-        end
+        WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetScript("OnClick", function(self)
+            WhcAddonSettings.blockArmorItemsTooltip = math.abs(WhcAddonSettings.blockArmorItemsTooltip - 1)
+            playCheckedSound(WhcAddonSettings.blockArmorItemsTooltip)
+        end)
 
-        WHC.SetBlockEquipItems()
-    end)
+        WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, "[Self-made] Achievement: Block equipping items you did not craft")
+        WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function(self)
+            WhcAddonSettings.blockNonSelfMadeItems = math.abs(WhcAddonSettings.blockNonSelfMadeItems - 1)
+            playCheckedSound(WhcAddonSettings.blockNonSelfMadeItems)
+            WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockNonSelfMadeItems)
+            if WhcAddonSettings.blockNonSelfMadeItems == 0 then
+                WhcAddonSettings.blockNonSelfMadeItemsTooltip = 0
+                WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItemsTooltip))
+            end
 
-    WHC_SETTINGS.blockArmorItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
-    WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockArmorItems)
-    WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockArmorItemsTooltip = math.abs(WhcAddonSettings.blockArmorItemsTooltip - 1)
-        playCheckedSound(WhcAddonSettings.blockArmorItemsTooltip)
-    end)
+            WHC.SetBlockEquipItems()
+        end)
 
-    WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, "[Self-made] Achievement: Block equipping items you did not craft")
-    WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockNonSelfMadeItems = math.abs(WhcAddonSettings.blockNonSelfMadeItems - 1)
-        playCheckedSound(WhcAddonSettings.blockNonSelfMadeItems)
+        WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
         WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockNonSelfMadeItems)
-        if WhcAddonSettings.blockNonSelfMadeItems == 0 then
-            WhcAddonSettings.blockNonSelfMadeItemsTooltip = 0
-            WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItemsTooltip))
-        end
-
-        WHC.SetBlockEquipItems()
-    end)
-
-    WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
-    WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockNonSelfMadeItems)
-    WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockNonSelfMadeItemsTooltip = math.abs(WhcAddonSettings.blockNonSelfMadeItemsTooltip - 1)
-        playCheckedSound(WhcAddonSettings.blockNonSelfMadeItemsTooltip)
-    end)
+        WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetScript("OnClick", function(self)
+            WhcAddonSettings.blockNonSelfMadeItemsTooltip = math.abs(WhcAddonSettings.blockNonSelfMadeItemsTooltip - 1)
+            playCheckedSound(WhcAddonSettings.blockNonSelfMadeItemsTooltip)
+        end)
+    end
 
     WHC_SETTINGS.blockMailItemsCheckbox = createSettingsCheckBox(scrollContent, "[Special Deliveries] Achievement: Block mail items and money")
     WHC_SETTINGS.blockMailItemsCheckbox:SetScript("OnClick", function(self)

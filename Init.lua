@@ -117,8 +117,8 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.SetBlockAuctionBuy()
     WHC.SetBlockRepair()
     WHC.SetBlockTaxiService()
-    WHC.SetBlockEquipItems()
-    WHC.SetBlockEquipItems()
-    WHC.SetBlockEquipItems()
     WHC.SetBlockMailItems()
+    if RETAIL == 0 then
+        WHC.SetBlockEquipItems()
+    end
 end)
