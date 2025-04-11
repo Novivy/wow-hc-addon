@@ -152,114 +152,114 @@ function WHC.Tab_Settings(content)
 
     WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsCheckBox(scrollContent, "[Grounded] Achievement: Block flying service")
     WHC_SETTINGS.blockTaxiServiceCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockTaxiService = math.abs(WhcAddonSettings.blockTaxiService - 1)
-        playCheckedSound(WhcAddonSettings.blockTaxiService)
+        WhcAchievementSettings.blockTaxiService = math.abs(WhcAchievementSettings.blockTaxiService - 1)
+        playCheckedSound(WhcAchievementSettings.blockTaxiService)
         WHC.SetBlockTaxiService()
     end)
 
     WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(scrollContent, "[Iron Bones] Achievement: Block repairing items")
     WHC_SETTINGS.blockRepairCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockRepair = math.abs(WhcAddonSettings.blockRepair - 1)
-        playCheckedSound(WhcAddonSettings.blockRepair)
+        WhcAchievementSettings.blockRepair = math.abs(WhcAchievementSettings.blockRepair - 1)
+        playCheckedSound(WhcAchievementSettings.blockRepair)
         WHC.SetBlockRepair()
     end)
 
     WHC_SETTINGS.blockAuctionSellCheckbox = createSettingsCheckBox(scrollContent, "[Killer Trader] Achievement: Block auction house selling")
     WHC_SETTINGS.blockAuctionSellCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockAuctionSell = math.abs(WhcAddonSettings.blockAuctionSell - 1)
-        playCheckedSound(WhcAddonSettings.blockAuctionSell)
+        WhcAchievementSettings.blockAuctionSell = math.abs(WhcAchievementSettings.blockAuctionSell - 1)
+        playCheckedSound(WhcAchievementSettings.blockAuctionSell)
         WHC.SetBlockAuctionSell()
     end)
 
     WHC_SETTINGS.blockInvitesCheckbox = createSettingsCheckBox(scrollContent, "[Lone Wolf] Achievement: Block invites")
     WHC_SETTINGS.blockInvitesCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockInvites = math.abs(WhcAddonSettings.blockInvites - 1)
-        playCheckedSound(WhcAddonSettings.blockInvites)
+        WhcAchievementSettings.blockInvites = math.abs(WhcAchievementSettings.blockInvites - 1)
+        playCheckedSound(WhcAchievementSettings.blockInvites)
         WHC.SetBlockInvites()
     end)
 
     if RETAIL == 0 then
         WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, "[Mister White] Achievement: Block equipping magic items")
         WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function(self)
-            WhcAddonSettings.blockMagicItems = math.abs(WhcAddonSettings.blockMagicItems - 1)
-            playCheckedSound(WhcAddonSettings.blockMagicItems)
-            WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockMagicItems)
-            if WhcAddonSettings.blockMagicItems == 0 then
-                WhcAddonSettings.blockMagicItemsTooltip = 0
-                WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockMagicItemsTooltip))
+            WhcAchievementSettings.blockMagicItems = math.abs(WhcAchievementSettings.blockMagicItems - 1)
+            playCheckedSound(WhcAchievementSettings.blockMagicItems)
+            WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockMagicItems)
+            if WhcAchievementSettings.blockMagicItems == 0 then
+                WhcAchievementSettings.blockMagicItemsTooltip = 0
+                WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMagicItemsTooltip))
             end
 
             WHC.SetBlockEquipItems()
         end)
 
         WHC_SETTINGS.blockMagicItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
-        WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockMagicItems)
+        WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockMagicItems)
         WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetScript("OnClick", function(self)
-            WhcAddonSettings.blockMagicItemsTooltip = math.abs(WhcAddonSettings.blockMagicItemsTooltip - 1)
-            playCheckedSound(WhcAddonSettings.blockMagicItemsTooltip)
+            WhcAchievementSettings.blockMagicItemsTooltip = math.abs(WhcAchievementSettings.blockMagicItemsTooltip - 1)
+            playCheckedSound(WhcAchievementSettings.blockMagicItemsTooltip)
         end)
     end
 
     WHC_SETTINGS.blockTradesCheckbox = createSettingsCheckBox(scrollContent, "[My Precious!] Achievement: Block trades")
     WHC_SETTINGS.blockTradesCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockTrades = math.abs(WhcAddonSettings.blockTrades - 1)
-        playCheckedSound(WhcAddonSettings.blockTrades)
+        WhcAchievementSettings.blockTrades = math.abs(WhcAchievementSettings.blockTrades - 1)
+        playCheckedSound(WhcAchievementSettings.blockTrades)
         WHC.SetBlockTrades()
     end)
 
     if RETAIL == 0 then
         WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(scrollContent, "[Only Fan] Achievement: Block equipping armor items")
         WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function(self)
-            WhcAddonSettings.blockArmorItems = math.abs(WhcAddonSettings.blockArmorItems - 1)
-            playCheckedSound(WhcAddonSettings.blockArmorItems)
-            WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockArmorItems)
-            if WhcAddonSettings.blockArmorItems == 0 then
-                WhcAddonSettings.blockArmorItemsTooltip = 0
-                WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockArmorItemsTooltip))
+            WhcAchievementSettings.blockArmorItems = math.abs(WhcAchievementSettings.blockArmorItems - 1)
+            playCheckedSound(WhcAchievementSettings.blockArmorItems)
+            WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockArmorItems)
+            if WhcAchievementSettings.blockArmorItems == 0 then
+                WhcAchievementSettings.blockArmorItemsTooltip = 0
+                WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockArmorItemsTooltip))
             end
 
             WHC.SetBlockEquipItems()
         end)
 
         WHC_SETTINGS.blockArmorItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
-        WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockArmorItems)
+        WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockArmorItems)
         WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetScript("OnClick", function(self)
-            WhcAddonSettings.blockArmorItemsTooltip = math.abs(WhcAddonSettings.blockArmorItemsTooltip - 1)
-            playCheckedSound(WhcAddonSettings.blockArmorItemsTooltip)
+            WhcAchievementSettings.blockArmorItemsTooltip = math.abs(WhcAchievementSettings.blockArmorItemsTooltip - 1)
+            playCheckedSound(WhcAchievementSettings.blockArmorItemsTooltip)
         end)
 
         WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, "[Self-made] Achievement: Block equipping items you did not craft")
         WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function(self)
-            WhcAddonSettings.blockNonSelfMadeItems = math.abs(WhcAddonSettings.blockNonSelfMadeItems - 1)
-            playCheckedSound(WhcAddonSettings.blockNonSelfMadeItems)
-            WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockNonSelfMadeItems)
-            if WhcAddonSettings.blockNonSelfMadeItems == 0 then
-                WhcAddonSettings.blockNonSelfMadeItemsTooltip = 0
-                WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAddonSettings.blockNonSelfMadeItemsTooltip))
+            WhcAchievementSettings.blockNonSelfMadeItems = math.abs(WhcAchievementSettings.blockNonSelfMadeItems - 1)
+            playCheckedSound(WhcAchievementSettings.blockNonSelfMadeItems)
+            WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockNonSelfMadeItems)
+            if WhcAchievementSettings.blockNonSelfMadeItems == 0 then
+                WhcAchievementSettings.blockNonSelfMadeItemsTooltip = 0
+                WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockNonSelfMadeItemsTooltip))
             end
 
             WHC.SetBlockEquipItems()
         end)
 
         WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
-        WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAddonSettings.blockNonSelfMadeItems)
+        WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockNonSelfMadeItems)
         WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetScript("OnClick", function(self)
-            WhcAddonSettings.blockNonSelfMadeItemsTooltip = math.abs(WhcAddonSettings.blockNonSelfMadeItemsTooltip - 1)
-            playCheckedSound(WhcAddonSettings.blockNonSelfMadeItemsTooltip)
+            WhcAchievementSettings.blockNonSelfMadeItemsTooltip = math.abs(WhcAchievementSettings.blockNonSelfMadeItemsTooltip - 1)
+            playCheckedSound(WhcAchievementSettings.blockNonSelfMadeItemsTooltip)
         end)
     end
 
     WHC_SETTINGS.blockMailItemsCheckbox = createSettingsCheckBox(scrollContent, "[Special Deliveries] Achievement: Block mail items and money")
     WHC_SETTINGS.blockMailItemsCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockMailItems = math.abs(WhcAddonSettings.blockMailItems - 1)
-        playCheckedSound(WhcAddonSettings.blockMailItems)
+        WhcAchievementSettings.blockMailItems = math.abs(WhcAchievementSettings.blockMailItems - 1)
+        playCheckedSound(WhcAchievementSettings.blockMailItems)
         WHC.SetBlockMailItems()
     end)
 
     WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(scrollContent, "[Time is Money] Achievement: Block auction house buying")
     WHC_SETTINGS.blockAuctionBuyCheckbox:SetScript("OnClick", function(self)
-        WhcAddonSettings.blockAuctionBuy = math.abs(WhcAddonSettings.blockAuctionBuy - 1)
-        playCheckedSound(WhcAddonSettings.blockAuctionBuy)
+        WhcAchievementSettings.blockAuctionBuy = math.abs(WhcAchievementSettings.blockAuctionBuy - 1)
+        playCheckedSound(WhcAchievementSettings.blockAuctionBuy)
         WHC.SetBlockAuctionBuy()
     end)
 
