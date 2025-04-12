@@ -42,11 +42,11 @@ hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, n
     for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
         local button = _G["DropDownList1Button" .. i]
         if button then
-            if button.value == "INVITE" and WhcAddonSettings.blockInvites == 1 then
+            if button.value == "INVITE" and WhcAchievementSettings.blockInvites == 1 then
                 button:Disable()
             end
 
-            if button.value == "TRADE" and WhcAddonSettings.blockTrades == 1 then
+            if button.value == "TRADE" and WhcAchievementSettings.blockTrades == 1 then
                 button:Disable()
             end
         end
@@ -58,21 +58,21 @@ local loneWolfLink = WHC.Achievements.LONE_WOLF.itemLink
 
 -- Disables friend list "Group Invite" button
 hooksecurefunc("FriendsList_Update", function()
-    if WhcAddonSettings.blockInvites == 1 and FriendsFrameGroupInviteButton then
+    if WhcAchievementSettings.blockInvites == 1 and FriendsFrameGroupInviteButton then
         FriendsFrameGroupInviteButton:Disable()
     end
 end)
 
 -- Disables who "Group Invite" button
 hooksecurefunc("WhoList_Update", function()
-    if WhcAddonSettings.blockInvites == 1 and WhoFrameGroupInviteButton then
+    if WhcAchievementSettings.blockInvites == 1 and WhoFrameGroupInviteButton then
         WhoFrameGroupInviteButton:Disable()
     end
 end)
 
 -- Disables guild details "Group Invite" button
 hooksecurefunc("GuildStatus_Update", function()
-    if WhcAddonSettings.blockInvites == 1 and GuildMemberGroupInviteButton then
+    if WhcAchievementSettings.blockInvites == 1 and GuildMemberGroupInviteButton then
         GuildMemberGroupInviteButton:Disable()
     end
 end)
@@ -98,7 +98,7 @@ function WHC.SetBlockInvites()
     InviteByName = BlizzardFunctions.InviteByName
     InviteToParty = BlizzardFunctions.InviteToParty
 
-    if WhcAddonSettings.blockInvites == 1 then
+    if WhcAchievementSettings.blockInvites == 1 then
         -- Blocks incoming invites
         inviteEventHandler:RegisterEvent("PARTY_INVITE_REQUEST")
         -- Blocks addons like LazyPig from auto accepting invites
@@ -123,8 +123,8 @@ function WHC.SetBlockTrades()
     InitiateTrade = BlizzardFunctions.InitiateTrade
 
     -- Block incoming trade via Blizzard interface checkbox
-    SetCVar("blockTrades", WhcAddonSettings.blockTrades)
-    if WhcAddonSettings.blockTrades == 1 then
+    SetCVar("blockTrades", WhcAchievementSettings.blockTrades)
+    if WhcAchievementSettings.blockTrades == 1 then
         -- Block outgoing trade
         InitiateTrade = function()
             printAchievementInfo(myPreciousLink, "Trade requests are blocked.")
@@ -146,7 +146,7 @@ killerTraderEventListener:SetScript("OnEvent", function(self, event, addonName)
     end
 
     local blockAuctionSell = function()
-        if WhcAddonSettings.blockAuctionSell == 1 and AuctionsCreateAuctionButton then
+        if WhcAchievementSettings.blockAuctionSell == 1 and AuctionsCreateAuctionButton then
             AuctionsCreateAuctionButton:Disable()
         end
     end
@@ -161,7 +161,7 @@ function WHC.SetBlockAuctionSell()
     PostAuction  = BlizzardFunctions.PostAuction
     StartAuction = BlizzardFunctions.StartAuction
 
-    if WhcAddonSettings.blockAuctionSell == 1 then
+    if WhcAchievementSettings.blockAuctionSell == 1 then
         local blockAuctionSell = function()
             printAchievementInfo(killerTraderLink, "Selling items on the auction house is blocked.")
         end
@@ -183,7 +183,7 @@ timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
     end
 
     hooksecurefunc("AuctionFrameBrowse_Update", function()
-        if WhcAddonSettings.blockAuctionBuy == 1 then
+        if WhcAchievementSettings.blockAuctionBuy == 1 then
             if BrowseBidButton then
                 BrowseBidButton:Disable()
             end
@@ -194,7 +194,7 @@ timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
     end)
 
     hooksecurefunc("AuctionFrameBid_Update", function()
-        if WhcAddonSettings.blockAuctionBuy == 1 then
+        if WhcAchievementSettings.blockAuctionBuy == 1 then
             if BidBidButton then
                 BidBidButton:Disable()
             end
@@ -209,7 +209,7 @@ BlizzardFunctions.PlaceAuctionBid = PlaceAuctionBid
 function WHC.SetBlockAuctionBuy()
     PlaceAuctionBid = BlizzardFunctions.PlaceAuctionBid
 
-    if WhcAddonSettings.blockAuctionBuy == 1 then
+    if WhcAchievementSettings.blockAuctionBuy == 1 then
         -- Block outgoing trade
         PlaceAuctionBid = function()
             printAchievementInfo(timeIsMoneyLink, "Buying items from the auction house is blocked.")
@@ -230,7 +230,7 @@ local disableRepairButtons = function()
         MerchantRepairItemButton:Enable()
     end
 
-    if WhcAddonSettings.blockRepair == 1 then
+    if WhcAchievementSettings.blockRepair == 1 then
         if MerchantRepairItemButton and repairItemIcon then
             SetDesaturation(repairItemIcon, 1)
             MerchantRepairItemButton:Disable()
@@ -251,7 +251,7 @@ function WHC.SetBlockRepair()
     RepairAllItems = BlizzardFunctions.RepairAllItems
     ShowRepairCursor = BlizzardFunctions.ShowRepairCursor
 
-    if WhcAddonSettings.blockRepair == 1 then
+    if WhcAchievementSettings.blockRepair == 1 then
         local blockRepair = function()
             printAchievementInfo(ironBonesLink, "Repairing items are blocked.")
         end
@@ -276,7 +276,7 @@ function WHC.SetBlockTaxiService()
     taxiServiceEventHandler:UnregisterEvent("TAXIMAP_OPENED")
     TakeTaxiNode = BlizzardFunctions.TakeTaxiNode
 
-    if WhcAddonSettings.blockTaxiService == 1 then
+    if WhcAchievementSettings.blockTaxiService == 1 then
         -- block user from opening the taxi map
         taxiServiceEventHandler:RegisterEvent("TAXIMAP_OPENED")
         -- Block addons from taking flights
@@ -385,16 +385,16 @@ local function setTooltipInfo(itemLink)
         return
     end
 
-    if WhcAddonSettings.blockMagicItemsTooltip == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
+    if WhcAchievementSettings.blockMagicItemsTooltip == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
         local msg = "Cannot equip ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items>"
         GameTooltip:AddLine("<Mister White: "..msg, 1, 0, 0)
     end
 
-    if WhcAddonSettings.blockArmorItemsTooltip == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+    if WhcAchievementSettings.blockArmorItemsTooltip == 1 and not onlyFanAllowedItems[itemEquipLoc] then
         GameTooltip:AddLine("<Only Fan: Cannot equip armor items>", 1, 0, 0)
     end
 
-    if WhcAddonSettings.blockNonSelfMadeItemsTooltip == 1 and not isSelfMade(itemSubType, itemEquipLoc) then
+    if WhcAchievementSettings.blockNonSelfMadeItemsTooltip == 1 and not isSelfMade(itemSubType, itemEquipLoc) then
         GameTooltip:AddLine("<Self-made: Cannot equip items you did not craft>", 1, 0, 0)
     end
 
@@ -419,11 +419,11 @@ hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
             return
         end
 
-        if WhcAddonSettings.blockArmorItemsTooltip == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+        if WhcAchievementSettings.blockArmorItemsTooltip == 1 and not onlyFanAllowedItems[itemEquipLoc] then
             GameTooltip:AddLine("<Only Fan: Unequipping this item will block you from equipping it again>", 1, 0, 0)
         end
 
-        if WhcAddonSettings.blockNonSelfMadeItemsTooltip == 1 and not isSelfMade(itemSubType, itemEquipLoc) then
+        if WhcAchievementSettings.blockNonSelfMadeItemsTooltip == 1 and not isSelfMade(itemSubType, itemEquipLoc) then
             GameTooltip:AddLine("<Self-made: Unequipping this item will block you from equipping it again>", 1, 0, 0)
         end
 
@@ -464,16 +464,16 @@ local function canEquipItem(itemLink)
         return
     end
 
-    if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
+    if WhcAchievementSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
         local msg = "Equipping ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items are blocked."
         table.insert(errorMessages, achievementErrorMessage(misterWhiteLink, msg))
     end
 
-    if WhcAddonSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+    if WhcAchievementSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
         table.insert(errorMessages, achievementErrorMessage(onlyFanLink, "Equipping armor items are blocked."))
     end
 
-    if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and
+    if WhcAchievementSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and
             not selfMadeAllowedItems[itemSubType] and not selfMadeAllowedItems[itemEquipLoc] then
         table.insert(errorMessages, achievementErrorMessage(selfMadeLink, "Equipping items you did not craft are blocked."))
     end
@@ -509,7 +509,7 @@ function WHC.SetBlockEquipItems()
     PickupMerchantItem  = BlizzardFunctions.PickupMerchantItem
     UseContainerItem    = BlizzardFunctions.UseContainerItem
 
-    if WhcAddonSettings.blockMagicItems == 1 or WhcAddonSettings.blockArmorItems == 1 or WhcAddonSettings.blockNonSelfMadeItems == 1 then
+    if WhcAchievementSettings.blockMagicItems == 1 or WhcAchievementSettings.blockArmorItems == 1 or WhcAchievementSettings.blockNonSelfMadeItems == 1 then
         -- Block right-click equip
         UseContainerItem = function(bagId, slot, onSelf)
             if BankFrame:IsVisible() or MerchantFrame:IsVisible() then
@@ -543,16 +543,16 @@ function WHC.SetBlockEquipItems()
                 return BlizzardFunctions.PickupMerchantItem(index)
             end
 
-            if WhcAddonSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
+            if WhcAchievementSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
                 local msg = "Buying ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." equipment must be done using right-click."
                 printAchievementInfo(misterWhiteLink, msg)
             end
 
-            if WhcAddonSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
+            if WhcAchievementSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
                 printAchievementInfo(onlyFanLink, "Buying armor must be done using right-click.")
             end
 
-            if WhcAddonSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and not selfMadeAllowedItems[itemSubType] and not selfMadeAllowedItems[itemEquipLoc] then
+            if WhcAchievementSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and not selfMadeAllowedItems[itemSubType] and not selfMadeAllowedItems[itemEquipLoc] then
                 printAchievementInfo(selfMadeLink, "Buying equipment you did not craft must be done using right-click,")
             end
         end
@@ -641,7 +641,7 @@ function WHC.SetBlockMailItems()
     TakeInboxMoney = BlizzardFunctions.TakeInboxMoney
     TakeInboxItem = BlizzardFunctions.TakeInboxItem
 
-    if WhcAddonSettings.blockMailItems == 1 then
+    if WhcAchievementSettings.blockMailItems == 1 then
         TakeInboxMoney = function(index)
             if isMailAllowed(index) then
                 return BlizzardFunctions.TakeInboxMoney(index)

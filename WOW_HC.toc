@@ -4,6 +4,7 @@
 ## Author: Nyu, DBFBlackbull(Windcaller)
 ## Version: 1.0
 ## SavedVariables: WhcAddonSettings
+## SavedVariablesPerCharacter: WhcAchievementSettings
 
 Init.lua
 Tabs\Settings.lua

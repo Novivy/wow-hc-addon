@@ -42,6 +42,34 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         RETAIL_BACKDROP = nil
     end
 
+    WhcAddonSettings = WhcAddonSettings or {}
+    -- Ensure the specific setting exists and has a default value
+    WhcAddonSettings.minimapicon = WhcAddonSettings.minimapicon or 1
+    WhcAddonSettings.achievementbtn = WhcAddonSettings.achievementbtn or 1
+    WhcAddonSettings.splash = WhcAddonSettings.splash or 0
+    WhcAddonSettings.minimapX = WhcAddonSettings.minimapX or 0
+    WhcAddonSettings.minimapY = WhcAddonSettings.minimapY or 0
+    WhcAddonSettings.auction_short = WhcAddonSettings.auction_short or 0
+    WhcAddonSettings.auction_medium = WhcAddonSettings.auction_medium or 0
+    WhcAddonSettings.auction_long = WhcAddonSettings.auction_long or 0
+    WhcAddonSettings.auction_deposit = WhcAddonSettings.auction_deposit or 0
+    WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
+
+    WhcAchievementSettings = WhcAchievementSettings or {}
+    WhcAchievementSettings.blockInvites = WhcAchievementSettings.blockInvites or 0
+    WhcAchievementSettings.blockTrades = WhcAchievementSettings.blockTrades or 0
+    WhcAchievementSettings.blockAuctionSell = WhcAchievementSettings.blockAuctionSell or 0
+    WhcAchievementSettings.blockAuctionBuy = WhcAchievementSettings.blockAuctionBuy or 0
+    WhcAchievementSettings.blockRepair = WhcAchievementSettings.blockRepair or 0
+    WhcAchievementSettings.blockTaxiService = WhcAchievementSettings.blockTaxiService or 0
+    WhcAchievementSettings.blockMagicItems = WhcAchievementSettings.blockMagicItems or 0
+    WhcAchievementSettings.blockMagicItemsTooltip = WhcAchievementSettings.blockMagicItemsTooltip or 0
+    WhcAchievementSettings.blockArmorItems = WhcAchievementSettings.blockArmorItems or 0
+    WhcAchievementSettings.blockArmorItemsTooltip = WhcAchievementSettings.blockArmorItemsTooltip or 0
+    WhcAchievementSettings.blockNonSelfMadeItems = WhcAchievementSettings.blockNonSelfMadeItems or 0
+    WhcAchievementSettings.blockNonSelfMadeItemsTooltip = WhcAchievementSettings.blockNonSelfMadeItemsTooltip or 0
+    WhcAchievementSettings.blockMailItems = WhcAchievementSettings.blockMailItems or 0
+
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
     WHC.InitializeDeathLogFrame()
@@ -58,33 +86,6 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
             WHC.UIShowTabContent("Support")
         end
     end
-
-    WhcAddonSettings = WhcAddonSettings or {}
-    -- Ensure the specific setting exists and has a default value
-    WhcAddonSettings.minimapicon = WhcAddonSettings.minimapicon or 1
-    WhcAddonSettings.achievementbtn = WhcAddonSettings.achievementbtn or 1
-    WhcAddonSettings.splash = WhcAddonSettings.splash or 0
-    WhcAddonSettings.minimapX = WhcAddonSettings.minimapX or 0
-    WhcAddonSettings.minimapY = WhcAddonSettings.minimapY or 0
-    WhcAddonSettings.auction_short = WhcAddonSettings.auction_short or 0
-    WhcAddonSettings.auction_medium = WhcAddonSettings.auction_medium or 0
-    WhcAddonSettings.auction_long = WhcAddonSettings.auction_long or 0
-    WhcAddonSettings.auction_deposit = WhcAddonSettings.auction_deposit or 0
-    WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
-    WhcAddonSettings.blockInvites = WhcAddonSettings.blockInvites or 0
-    WhcAddonSettings.blockTrades = WhcAddonSettings.blockTrades or 0
-    WhcAddonSettings.blockAuctionSell = WhcAddonSettings.blockAuctionSell or 0
-    WhcAddonSettings.blockAuctionBuy = WhcAddonSettings.blockAuctionBuy or 0
-    WhcAddonSettings.blockRepair = WhcAddonSettings.blockRepair or 0
-    WhcAddonSettings.blockTaxiService = WhcAddonSettings.blockTaxiService or 0
-    WhcAddonSettings.blockMagicItems = WhcAddonSettings.blockMagicItems or 0
-    WhcAddonSettings.blockMagicItemsTooltip = WhcAddonSettings.blockMagicItemsTooltip or 0
-    WhcAddonSettings.blockArmorItems = WhcAddonSettings.blockArmorItems or 0
-    WhcAddonSettings.blockArmorItemsTooltip = WhcAddonSettings.blockArmorItemsTooltip or 0
-    WhcAddonSettings.blockNonSelfMadeItems = WhcAddonSettings.blockNonSelfMadeItems or 0
-    WhcAddonSettings.blockNonSelfMadeItemsTooltip = WhcAddonSettings.blockNonSelfMadeItemsTooltip or 0
-    WhcAddonSettings.blockMailItems = WhcAddonSettings.blockMailItems or 0
-
 
     if (WhcAddonSettings.minimapicon == 1) then
         WHC.Frames.MapIcon:Show()
