@@ -324,7 +324,8 @@ local selfMadeAllowedItems = {
     ["Vara de pescar"] = true, -- Portuguese
     ["Удочка"] = true,         -- Russian
     ["낚싯대"] = true,          -- Korean
-    ["钓鱼竿"] = true,          -- Chinese
+    ["钓鱼竿"] = true,          -- Chinese (Simplified)
+    ["釣魚竿"] = true,          -- Chinese (Traditional)
 }
 
 local function getItemIDFromLink(itemLink)
@@ -663,6 +664,23 @@ end
 --region ====== Marathon Runner ======
 local marathonRunnerLink = WHC.Achievements.MARATHON_RUNNER.itemLink
 
+local marathonRunnerBlockedSkills = {
+    ["Apprentice Riding"] = true,      -- English
+    ["Unerfahrener Reiter"] = true,    -- German
+    ["Aprendiz jinete"] = true,        -- Spanish
+    ["Apprenti cavalier"] = true,      -- French
+    ["Apprentice Riding"] = true,      -- Italian
+    ["Aprendiz de Montaria"] = true,   -- Portuguese
+    ["Верховая езда (ученик)"] = true, -- Russian
+    ["초급 타기"] = true,                -- Korean
+    ["初级骑术"] = true,                -- Chinese (simple)
+    ["初級騎術"] = true,                -- Chinese (traditional)
+}
+
+local marathonRunnerBlockedQuests = {
+
+}
+
 local marathonRunnerEventListener = CreateFrame("Frame")
 marathonRunnerEventListener:RegisterEvent("ADDON_LOADED")
 marathonRunnerEventListener:SetScript("OnEvent", function(self, event, addonName)
@@ -672,6 +690,10 @@ marathonRunnerEventListener:SetScript("OnEvent", function(self, event, addonName
     end
 
     WHC.DebugPrint("TrainerUI Loaded")
+
+    hooksecurefunc("ClassTrainer_SetSelection", function(id)
+
+    end)
     hooksecurefunc("SelectTrainerService", function(index)
         local icon = GetTrainerServiceIcon(index);
         WHC.DebugPrint("GetTrainerServiceIcon.icon "..icon)
@@ -680,6 +702,10 @@ marathonRunnerEventListener:SetScript("OnEvent", function(self, event, addonName
         WHC.DebugPrint("GetTrainerServiceIcon.name "..tostring(name))
         WHC.DebugPrint("GetTrainerServiceIcon.rank "..tostring(rank))
         WHC.DebugPrint("GetTrainerServiceIcon.category "..tostring(category))
+
+        if WhcAchievementSettings.blockRidingSkill == 1 and ClassTrainerTrainButton then
+            ClassTrainerTrainButton:Disable()
+        end
 
         local levelReq = GetTrainerServiceLevelReq(index)
         WHC.DebugPrint("GetTrainerServiceLevelReq.levelReq "..tostring(levelReq))
@@ -691,7 +717,22 @@ marathonRunnerEventListener:SetScript("OnEvent", function(self, event, addonName
 
         WHC.DebugPrint(" ")
     end)
-
-
 end)
+
+BlizzardFunctions.BuyTrainerService = BuyTrainerService
+function WHC.SetBlockRidingSkill()
+    BuyTrainerService = BlizzardFunctions.BuyTrainerService
+
+    if WhcAchievementSettings.blockRidingSkill == 1 then
+        BuyTrainerService = function(index)
+            local skillName = GetTrainerServiceInfo(index)
+            if marathonRunnerBlockedSkills[skillName] then
+                return printAchievementInfo(marathonRunnerLink, "Buying riding skill is blocked.")
+            end
+
+            return BlizzardFunctions.BuyTrainerService(index)
+        end
+    end
+end
+
 --endregion

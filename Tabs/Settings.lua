@@ -178,6 +178,13 @@ function WHC.Tab_Settings(content)
         WHC.SetBlockInvites()
     end)
 
+    WHC_SETTINGS.blockRidingSkillCheckbox = createSettingsCheckBox(scrollContent, "[Marathon Runner] Achievement: Block learning riding skill")
+    WHC_SETTINGS.blockRidingSkillCheckbox:SetScript("OnClick", function(self)
+        WhcAchievementSettings.blockRidingSkill = math.abs(WhcAchievementSettings.blockRidingSkill - 1)
+        playCheckedSound(WhcAchievementSettings.blockRidingSkill)
+        WHC.SetBlockRidingSkill()
+    end)
+
     if RETAIL == 0 then
         WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, "[Mister White] Achievement: Block equipping magic items")
         WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function(self)

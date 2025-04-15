@@ -69,6 +69,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAchievementSettings.blockNonSelfMadeItems = WhcAchievementSettings.blockNonSelfMadeItems or 0
     WhcAchievementSettings.blockNonSelfMadeItemsTooltip = WhcAchievementSettings.blockNonSelfMadeItemsTooltip or 0
     WhcAchievementSettings.blockMailItems = WhcAchievementSettings.blockMailItems or 0
+    WhcAchievementSettings.blockRidingSkill = WhcAchievementSettings.blockRidingSkill or 0
 
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
