@@ -659,3 +659,39 @@ function WHC.SetBlockMailItems()
     end
 end
 --endregion
+
+--region ====== Marathon Runner ======
+local marathonRunnerLink = WHC.Achievements.MARATHON_RUNNER.itemLink
+
+local marathonRunnerEventListener = CreateFrame("Frame")
+marathonRunnerEventListener:RegisterEvent("ADDON_LOADED")
+marathonRunnerEventListener:SetScript("OnEvent", function(self, event, addonName)
+    addonName = addonName or arg1
+    if addonName ~= "Blizzard_TrainerUI" then
+        return
+    end
+
+    WHC.DebugPrint("TrainerUI Loaded")
+    hooksecurefunc("SelectTrainerService", function(index)
+        local icon = GetTrainerServiceIcon(index);
+        WHC.DebugPrint("GetTrainerServiceIcon.icon "..icon)
+
+        local name, rank, category = GetTrainerServiceInfo(index)
+        WHC.DebugPrint("GetTrainerServiceIcon.name "..tostring(name))
+        WHC.DebugPrint("GetTrainerServiceIcon.rank "..tostring(rank))
+        WHC.DebugPrint("GetTrainerServiceIcon.category "..tostring(category))
+
+        local levelReq = GetTrainerServiceLevelReq(index)
+        WHC.DebugPrint("GetTrainerServiceLevelReq.levelReq "..tostring(levelReq))
+
+        if GetTrainerServiceItemLink then
+            local link = GetTrainerServiceItemLink(index)
+            WHC.DebugPrint("GetTrainerServiceLevelReq.link "..tostring(link))
+        end
+
+        WHC.DebugPrint(" ")
+    end)
+
+
+end)
+--endregion
