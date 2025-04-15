@@ -665,63 +665,83 @@ end
 local marathonRunnerLink = WHC.Achievements.MARATHON_RUNNER.itemLink
 
 local marathonRunnerBlockedSkills = {
-    ["Apprentice Riding"] = true,      -- English
-    ["Unerfahrener Reiter"] = true,    -- German
-    ["Aprendiz jinete"] = true,        -- Spanish
-    ["Apprenti cavalier"] = true,      -- French
-    ["Apprentice Riding"] = true,      -- Italian
-    ["Aprendiz de Montaria"] = true,   -- Portuguese
+    ["Apprentice Riding"]      = true, -- English
+    ["Unerfahrener Reiter"]    = true, -- German
+    ["Aprendiz jinete"]        = true, -- Spanish
+    ["Apprenti cavalier"]      = true, -- French
+    ["Apprentice Riding"]      = true, -- Italian TODO clearly wrong. Wowhead does not have it
+    ["Aprendiz de Montaria"]   = true, -- Portuguese
     ["Верховая езда (ученик)"] = true, -- Russian
-    ["초급 타기"] = true,                -- Korean
-    ["初级骑术"] = true,                -- Chinese (simple)
-    ["初級騎術"] = true,                -- Chinese (traditional)
+    ["초급 타기"]               = true, -- Korean
+    ["初级骑术"]                = true, -- Chinese (Simplified)
+    ["初級騎術"]                = true, -- Chinese (Traditional)
 }
 
 local marathonRunnerBlockedQuests = {
+    ["The Tome of Nobility"]  = true, -- English
+    ["Der Foliant des Adels"] = true, -- German
+    ["Libro de la nobleza"]   = true, -- Spanish
+    ["Escrito sobre nobleza"] = true, -- Spanish (Mexico)
+    ["Le Tome de noblesse"]   = true, -- French
+    ["The Tome of Nobility"]  = true, -- Italian TODO clearly wrong. Wowhead does not have it.
+    ["O Tomo de Nobreza"]     = true, -- Portuguese
+    ["Фолиант Благородства"]  = true, -- Russian
+    ["고결함의 고서"]           = true, -- Korean
+    ["高贵之书"]               = true, -- Chinese (Simplified)
+    ["高貴之書"]               = true, -- Chinese (Traditional)
 
+    ["Summon Felsteed"]               = true, -- English
+    ["Teufelsross beschwören"]        = true, -- German
+    ["Invoca un malignoecus"]         = true, -- Spanish
+    ["Invoca un corcel vil"]          = true, -- Spanish (Mexico)
+    ["Invoquer un Palefroi corrompu"] = true, -- French
+    ["Summon Felsteed"]               = true, -- Italian TODO clearly wrong. Wowhead does not have it
+    ["Evocar Corcel Vil"]             = true, -- Portuguese
+    ["Призывание коня Скверны"]       = true, -- Russian
+    ["지옥마 소환"]                     = true, -- Korean
+    ["召唤地狱战马"]                    = true, -- Chinese (Simplified)
+    ["召喚地獄戰馬"]                    = true, -- Chinese (Traditional)
 }
 
 local marathonRunnerEventListener = CreateFrame("Frame")
 marathonRunnerEventListener:RegisterEvent("ADDON_LOADED")
-marathonRunnerEventListener:SetScript("OnEvent", function(self, event, addonName)
+marathonRunnerEventListener:SetScript("OnEvent", function(self, eventName, addonName)
     addonName = addonName or arg1
-    if addonName ~= "Blizzard_TrainerUI" then
-        return
+    if addonName == "Blizzard_TrainerUI" then
+        marathonRunnerEventListener:UnregisterEvent("ADDON_LOADED")
     end
 
-    WHC.DebugPrint("TrainerUI Loaded")
-
     hooksecurefunc("ClassTrainer_SetSelection", function(id)
-
-    end)
-    hooksecurefunc("SelectTrainerService", function(index)
-        local icon = GetTrainerServiceIcon(index);
-        WHC.DebugPrint("GetTrainerServiceIcon.icon "..icon)
-
-        local name, rank, category = GetTrainerServiceInfo(index)
-        WHC.DebugPrint("GetTrainerServiceIcon.name "..tostring(name))
-        WHC.DebugPrint("GetTrainerServiceIcon.rank "..tostring(rank))
-        WHC.DebugPrint("GetTrainerServiceIcon.category "..tostring(category))
-
-        if WhcAchievementSettings.blockRidingSkill == 1 and ClassTrainerTrainButton then
+        local skillName = GetTrainerServiceInfo(id)
+        if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedSkills[skillName] and ClassTrainerTrainButton then
             ClassTrainerTrainButton:Disable()
         end
-
-        local levelReq = GetTrainerServiceLevelReq(index)
-        WHC.DebugPrint("GetTrainerServiceLevelReq.levelReq "..tostring(levelReq))
-
-        if GetTrainerServiceItemLink then
-            local link = GetTrainerServiceItemLink(index)
-            WHC.DebugPrint("GetTrainerServiceLevelReq.link "..tostring(link))
-        end
-
-        WHC.DebugPrint(" ")
     end)
 end)
 
+
+hooksecurefunc("QuestFrameDetailPanel_OnUpdate", function()
+    local questName = GetTitleText()
+    if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
+        QuestFrameAcceptButton:Disable()
+    end
+end)
+
+hooksecurefunc("QuestFrameItems_Update", function()
+    local questName = GetTitleText()
+    if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
+        QuestFrameCompleteQuestButton:Disable()
+    end
+end)
+
+-- Works for both
 BlizzardFunctions.BuyTrainerService = BuyTrainerService
+BlizzardFunctions.AcceptQuest = AcceptQuest
+BlizzardFunctions.GetQuestReward = GetQuestReward
 function WHC.SetBlockRidingSkill()
     BuyTrainerService = BlizzardFunctions.BuyTrainerService
+    AcceptQuest = BlizzardFunctions.AcceptQuest
+    GetQuestReward = BlizzardFunctions.GetQuestReward
 
     if WhcAchievementSettings.blockRidingSkill == 1 then
         BuyTrainerService = function(index)
@@ -731,6 +751,24 @@ function WHC.SetBlockRidingSkill()
             end
 
             return BlizzardFunctions.BuyTrainerService(index)
+        end
+
+        AcceptQuest = function()
+            local questName = GetTitleText()
+            if marathonRunnerBlockedQuests[questName] then
+                return printAchievementInfo(marathonRunnerLink, format("Accepting [%s] is blocked as the reward includes riding skill.", questName))
+            end
+
+            return BlizzardFunctions.AcceptQuest()
+        end
+        
+        GetQuestReward = function(itemChoice)
+            local questName = GetTitleText()
+            if marathonRunnerBlockedQuests[questName] then
+                return printAchievementInfo(marathonRunnerLink, format("Completing [%s] is blocked as the reward includes riding skill.", questName))
+            end
+
+            return BlizzardFunctions.GetQuestReward(itemChoice)
         end
     end
 end
