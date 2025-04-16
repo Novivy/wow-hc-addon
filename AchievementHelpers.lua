@@ -57,25 +57,32 @@ end)
 local loneWolfLink = WHC.Achievements.LONE_WOLF.itemLink
 
 -- Disables friend list "Group Invite" button
-hooksecurefunc("FriendsList_Update", function()
-    if WhcAchievementSettings.blockInvites == 1 and FriendsFrameGroupInviteButton then
-        FriendsFrameGroupInviteButton:Disable()
-    end
-end)
+if FriendsFrameGroupInviteButton then
+    hooksecurefunc(FriendsFrameGroupInviteButton, "Enable", function()
+        if WhcAchievementSettings.blockInvites == 1 then
+            FriendsFrameGroupInviteButton:Disable()
+        end
+    end)
+end
 
 -- Disables who "Group Invite" button
-hooksecurefunc("WhoList_Update", function()
-    if WhcAchievementSettings.blockInvites == 1 and WhoFrameGroupInviteButton then
-        WhoFrameGroupInviteButton:Disable()
-    end
-end)
+if WhoFrameGroupInviteButton then
+    hooksecurefunc(WhoFrameGroupInviteButton, "Enable", function()
+        if WhcAchievementSettings.blockInvites == 1 then
+            WhoFrameGroupInviteButton:Disable()
+        end
+    end)
+end
+
 
 -- Disables guild details "Group Invite" button
-hooksecurefunc("GuildStatus_Update", function()
-    if WhcAchievementSettings.blockInvites == 1 and GuildMemberGroupInviteButton then
-        GuildMemberGroupInviteButton:Disable()
-    end
-end)
+if GuildMemberGroupInviteButton then
+    hooksecurefunc(GuildMemberGroupInviteButton, "Enable", function()
+        if WhcAchievementSettings.blockInvites == 1 then
+            GuildMemberGroupInviteButton:Disable()
+        end
+    end)
+end
 
 local inviteEventHandler = CreateFrame("Frame")
 inviteEventHandler:SetScript("OnEvent", function(self, event, name)
@@ -145,14 +152,13 @@ killerTraderEventListener:SetScript("OnEvent", function(self, event, addonName)
         return
     end
 
-    local blockAuctionSell = function()
-        if WhcAchievementSettings.blockAuctionSell == 1 and AuctionsCreateAuctionButton then
-            AuctionsCreateAuctionButton:Disable()
-        end
+    if AuctionsCreateAuctionButton then
+        hooksecurefunc(AuctionsCreateAuctionButton, "Enable", function()
+            if WhcAchievementSettings.blockAuctionSell == 1 then
+                AuctionsCreateAuctionButton:Disable()
+            end
+        end)
     end
-
-    hooksecurefunc("AuctionsFrameAuctions_ValidateAuction", blockAuctionSell)
-    hooksecurefunc("MoneyInputFrame_OnTextChanged", blockAuctionSell)
 end)
 
 BlizzardFunctions.PostAuction  = PostAuction -- Retail
@@ -182,27 +188,37 @@ timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
         return
     end
 
-    hooksecurefunc("AuctionFrameBrowse_Update", function()
-        if WhcAchievementSettings.blockAuctionBuy == 1 then
-            if BrowseBidButton then
+    if BrowseBidButton then
+        hooksecurefunc(BrowseBidButton, "Enable", function()
+            if WhcAchievementSettings.blockAuctionBuy == 1 then
                 BrowseBidButton:Disable()
             end
-            if BrowseBuyoutButton then
+        end)
+    end
+
+    if BrowseBuyoutButton then
+        hooksecurefunc(BrowseBuyoutButton, "Enable", function()
+            if WhcAchievementSettings.blockAuctionBuy == 1 then
                 BrowseBuyoutButton:Disable()
             end
-        end
-    end)
+        end)
+    end
 
-    hooksecurefunc("AuctionFrameBid_Update", function()
-        if WhcAchievementSettings.blockAuctionBuy == 1 then
-            if BidBidButton then
+    if BidBidButton then
+        hooksecurefunc(BidBidButton, "Enable", function()
+            if WhcAchievementSettings.blockAuctionBuy == 1 then
                 BidBidButton:Disable()
             end
-            if BidBuyoutButton then
+        end)
+    end
+
+    if BidBuyoutButton then
+        hooksecurefunc(BidBuyoutButton, "Enable", function()
+            if WhcAchievementSettings.blockAuctionBuy == 1 then
                 BidBuyoutButton:Disable()
             end
-        end
-    end)
+        end)
+    end
 end)
 
 BlizzardFunctions.PlaceAuctionBid = PlaceAuctionBid
@@ -222,28 +238,27 @@ end
 local ironBonesLink = WHC.Achievements.IRON_BONES.itemLink
 
 -- Disable repair buttons from Blizzard interface
-local disableRepairButtons = function()
-    local repairItemIcon
-    if MerchantRepairItemButton then
+if MerchantRepairItemButton then
+    hooksecurefunc(MerchantRepairItemButton, "Show", function()
         repairItemIcon = MerchantRepairItemButton:GetRegions()
         SetDesaturation(repairItemIcon, nil)
         MerchantRepairItemButton:Enable()
-    end
 
-    if WhcAchievementSettings.blockRepair == 1 then
-        if MerchantRepairItemButton and repairItemIcon then
+        if WhcAchievementSettings.blockRepair == 1 then
             SetDesaturation(repairItemIcon, 1)
             MerchantRepairItemButton:Disable()
         end
+    end)
+end
 
-        if MerchantRepairAllButton then
+if MerchantRepairAllButton then
+    hooksecurefunc(MerchantRepairAllButton, "Enable", function()
+        if WhcAchievementSettings.blockRepair == 1 then
             SetDesaturation(MerchantRepairAllIcon, 1)
             MerchantRepairAllButton:Disable()
         end
-    end
+    end)
 end
-hooksecurefunc("MerchantFrame_UpdateRepairButtons", disableRepairButtons) -- Retail
-hooksecurefunc("MerchantFrame_OnShow", disableRepairButtons) -- 1.12
 
 BlizzardFunctions.RepairAllItems = RepairAllItems
 BlizzardFunctions.ShowRepairCursor = ShowRepairCursor
