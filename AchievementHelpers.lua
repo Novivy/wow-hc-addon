@@ -151,6 +151,7 @@ killerTraderEventListener:SetScript("OnEvent", function(self, event, addonName)
     if addonName ~= "Blizzard_AuctionUI" then
         return
     end
+    killerTraderEventListener:UnregisterEvent("ADDON_LOADED")
 
     if AuctionsCreateAuctionButton then
         hooksecurefunc(AuctionsCreateAuctionButton, "Enable", function()
@@ -187,6 +188,7 @@ timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
     if addonName ~= "Blizzard_AuctionUI" then
         return
     end
+    timeIsMoneyEventListener:UnregisterEvent("ADDON_LOADED")
 
     if BrowseBidButton then
         hooksecurefunc(BrowseBidButton, "Enable", function()
