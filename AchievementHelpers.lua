@@ -710,6 +710,7 @@ marathonRunnerEventListener:SetScript("OnEvent", function(self, eventName, addon
     if addonName ~= "Blizzard_TrainerUI" then
         return
     end
+    marathonRunnerEventListener:UnregisterEvent("ADDON_LOADED")
 
     hooksecurefunc(ClassTrainerTrainButton, "Enable", function()
         local skillIndex = GetTrainerSelectionIndex()
@@ -726,6 +727,7 @@ hooksecurefunc(QuestFrameAcceptButton, "Enable", function()
         QuestFrameAcceptButton:Disable()
     end
 end)
+
 hooksecurefunc(QuestFrameCompleteQuestButton, "Enable", function()
     local questName = GetTitleText()
     if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
