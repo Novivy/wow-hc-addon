@@ -712,28 +712,34 @@ marathonRunnerEventListener:SetScript("OnEvent", function(self, eventName, addon
     end
     marathonRunnerEventListener:UnregisterEvent("ADDON_LOADED")
 
-    hooksecurefunc(ClassTrainerTrainButton, "Enable", function()
-        local skillIndex = GetTrainerSelectionIndex()
-        local skillName = GetTrainerServiceInfo(skillIndex)
-        if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedSkills[skillName] then
-            ClassTrainerTrainButton:Disable()
+    if ClassTrainerTrainButton then
+        hooksecurefunc(ClassTrainerTrainButton, "Enable", function()
+            local skillIndex = GetTrainerSelectionIndex()
+            local skillName = GetTrainerServiceInfo(skillIndex)
+            if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedSkills[skillName] then
+                ClassTrainerTrainButton:Disable()
+            end
+        end)
+    end
+end)
+
+if QuestFrameAcceptButton then
+    hooksecurefunc(QuestFrameAcceptButton, "Enable", function()
+        local questName = GetTitleText()
+        if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
+            QuestFrameAcceptButton:Disable()
         end
     end)
-end)
+end
 
-hooksecurefunc(QuestFrameAcceptButton, "Enable", function()
-    local questName = GetTitleText()
-    if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
-        QuestFrameAcceptButton:Disable()
-    end
-end)
-
-hooksecurefunc(QuestFrameCompleteQuestButton, "Enable", function()
-    local questName = GetTitleText()
-    if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
-        QuestFrameCompleteQuestButton:Disable()
-    end
-end)
+if QuestFrameCompleteQuestButton then
+    hooksecurefunc(QuestFrameCompleteQuestButton, "Enable", function()
+        local questName = GetTitleText()
+        if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
+            QuestFrameCompleteQuestButton:Disable()
+        end
+    end)
+end
 
 BlizzardFunctions.BuyTrainerService = BuyTrainerService
 BlizzardFunctions.AcceptQuest = AcceptQuest
