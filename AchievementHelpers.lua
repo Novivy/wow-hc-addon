@@ -707,34 +707,32 @@ local marathonRunnerEventListener = CreateFrame("Frame")
 marathonRunnerEventListener:RegisterEvent("ADDON_LOADED")
 marathonRunnerEventListener:SetScript("OnEvent", function(self, eventName, addonName)
     addonName = addonName or arg1
-    if addonName == "Blizzard_TrainerUI" then
-        marathonRunnerEventListener:UnregisterEvent("ADDON_LOADED")
+    if addonName ~= "Blizzard_TrainerUI" then
+        return
     end
 
-    hooksecurefunc("ClassTrainer_SetSelection", function(id)
-        local skillName = GetTrainerServiceInfo(id)
-        if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedSkills[skillName] and ClassTrainerTrainButton then
+    hooksecurefunc(ClassTrainerTrainButton, "Enable", function()
+        local skillIndex = GetTrainerSelectionIndex()
+        local skillName = GetTrainerServiceInfo(skillIndex)
+        if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedSkills[skillName] then
             ClassTrainerTrainButton:Disable()
         end
     end)
 end)
 
-
-hooksecurefunc("QuestFrameDetailPanel_OnUpdate", function()
+hooksecurefunc(QuestFrameAcceptButton, "Enable", function()
     local questName = GetTitleText()
     if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
         QuestFrameAcceptButton:Disable()
     end
 end)
-
-hooksecurefunc("QuestFrameItems_Update", function()
+hooksecurefunc(QuestFrameCompleteQuestButton, "Enable", function()
     local questName = GetTitleText()
     if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
         QuestFrameCompleteQuestButton:Disable()
     end
 end)
 
--- Works for both
 BlizzardFunctions.BuyTrainerService = BuyTrainerService
 BlizzardFunctions.AcceptQuest = AcceptQuest
 BlizzardFunctions.GetQuestReward = GetQuestReward
