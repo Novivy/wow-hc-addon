@@ -678,6 +678,7 @@ local marathonRunnerBlockedSkills = {
 }
 
 local marathonRunnerBlockedQuests = {
+    [1661] = true,
     ["The Tome of Nobility"]  = true, -- English
     ["Der Foliant des Adels"] = true, -- German
     ["Libro de la nobleza"]   = true, -- Spanish
@@ -690,6 +691,7 @@ local marathonRunnerBlockedQuests = {
     ["高贵之书"]               = true, -- Chinese (Simplified)
     ["高貴之書"]               = true, -- Chinese (Traditional)
 
+    [4490] = true,
     ["Summon Felsteed"]               = true, -- English
     ["Teufelsross beschwören"]        = true, -- German
     ["Invoca un malignoecus"]         = true, -- Spanish
@@ -725,18 +727,32 @@ end)
 
 if QuestFrameAcceptButton then
     hooksecurefunc(QuestFrameAcceptButton, "Enable", function()
-        local questName = GetTitleText()
-        if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
-            QuestFrameAcceptButton:Disable()
+        if WhcAchievementSettings.blockRidingSkill == 1 then
+            local questID = 0
+            if GetQuestID then
+                questID = GetQuestID() -- 1.14 feature
+            end
+
+            local questName = GetTitleText()
+            if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
+                QuestFrameAcceptButton:Disable()
+            end
         end
     end)
 end
 
 if QuestFrameCompleteQuestButton then
     hooksecurefunc(QuestFrameCompleteQuestButton, "Enable", function()
-        local questName = GetTitleText()
-        if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedQuests[questName] then
-            QuestFrameCompleteQuestButton:Disable()
+        if WhcAchievementSettings.blockRidingSkill == 1 then
+            local questID = 0
+            if GetQuestID then
+                questID = GetQuestID() -- 1.14 feature
+            end
+
+            local questName = GetTitleText()
+            if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
+                QuestFrameCompleteQuestButton:Disable()
+            end
         end
     end)
 end
