@@ -74,6 +74,8 @@ function WHC.UIShowTabContent(tabIndex, arg1)
             WHC_SETTINGS.blockRepairCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRepair))
             WHC_SETTINGS.blockTaxiServiceCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTaxiService))
             WHC_SETTINGS.blockMailItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMailItems))
+            WHC_SETTINGS.blockRidingSkillCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRidingSkill))
+
             if RETAIL == 0 then
                 WHC_SETTINGS.blockMagicItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMagicItems))
                 WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMagicItemsTooltip))

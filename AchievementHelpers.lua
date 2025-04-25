@@ -324,7 +324,8 @@ local selfMadeAllowedItems = {
     ["Vara de pescar"] = true, -- Portuguese
     ["Удочка"] = true,         -- Russian
     ["낚싯대"] = true,          -- Korean
-    ["钓鱼竿"] = true,          -- Chinese
+    ["钓鱼竿"] = true,          -- Chinese (Simplified)
+    ["釣魚竿"] = true,          -- Chinese (Traditional)
 }
 
 local function getItemIDFromLink(itemLink)
@@ -658,4 +659,140 @@ function WHC.SetBlockMailItems()
         end
     end
 end
+--endregion
+
+--region ====== Marathon Runner ======
+local marathonRunnerLink = WHC.Achievements.MARATHON_RUNNER.itemLink
+
+local marathonRunnerBlockedSkills = {
+    ["Apprentice Riding"]          = true, -- English
+    ["Unerfahrener Reiter"]        = true, -- German
+    ["Aprendiz jinete"]            = true, -- Spanish
+    ["Apprenti cavalier"]          = true, -- French
+    ["Apprendista in Equitazione"] = true, -- Italian
+    ["Aprendiz de Montaria"]       = true, -- Portuguese
+    ["Верховая езда (ученик)"]     = true, -- Russian
+    ["초급 타기"]                   = true, -- Korean
+    ["初级骑术"]                    = true, -- Chinese (Simplified)
+    ["初級騎術"]                    = true, -- Chinese (Traditional)
+}
+
+local marathonRunnerBlockedQuests = {
+    [1661] = true,
+    ["The Tome of Nobility"]  = true, -- English
+    ["Der Foliant des Adels"] = true, -- German
+    ["Libro de la nobleza"]   = true, -- Spanish
+    ["Escrito sobre nobleza"] = true, -- Spanish (Mexico)
+    ["Le Tome de noblesse"]   = true, -- French
+    ["Il tomo della nobiltà"]  = true, -- Italian
+    ["O Tomo de Nobreza"]     = true, -- Portuguese
+    ["Фолиант Благородства"]  = true, -- Russian
+    ["고결함의 고서"]           = true, -- Korean
+    ["高贵之书"]               = true, -- Chinese (Simplified)
+    ["高貴之書"]               = true, -- Chinese (Traditional)
+
+    [4490] = true,
+    ["Summon Felsteed"]               = true, -- English
+    ["Teufelsross beschwören"]        = true, -- German
+    ["Invoca un malignoecus"]         = true, -- Spanish
+    ["Invoca un corcel vil"]          = true, -- Spanish (Mexico)
+    ["Invoquer un Palefroi corrompu"] = true, -- French
+    ["Summon Felsteed"]               = true, -- Italian TODO Wowhead does not have it. Apparently there is no official italian client, so this might not be an issue.
+    ["Evocar Corcel Vil"]             = true, -- Portuguese
+    ["Призывание коня Скверны"]       = true, -- Russian
+    ["지옥마 소환"]                     = true, -- Korean
+    ["召唤地狱战马"]                    = true, -- Chinese (Simplified)
+    ["召喚地獄戰馬"]                    = true, -- Chinese (Traditional)
+}
+
+local marathonRunnerEventListener = CreateFrame("Frame")
+marathonRunnerEventListener:RegisterEvent("ADDON_LOADED")
+marathonRunnerEventListener:SetScript("OnEvent", function(self, eventName, addonName)
+    addonName = addonName or arg1
+    if addonName ~= "Blizzard_TrainerUI" then
+        return
+    end
+    marathonRunnerEventListener:UnregisterEvent("ADDON_LOADED")
+
+    if ClassTrainerTrainButton then
+        hooksecurefunc(ClassTrainerTrainButton, "Enable", function()
+            local skillIndex = GetTrainerSelectionIndex()
+            local skillName = GetTrainerServiceInfo(skillIndex)
+            if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedSkills[skillName] then
+                ClassTrainerTrainButton:Disable()
+            end
+        end)
+    end
+end)
+
+if QuestFrameAcceptButton then
+    hooksecurefunc(QuestFrameAcceptButton, "Enable", function()
+        if WhcAchievementSettings.blockRidingSkill == 1 then
+            local questID = 0
+            if GetQuestID then
+                questID = GetQuestID() -- 1.14 feature
+            end
+
+            local questName = GetTitleText()
+            if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
+                QuestFrameAcceptButton:Disable()
+            end
+        end
+    end)
+end
+
+if QuestFrameCompleteQuestButton then
+    hooksecurefunc(QuestFrameCompleteQuestButton, "Enable", function()
+        if WhcAchievementSettings.blockRidingSkill == 1 then
+            local questID = 0
+            if GetQuestID then
+                questID = GetQuestID() -- 1.14 feature
+            end
+
+            local questName = GetTitleText()
+            if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
+                QuestFrameCompleteQuestButton:Disable()
+            end
+        end
+    end)
+end
+
+BlizzardFunctions.BuyTrainerService = BuyTrainerService
+BlizzardFunctions.AcceptQuest = AcceptQuest
+BlizzardFunctions.GetQuestReward = GetQuestReward
+function WHC.SetBlockRidingSkill()
+    BuyTrainerService = BlizzardFunctions.BuyTrainerService
+    AcceptQuest = BlizzardFunctions.AcceptQuest
+    GetQuestReward = BlizzardFunctions.GetQuestReward
+
+    if WhcAchievementSettings.blockRidingSkill == 1 then
+        BuyTrainerService = function(index)
+            local skillName = GetTrainerServiceInfo(index)
+            if marathonRunnerBlockedSkills[skillName] then
+                return printAchievementInfo(marathonRunnerLink, "Buying riding skill is blocked.")
+            end
+
+            return BlizzardFunctions.BuyTrainerService(index)
+        end
+
+        AcceptQuest = function()
+            local questName = GetTitleText()
+            if marathonRunnerBlockedQuests[questName] then
+                return printAchievementInfo(marathonRunnerLink, format("Accepting [%s] is blocked as the reward includes riding skill.", questName))
+            end
+
+            return BlizzardFunctions.AcceptQuest()
+        end
+        
+        GetQuestReward = function(itemChoice)
+            local questName = GetTitleText()
+            if marathonRunnerBlockedQuests[questName] then
+                return printAchievementInfo(marathonRunnerLink, format("Completing [%s] is blocked as the reward includes riding skill.", questName))
+            end
+
+            return BlizzardFunctions.GetQuestReward(itemChoice)
+        end
+    end
+end
+
 --endregion
