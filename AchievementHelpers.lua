@@ -665,16 +665,16 @@ end
 local marathonRunnerLink = WHC.Achievements.MARATHON_RUNNER.itemLink
 
 local marathonRunnerBlockedSkills = {
-    ["Apprentice Riding"]      = true, -- English
-    ["Unerfahrener Reiter"]    = true, -- German
-    ["Aprendiz jinete"]        = true, -- Spanish
-    ["Apprenti cavalier"]      = true, -- French
-    ["Apprentice Riding"]      = true, -- Italian TODO clearly wrong. Wowhead does not have it
-    ["Aprendiz de Montaria"]   = true, -- Portuguese
-    ["Верховая езда (ученик)"] = true, -- Russian
-    ["초급 타기"]               = true, -- Korean
-    ["初级骑术"]                = true, -- Chinese (Simplified)
-    ["初級騎術"]                = true, -- Chinese (Traditional)
+    ["Apprentice Riding"]          = true, -- English
+    ["Unerfahrener Reiter"]        = true, -- German
+    ["Aprendiz jinete"]            = true, -- Spanish
+    ["Apprenti cavalier"]          = true, -- French
+    ["Apprendista in Equitazione"] = true, -- Italian
+    ["Aprendiz de Montaria"]       = true, -- Portuguese
+    ["Верховая езда (ученик)"]     = true, -- Russian
+    ["초급 타기"]                   = true, -- Korean
+    ["初级骑术"]                    = true, -- Chinese (Simplified)
+    ["初級騎術"]                    = true, -- Chinese (Traditional)
 }
 
 local marathonRunnerBlockedQuests = {
@@ -684,7 +684,7 @@ local marathonRunnerBlockedQuests = {
     ["Libro de la nobleza"]   = true, -- Spanish
     ["Escrito sobre nobleza"] = true, -- Spanish (Mexico)
     ["Le Tome de noblesse"]   = true, -- French
-    ["The Tome of Nobility"]  = true, -- Italian TODO clearly wrong. Wowhead does not have it.
+    ["Il tomo della nobiltà"]  = true, -- Italian
     ["O Tomo de Nobreza"]     = true, -- Portuguese
     ["Фолиант Благородства"]  = true, -- Russian
     ["고결함의 고서"]           = true, -- Korean
@@ -697,7 +697,7 @@ local marathonRunnerBlockedQuests = {
     ["Invoca un malignoecus"]         = true, -- Spanish
     ["Invoca un corcel vil"]          = true, -- Spanish (Mexico)
     ["Invoquer un Palefroi corrompu"] = true, -- French
-    ["Summon Felsteed"]               = true, -- Italian TODO clearly wrong. Wowhead does not have it
+    ["Summon Felsteed"]               = true, -- Italian TODO Wowhead does not have it. Apparently there is no official italian client, so this might not be an issue.
     ["Evocar Corcel Vil"]             = true, -- Portuguese
     ["Призывание коня Скверны"]       = true, -- Russian
     ["지옥마 소환"]                     = true, -- Korean
