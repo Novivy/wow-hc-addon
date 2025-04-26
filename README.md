@@ -1,6 +1,6 @@
 
 ## Changelog for next update
-- Settings checkbox for Help Yourself achievement, auto abandoning quests
+- Settings checkbox for Help Yourself achievement, auto abandoning non-class or profession quests
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath

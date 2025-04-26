@@ -157,7 +157,7 @@ function WHC.Tab_Settings(content)
         WHC.SetBlockTaxiService()
     end)
 
-    WHC_SETTINGS.blockQuestsCheckbox = createSettingsCheckBox(scrollContent, "[Help Yourself] Achievement: Auto-abandon illegal quests")
+    WHC_SETTINGS.blockQuestsCheckbox = createSettingsCheckBox(scrollContent, "[Help Yourself] Achievement: Auto-abandon non-class or profession quests")
     WHC_SETTINGS.blockQuestsCheckbox:SetScript("OnClick", function(self)
         WhcAchievementSettings.blockQuests = math.abs(WhcAchievementSettings.blockQuests - 1)
         playCheckedSound(WhcAchievementSettings.blockQuests)
