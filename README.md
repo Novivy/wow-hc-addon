@@ -1,5 +1,6 @@
 
 ## Changelog for next update
+- Settings checkbox for Marathon Runner achievement, blocking learning riding skill
 
 
 ## Future versions:
