@@ -817,7 +817,100 @@ end
 --region ====== Help Yourself ======
 local helpYourselfLink = WHC.Achievements.HELP_YOURSELF.itemLink
 
-function WHC.SetBlockQuests()
+local helpYourselfAllowedCategories = {
+    ["Warrior"] = true, -- English
+    ["Krieger"] = true, -- German
+    ["Guerrero"] = true, -- Spanish
+    ["Guerrero"] = true, -- Spanish (Mexico)
+    ["Guerrier"] = true, -- French
+    ["Guerriero"] = true, -- Italian
+    ["Guerreiro"] = true, -- Portuguese
+    ["Воин"] = true, -- Russian
+    ["전사"] = true, -- Korean
+    ["战士"] = true, -- Chinese (Simplified)
+    ["戰士"] = true, -- Chinese (Traditional)
 
+    ["Paladin"] = true, -- English
+    ["Paladin"] = true, -- German
+    ["Paladín"] = true, -- Spanish
+    ["Paladín"] = true, -- Spanish (Mexico)
+    ["Paladin"] = true, -- French
+    ["Paladino"] = true, -- Italian
+    ["Paladino"] = true, -- Portuguese
+    ["Паладин"] = true, -- Russian
+    ["성기사"] = true, -- Korean
+    ["圣骑士"] = true, -- Chinese (Simplified)
+    ["聖騎士"] = true, -- Chinese (Traditional)
+
+    ["Hunter"] = true, -- English
+    ["Jäger"] = true, -- German
+    ["Cazador"] = true, -- Spanish
+    ["Cazador"] = true, -- Spanish (Mexico)
+    ["Chasseur"] = true, -- French
+    ["Cacciatore"] = true, -- Italian
+    ["Caçador"] = true, -- Portuguese
+    ["Охотник"] = true, -- Russian
+    ["사냥꾼"] = true, -- Korean
+    ["猎人"] = true, -- Chinese (Simplified)
+    ["獵人"] = true, -- Chinese (Traditional)
+
+    ["Rogue"] = true, -- English
+    ["Schurke"] = true, -- German
+    ["Pícaro"] = true, -- Spanish
+    ["Pícaro"] = true, -- Spanish (Mexico)
+    ["Voleur"] = true, -- French
+    ["Ladro"] = true, -- Italian
+    ["Ladino"] = true, -- Portuguese
+    ["Разбойник"] = true, -- Russian
+    ["도적"] = true, -- Korean
+    ["潜行者"] = true, -- Chinese (Simplified)
+    ["盜賊"] = true, -- Chinese (Traditional)
+
+    ["Priest"] = true, -- English
+    ["Priester"] = true, -- German
+    ["Sacerdote"] = true, -- Spanish
+    ["Sacerdote"] = true, -- Spanish (Mexico)
+    ["Prêtre"] = true, -- French
+    ["Sacerdote"] = true, -- Italian
+    ["Sacerdote"] = true, -- Portuguese
+    ["Жрец"] = true, -- Russian
+    ["사제"] = true, -- Korean
+    ["牧师"] = true, -- Chinese (Simplified)
+    ["牧師"] = true, -- Chinese (Traditional)
+}
+
+local function getQuestLogTitle(questLogIndex)
+    local questTitle, _, _, isHeader, isCollapsed = GetQuestLogTitle(questLogIndex);
+    if RETAIL == 1 then
+        questTitle, _, _, _, isHeader, isCollapsed = GetQuestLogTitle(questLogIndex);
+    end
+
+    return questTitle, isHeader, isCollapsed
+end
+
+local blockQuestsEventListener = CreateFrame("Frame")
+blockQuestsEventListener:SetScript("OnEvent", function()
+    local headerName = ""
+    for questLogIndex = 1, GetNumQuestLogEntries() do
+        local questTitle, isHeader, isCollapsed = getQuestLogTitle(questLogIndex)
+        if isHeader then
+            headerName = questTitle
+        end
+
+        if not isHeader then
+
+        end
+    end
+end)
+function WHC.SetBlockQuests()
+    local event = "QUEST_LOG_UPDATE"
+    if RETAIL == 1 then
+        event = "QUEST_ACCEPTED" -- test if this exist on 1.12 even though Chat GPT says it doesn't
+    end
+    blockQuestsEventListener:UnregisterEvent(event)
+
+    if WhcAchievementSettings.blockQuests == 1 then
+        blockQuestsEventListener:RegisterEvent(event)
+    end
 end
 --endregion
