@@ -817,7 +817,7 @@ end
 --region ====== Help Yourself ======
 local helpYourselfLink = WHC.Achievements.HELP_YOURSELF.itemLink
 
-local helpYourselfSkillsHeadings = {
+local secondarySkillsHeading = {
     ["Secondary Skills"] = true, -- English
     ["Nebenfertigkeiten"] = true, -- German
     ["Habilidades secundarias"] = true, -- Spanish
@@ -832,50 +832,85 @@ local function getHelpYourselfAllowedCategories()
     local allowedCategories = {}
     allowedCategories[WHC.player.class] = true
 
+    ExpandSkillHeader(0) -- Ensure all skills are expanded
+
+    local headerName
     local numSkills = GetNumSkillLines();
     for skillIndex=1, numSkills do
-        local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier,
-        skillMaxRank, isAbandonable, stepCost, rankCost, minLevel, skillCostType,
-        skillDescription = GetSkillLineInfo(skillIndex)
-
-    end
-end
-
-local function getQuestLogTitle(questLogIndex)
-    local questTitle, _, _, isHeader, isCollapsed = GetQuestLogTitle(questLogIndex);
-    if RETAIL == 1 then
-        questTitle, _, _, _, isHeader, isCollapsed = GetQuestLogTitle(questLogIndex);
-    end
-
-    return questTitle, isHeader, isCollapsed
-end
-
-local blockQuestsEventListener = CreateFrame("Frame")
-blockQuestsEventListener:SetScript("OnEvent", function()
-    local headerName = ""
-    for questLogIndex = 1, GetNumQuestLogEntries() do
-        local questTitle, isHeader, isCollapsed = getQuestLogTitle(questLogIndex)
-        if isHeader then
-            headerName = questTitle
+        local skillName, isHeader, _, _, _, _, _, isAbandonable, _, _, minLevel = GetSkillLineInfo(skillIndex)
+        if isAbandonable then
+            allowedCategories[skillName] = true -- Primary Proficiency
         end
 
-        if not isHeader then
-            if headerName ~= WHC.player.class then
+        if isHeader then
+            headerName = skillName
+        elseif secondarySkillsHeading[headerName] and minLevel == 0 then
+            allowedCategories[skillName] = true -- Secondary Proficiency, excluding riding
+        end
+    end
 
+    return allowedCategories
+end
+
+local function abandonQuestSound()
+    local sound = "igQuestLogAbandonQuest"
+    if RETAIL == 1 then
+        sound = 846
+    end
+
+    return sound
+end
+
+
+local checkQuests = false
+local blockQuestsEventListener = CreateFrame("Frame")
+blockQuestsEventListener:SetScript("OnEvent", function(self, eventName, a1)
+    eventName = eventName or event
+    if eventName == "UNIT_QUEST_LOG_CHANGED" then
+        checkQuests = true
+        return
+    end
+
+    local numQuests = GetNumQuestLogEntries()
+    if numQuests < 1 then
+        return
+    end
+
+    if eventName == "QUEST_ACCEPTED" or eventName == "QUEST_LOG_UPDATE" and checkQuests then
+        checkQuests = false
+
+        local helpYourselfAllowedCategories = getHelpYourselfAllowedCategories()
+
+        ExpandQuestHeader(0) -- Ensure all quest headers are expanded
+
+        local headerName = ""
+        for questLogIndex = 1, numQuests do
+            local questTitle, _, _, isHeader = GetQuestLogTitle(questLogIndex);
+            if isHeader then
+                headerName = questTitle
+            elseif not helpYourselfAllowedCategories[headerName] then
+                SelectQuestLogEntry(questLogIndex)
+                SetAbandonQuest()
+                AbandonQuest()
+                PlaySound(abandonQuestSound())
+                printAchievementInfo(helpYourselfLink, string.format("Abandoning [%s] as it is not a class or profession quest", questTitle))
             end
         end
     end
 end)
-function WHC.SetBlockQuests()
-    local event = "QUEST_LOG_UPDATE"
-    if RETAIL == 1 then
-        event = "QUEST_ACCEPTED" -- test if this exist on 1.12 even though Chat GPT says it doesn't
-    end
-    blockQuestsEventListener:UnregisterEvent(event)
 
+function WHC.SetBlockQuests()
+    blockQuestsEventListener:UnregisterEvent("UNIT_QUEST_LOG_CHANGED")
+    blockQuestsEventListener:UnregisterEvent("QUEST_LOG_UPDATE")
+    blockQuestsEventListener:UnregisterEvent("QUEST_ACCEPTED")
 
     if WhcAchievementSettings.blockQuests == 1 then
-        blockQuestsEventListener:RegisterEvent(event)
+        if RETAIL == 0 then
+            blockQuestsEventListener:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
+            blockQuestsEventListener:RegisterEvent("QUEST_LOG_UPDATE")
+        else
+            blockQuestsEventListener:RegisterEvent("QUEST_ACCEPTED")
+        end
     end
 end
 --endregion
