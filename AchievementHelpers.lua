@@ -817,115 +817,29 @@ end
 --region ====== Help Yourself ======
 local helpYourselfLink = WHC.Achievements.HELP_YOURSELF.itemLink
 
-local helpYourselfAllowedCategories = {
-    ["Warrior"] = true, -- English
-    ["Krieger"] = true, -- German
-    ["Guerrero"] = true, -- Spanish
-    ["Guerrero"] = true, -- Spanish (Mexico)
-    ["Guerrier"] = true, -- French
-    ["Guerriero"] = true, -- Italian
-    ["Guerreiro"] = true, -- Portuguese
-    ["Воин"] = true, -- Russian
-    ["전사"] = true, -- Korean
-    ["战士"] = true, -- Chinese (Simplified)
-    ["戰士"] = true, -- Chinese (Traditional)
-
-    ["Paladin"] = true, -- English
-    ["Paladin"] = true, -- German
-    ["Paladín"] = true, -- Spanish
-    ["Paladín"] = true, -- Spanish (Mexico)
-    ["Paladin"] = true, -- French
-    ["Paladino"] = true, -- Italian
-    ["Paladino"] = true, -- Portuguese
-    ["Паладин"] = true, -- Russian
-    ["성기사"] = true, -- Korean
-    ["圣骑士"] = true, -- Chinese (Simplified)
-    ["聖騎士"] = true, -- Chinese (Traditional)
-
-    ["Hunter"] = true, -- English
-    ["Jäger"] = true, -- German
-    ["Cazador"] = true, -- Spanish
-    ["Cazador"] = true, -- Spanish (Mexico)
-    ["Chasseur"] = true, -- French
-    ["Cacciatore"] = true, -- Italian
-    ["Caçador"] = true, -- Portuguese
-    ["Охотник"] = true, -- Russian
-    ["사냥꾼"] = true, -- Korean
-    ["猎人"] = true, -- Chinese (Simplified)
-    ["獵人"] = true, -- Chinese (Traditional)
-
-    ["Rogue"] = true, -- English
-    ["Schurke"] = true, -- German
-    ["Pícaro"] = true, -- Spanish
-    ["Pícaro"] = true, -- Spanish (Mexico)
-    ["Voleur"] = true, -- French
-    ["Ladro"] = true, -- Italian
-    ["Ladino"] = true, -- Portuguese
-    ["Разбойник"] = true, -- Russian
-    ["도적"] = true, -- Korean
-    ["潜行者"] = true, -- Chinese (Simplified)
-    ["盜賊"] = true, -- Chinese (Traditional)
-
-    ["Priest"] = true, -- English
-    ["Priester"] = true, -- German
-    ["Sacerdote"] = true, -- Spanish
-    ["Sacerdote"] = true, -- Spanish (Mexico)
-    ["Prêtre"] = true, -- French
-    ["Sacerdote"] = true, -- Italian
-    ["Sacerdote"] = true, -- Portuguese
-    ["Жрец"] = true, -- Russian
-    ["사제"] = true, -- Korean
-    ["牧师"] = true, -- Chinese (Simplified)
-    ["牧師"] = true, -- Chinese (Traditional)
-
-    ["Shaman"] = true, -- English
-    ["Schamane"] = true, -- German
-    ["Chamán"] = true, -- Spanish
-    ["Chamán"] = true, -- Spanish (Mexico)
-    ["Chaman"] = true, -- French
-    ["Sciamano"] = true, -- Italian
-    ["Xamã"] = true, -- Portuguese
-    ["Шаман"] = true, -- Russian
-    ["주술사"] = true, -- Korean
-    ["萨满祭司"] = true, -- Chinese (Simplified)
-    ["薩滿"] = true, -- Chinese (Traditional)
-
-    ["Mage"] = true, -- English
-    ["Magier"] = true, -- German
-    ["Mago"] = true, -- Spanish
-    ["Mago"] = true, -- Spanish (Mexico)
-    ["Mage"] = true, -- French
-    ["Mago"] = true, -- Italian
-    ["Mago"] = true, -- Portuguese
-    ["Маг"] = true, -- Russian
-    ["마법사"] = true, -- Korean
-    ["法师"] = true, -- Chinese (Simplified)
-    ["法師"] = true, -- Chinese (Traditional)
-
-    ["Warlock"] = true, -- English
-    ["Hexenmeister"] = true, -- German
-    ["Brujo"] = true, -- Spanish
-    ["Brujo"] = true, -- Spanish (Mexico)
-    ["Démoniste"] = true, -- French
-    ["Stregone"] = true, -- Italian
-    ["Bruxo"] = true, -- Portuguese
-    ["Чернокнижник"] = true, -- Russian
-    ["흑마법사"] = true, -- Korean
-    ["术士"] = true, -- Chinese (Simplified)
-    ["術士"] = true, -- Chinese (Traditional)
-
-    ["Druid"] = true, -- English
-    ["Druide"] = true, -- German
-    ["Druida"] = true, -- Spanish
-    ["Druida"] = true, -- Spanish (Mexico)
-    ["Druide"] = true, -- French
-    ["Druido"] = true, -- Italian
-    ["Druida"] = true, -- Portuguese
-    ["Друид"] = true, -- Russian
-    ["드루이드"] = true, -- Korean
-    ["德鲁伊"] = true, -- Chinese (Simplified)
-    ["德魯伊"] = true, -- Chinese (Traditional)
+local helpYourselfSkillsHeadings = {
+    ["Secondary Skills"] = true, -- English
+    ["Nebenfertigkeiten"] = true, -- German
+    ["Habilidades secundarias"] = true, -- Spanish
+    ["Habilidades secundarias"] = true, -- Spanish (Mexico)
+    ["Compétences secondaires"] = true, -- French
+    ["Competenze Secondarie"] = true, -- Italian
+    ["Habilidades secundárias"] = true, -- Portuguese
+    ["Вторичные навыки"] = true, -- Russian
 }
+
+local function getHelpYourselfAllowedCategories()
+    local allowedCategories = {}
+    allowedCategories[WHC.player.class] = true
+
+    local numSkills = GetNumSkillLines();
+    for skillIndex=1, numSkills do
+        local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier,
+        skillMaxRank, isAbandonable, stepCost, rankCost, minLevel, skillCostType,
+        skillDescription = GetSkillLineInfo(skillIndex)
+
+    end
+end
 
 local function getQuestLogTitle(questLogIndex)
     local questTitle, _, _, isHeader, isCollapsed = GetQuestLogTitle(questLogIndex);
@@ -946,7 +860,9 @@ blockQuestsEventListener:SetScript("OnEvent", function()
         end
 
         if not isHeader then
+            if headerName ~= WHC.player.class then
 
+            end
         end
     end
 end)
@@ -956,6 +872,7 @@ function WHC.SetBlockQuests()
         event = "QUEST_ACCEPTED" -- test if this exist on 1.12 even though Chat GPT says it doesn't
     end
     blockQuestsEventListener:UnregisterEvent(event)
+
 
     if WhcAchievementSettings.blockQuests == 1 then
         blockQuestsEventListener:RegisterEvent(event)
