@@ -813,3 +813,11 @@ function WHC.SetBlockRidingSkill()
 end
 
 --endregion
+
+--region ====== Help Yourself ======
+local helpYourselfLink = WHC.Achievements.HELP_YOURSELF.itemLink
+
+function WHC.SetBlockQuests()
+
+end
+--endregion
