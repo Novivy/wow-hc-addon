@@ -877,6 +877,54 @@ local helpYourselfAllowedCategories = {
     ["사제"] = true, -- Korean
     ["牧师"] = true, -- Chinese (Simplified)
     ["牧師"] = true, -- Chinese (Traditional)
+
+    ["Shaman"] = true, -- English
+    ["Schamane"] = true, -- German
+    ["Chamán"] = true, -- Spanish
+    ["Chamán"] = true, -- Spanish (Mexico)
+    ["Chaman"] = true, -- French
+    ["Sciamano"] = true, -- Italian
+    ["Xamã"] = true, -- Portuguese
+    ["Шаман"] = true, -- Russian
+    ["주술사"] = true, -- Korean
+    ["萨满祭司"] = true, -- Chinese (Simplified)
+    ["薩滿"] = true, -- Chinese (Traditional)
+
+    ["Mage"] = true, -- English
+    ["Magier"] = true, -- German
+    ["Mago"] = true, -- Spanish
+    ["Mago"] = true, -- Spanish (Mexico)
+    ["Mage"] = true, -- French
+    ["Mago"] = true, -- Italian
+    ["Mago"] = true, -- Portuguese
+    ["Маг"] = true, -- Russian
+    ["마법사"] = true, -- Korean
+    ["法师"] = true, -- Chinese (Simplified)
+    ["法師"] = true, -- Chinese (Traditional)
+
+    ["Warlock"] = true, -- English
+    ["Hexenmeister"] = true, -- German
+    ["Brujo"] = true, -- Spanish
+    ["Brujo"] = true, -- Spanish (Mexico)
+    ["Démoniste"] = true, -- French
+    ["Stregone"] = true, -- Italian
+    ["Bruxo"] = true, -- Portuguese
+    ["Чернокнижник"] = true, -- Russian
+    ["흑마법사"] = true, -- Korean
+    ["术士"] = true, -- Chinese (Simplified)
+    ["術士"] = true, -- Chinese (Traditional)
+
+    ["Druid"] = true, -- English
+    ["Druide"] = true, -- German
+    ["Druida"] = true, -- Spanish
+    ["Druida"] = true, -- Spanish (Mexico)
+    ["Druide"] = true, -- French
+    ["Druido"] = true, -- Italian
+    ["Druida"] = true, -- Portuguese
+    ["Друид"] = true, -- Russian
+    ["드루이드"] = true, -- Korean
+    ["德鲁伊"] = true, -- Chinese (Simplified)
+    ["德魯伊"] = true, -- Chinese (Traditional)
 }
 
 local function getQuestLogTitle(questLogIndex)
