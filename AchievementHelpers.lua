@@ -861,29 +861,36 @@ local function abandonQuestSound()
     return sound
 end
 
-
 local checkQuests = false
+local numQuestsBeforeNewHasBeenAdded = 0
 local blockQuestsEventListener = CreateFrame("Frame")
 blockQuestsEventListener:SetScript("OnEvent", function(self, eventName, a1)
     eventName = eventName or event
+    WHC.DebugPrint(eventName)
+    -- This event is always fired before quest is added to the quest log
     if eventName == "UNIT_QUEST_LOG_CHANGED" then
+        ExpandQuestHeader(0) -- Ensure all quest headers are expanded
+        numQuestsBeforeNewHasBeenAdded = GetNumQuestLogEntries()
+        return
+    end
+
+    -- This event is fired multiple times, both before and after a quest is added to the quest log
+    if eventName == "QUEST_LOG_UPDATE" and numQuestsBeforeNewHasBeenAdded < GetNumQuestLogEntries() then
         checkQuests = true
-        return
     end
 
-    local numQuests = GetNumQuestLogEntries()
-    if numQuests < 1 then
-        return
+    if eventName == "QUEST_ACCEPTED" then
+        ExpandQuestHeader(0) -- Ensure all quest headers are expanded
+        checkQuests = true
     end
 
-    if eventName == "QUEST_ACCEPTED" or eventName == "QUEST_LOG_UPDATE" and checkQuests then
+    if checkQuests then
         checkQuests = false
 
         local helpYourselfAllowedCategories = getHelpYourselfAllowedCategories()
 
-        ExpandQuestHeader(0) -- Ensure all quest headers are expanded
-
         local headerName = ""
+        local numQuests = GetNumQuestLogEntries()
         for questLogIndex = 1, numQuests do
             local questTitle, _, _, isHeader = GetQuestLogTitle(questLogIndex);
             if isHeader then
