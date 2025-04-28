@@ -864,7 +864,7 @@ local function abandonQuestSound()
 end
 
 local checkQuests = false
-local numQuestsBeforeNewHasBeenAdded = 0
+local previousNumQuests = 0
 local blockQuestsEventListener = CreateFrame("Frame")
 blockQuestsEventListener:SetScript("OnEvent", function(self, eventName, a1)
     eventName = eventName or event
@@ -872,12 +872,12 @@ blockQuestsEventListener:SetScript("OnEvent", function(self, eventName, a1)
     -- This event is always fired before quest is added to the quest log
     if eventName == "UNIT_QUEST_LOG_CHANGED" then
         ExpandQuestHeader(0) -- Ensure all quest headers are expanded
-        numQuestsBeforeNewHasBeenAdded = GetNumQuestLogEntries()
+        previousNumQuests = GetNumQuestLogEntries()
         return
     end
 
     -- This event is fired multiple times, both before and after a quest is added to the quest log
-    if eventName == "QUEST_LOG_UPDATE" and numQuestsBeforeNewHasBeenAdded < GetNumQuestLogEntries() then
+    if eventName == "QUEST_LOG_UPDATE" and previousNumQuests ~= GetNumQuestLogEntries() then
         checkQuests = true
     end
 
