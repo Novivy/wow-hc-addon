@@ -742,14 +742,18 @@ marathonRunnerEventListener:SetScript("OnEvent", function(self, eventName, addon
     end
 end)
 
+local function getQuestID()
+    if GetQuestID then -- 1.14 feature
+        return GetQuestID()
+    end
+
+    return 0
+end
+
 if QuestFrameAcceptButton then
     hooksecurefunc(QuestFrameAcceptButton, "Enable", function()
         if WhcAchievementSettings.blockRidingSkill == 1 then
-            local questID = 0
-            if GetQuestID then
-                questID = GetQuestID() -- 1.14 feature
-            end
-
+            local questID = getQuestID()
             local questName = GetTitleText()
             if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
                 QuestFrameAcceptButton:Disable()
@@ -761,11 +765,7 @@ end
 if QuestFrameCompleteQuestButton then
     hooksecurefunc(QuestFrameCompleteQuestButton, "Enable", function()
         if WhcAchievementSettings.blockRidingSkill == 1 then
-            local questID = 0
-            if GetQuestID then
-                questID = GetQuestID() -- 1.14 feature
-            end
-
+            local questID = getQuestID()
             local questName = GetTitleText()
             if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
                 QuestFrameCompleteQuestButton:Disable()
@@ -793,8 +793,9 @@ function WHC.SetBlockRidingSkill()
         end
 
         AcceptQuest = function()
+            local questID = getQuestID
             local questName = GetTitleText()
-            if marathonRunnerBlockedQuests[questName] then
+            if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
                 return printAchievementInfo(marathonRunnerLink, format("Accepting [%s] is blocked as the reward includes riding skill.", questName))
             end
 
@@ -802,8 +803,9 @@ function WHC.SetBlockRidingSkill()
         end
         
         GetQuestReward = function(itemChoice)
+            local questID = getQuestID()
             local questName = GetTitleText()
-            if marathonRunnerBlockedQuests[questName] then
+            if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
                 return printAchievementInfo(marathonRunnerLink, format("Completing [%s] is blocked as the reward includes riding skill.", questName))
             end
 

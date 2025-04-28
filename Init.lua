@@ -123,6 +123,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.SetBlockRepair()
     WHC.SetBlockTaxiService()
     WHC.SetBlockMailItems()
+    WHC.SetBlockRidingSkill()
     WHC.SetBlockQuests()
     if RETAIL == 0 then
         WHC.SetBlockEquipItems()

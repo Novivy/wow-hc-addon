@@ -1,5 +1,6 @@
 
 ## Changelog for next update
+- Settings checkbox for Marathon Runner achievement, blocking learning riding skill
 - Settings checkbox for Help Yourself achievement, auto abandoning non-class or profession quests
 
 ## Future versions:
