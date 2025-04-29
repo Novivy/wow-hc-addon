@@ -870,7 +870,7 @@ blockQuestsEventListener:SetScript("OnEvent", function(self, eventName, a1)
     eventName = eventName or event
     -- This event is always fired before quest is added to the quest log
     if eventName == "UNIT_QUEST_LOG_CHANGED" then
-        ExpandQuestHeader(0) -- Ensure dall quest headers are expanded
+        ExpandQuestHeader(0) -- Ensure all quest headers are expanded
         return
     end
 
