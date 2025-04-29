@@ -868,17 +868,16 @@ local previousNumQuests = 0
 local blockQuestsEventListener = CreateFrame("Frame")
 blockQuestsEventListener:SetScript("OnEvent", function(self, eventName, a1)
     eventName = eventName or event
-    WHC.DebugPrint(eventName)
     -- This event is always fired before quest is added to the quest log
     if eventName == "UNIT_QUEST_LOG_CHANGED" then
-        ExpandQuestHeader(0) -- Ensure all quest headers are expanded
-        previousNumQuests = GetNumQuestLogEntries()
+        ExpandQuestHeader(0) -- Ensure dall quest headers are expanded
         return
     end
 
     -- This event is fired multiple times, both before and after a quest is added to the quest log
-    if eventName == "QUEST_LOG_UPDATE" and previousNumQuests ~= GetNumQuestLogEntries() then
-        checkQuests = true
+    if eventName == "QUEST_LOG_UPDATE" then
+        checkQuests = previousNumQuests ~= GetNumQuestLogEntries()
+        previousNumQuests = GetNumQuestLogEntries()
     end
 
     if eventName == "QUEST_ACCEPTED" then
