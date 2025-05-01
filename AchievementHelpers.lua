@@ -721,8 +721,6 @@ local function canTrainSkill()
     local skillIndex = GetTrainerSelectionIndex()
     local money, _, profession = GetTrainerServiceCost(skillIndex)
 
-    WHC.DebugPrint(string.format("GetTrainerServiceCost money:%s profession:%s", tostring(money), tostring(profession)))
-
     if WhcAchievementSettings.blockRidingSkill == 1 and money > ridingCostInCopper then
         table.insert(trainSkillErrorMessages, achievementErrorMessage(marathonRunnerLink, "Buying riding skill is blocked."))
     end
