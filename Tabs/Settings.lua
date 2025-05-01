@@ -189,7 +189,7 @@ function WHC.Tab_Settings(content)
     WHC_SETTINGS.blockRidingSkillCheckbox:SetScript("OnClick", function(self)
         WhcAchievementSettings.blockRidingSkill = math.abs(WhcAchievementSettings.blockRidingSkill - 1)
         playCheckedSound(WhcAchievementSettings.blockRidingSkill)
-        WHC.SetBlockRidingSkill()
+        WHC.SetBlockTrainSkill()
     end)
 
     if RETAIL == 0 then
@@ -262,6 +262,13 @@ function WHC.Tab_Settings(content)
             playCheckedSound(WhcAchievementSettings.blockNonSelfMadeItemsTooltip)
         end)
     end
+
+    WHC_SETTINGS.blockProfessionsCheckbox = createSettingsCheckBox(scrollContent, "[Soft Hands] Achievement: Block learning primary professions")
+    WHC_SETTINGS.blockProfessionsCheckbox:SetScript("OnClick", function(self)
+        WhcAchievementSettings.blockProfessions = math.abs(WhcAchievementSettings.blockProfessions - 1)
+        playCheckedSound(WhcAchievementSettings.blockProfessions)
+        WHC.SetBlockTrainSkill()
+    end)
 
     WHC_SETTINGS.blockMailItemsCheckbox = createSettingsCheckBox(scrollContent, "[Special Deliveries] Achievement: Block mail items and money")
     WHC_SETTINGS.blockMailItemsCheckbox:SetScript("OnClick", function(self)

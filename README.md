@@ -2,6 +2,7 @@
 ## Changelog for next update
 - Settings checkbox for Marathon Runner achievement, blocking learning riding skill
 - Settings checkbox for Help Yourself achievement, auto abandoning non-class or profession quests
+- Settings checkbox for Soft Hands achievement, blocking learning primary professions
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath

@@ -72,6 +72,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAchievementSettings.blockNonSelfMadeItemsTooltip = WhcAchievementSettings.blockNonSelfMadeItemsTooltip or 0
     WhcAchievementSettings.blockMailItems = WhcAchievementSettings.blockMailItems or 0
     WhcAchievementSettings.blockRidingSkill = WhcAchievementSettings.blockRidingSkill or 0
+    WhcAchievementSettings.blockProfessions = WhcAchievementSettings.blockProfessions or 0
     WhcAchievementSettings.blockQuests = WhcAchievementSettings.blockQuests or 0
 
     WHC.InitializeUI()
@@ -123,7 +124,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.SetBlockRepair()
     WHC.SetBlockTaxiService()
     WHC.SetBlockMailItems()
-    WHC.SetBlockRidingSkill()
+    WHC.SetBlockTrainSkill()
     WHC.SetBlockQuests()
     if RETAIL == 0 then
         WHC.SetBlockEquipItems()
