@@ -710,6 +710,20 @@ local marathonRunnerBlockedQuests = {
     ["召喚地獄戰馬"]                    = true, -- Chinese (Traditional)
 }
 
+local function getTrainerServiceCost(skillIndex)
+    local money, _, professionSlots = GetTrainerServiceCost(skillIndex)
+    if RETAIL == 1 then
+        money, professionSlots = GetTrainerServiceCost(skillIndex)
+        if professionSlots then -- 1.14 returns a bool instead of an integer
+            professionSlots = 1
+        else
+            professionSlots = 0
+        end
+    end
+
+    return money, professionSlots
+end
+
 --Base cost is 80 gold (800000 cp)
 --10% discount is 72 gold (720000 cp)
 --20% discount is 64 gold (640000 cp)
@@ -719,13 +733,13 @@ local function canTrainSkill()
     local trainSkillErrorMessages = {}
 
     local skillIndex = GetTrainerSelectionIndex()
-    local money, _, profession = GetTrainerServiceCost(skillIndex)
+    local money, professionSlots = getTrainerServiceCost(skillIndex)
 
     if WhcAchievementSettings.blockRidingSkill == 1 and money > ridingCostInCopper then
         table.insert(trainSkillErrorMessages, achievementErrorMessage(marathonRunnerLink, "Buying riding skill is blocked."))
     end
 
-    if WhcAchievementSettings.blockProfessions == 1 and profession > 0 then
+    if WhcAchievementSettings.blockProfessions == 1 and professionSlots > 0 then
         table.insert(trainSkillErrorMessages, achievementErrorMessage(softHandsLink, "Buying primary profession is blocked."))
     end
 
