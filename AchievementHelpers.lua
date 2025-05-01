@@ -472,9 +472,9 @@ hooksecurefunc(GameTooltip, "SetTradeTargetItem", function(tip, tradeSlot)
     setTooltipInfo(itemLink)
 end)
 
-local errorMessages = {}
+local equipErrorMessages = {}
 local function canEquipItem(itemLink)
-    errorMessages = {}
+    equipErrorMessages = {}
 
     local itemId = getItemIDFromLink(itemLink)
     local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
@@ -484,20 +484,20 @@ local function canEquipItem(itemLink)
 
     if WhcAchievementSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
         local msg = "Equipping ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items are blocked."
-        table.insert(errorMessages, achievementErrorMessage(misterWhiteLink, msg))
+        table.insert(equipErrorMessages, achievementErrorMessage(misterWhiteLink, msg))
     end
 
     if WhcAchievementSettings.blockArmorItems == 1 and not onlyFanAllowedItems[itemEquipLoc] then
-        table.insert(errorMessages, achievementErrorMessage(onlyFanLink, "Equipping armor items are blocked."))
+        table.insert(equipErrorMessages, achievementErrorMessage(onlyFanLink, "Equipping armor items are blocked."))
     end
 
     if WhcAchievementSettings.blockNonSelfMadeItems == 1 and not isSelfMade() and
             not selfMadeAllowedItems[itemSubType] and not selfMadeAllowedItems[itemEquipLoc] then
-        table.insert(errorMessages, achievementErrorMessage(selfMadeLink, "Equipping items you did not craft are blocked."))
+        table.insert(equipErrorMessages, achievementErrorMessage(selfMadeLink, "Equipping items you did not craft are blocked."))
     end
 end
 
-local function printEquipBlockers()
+local function printBlockers(errorMessages)
     for _, value in ipairs(errorMessages) do
         DEFAULT_CHAT_FRAME:AddMessage(value)
     end
@@ -505,7 +505,7 @@ end
 
 hooksecurefunc("PickupContainerItem", function(bagId, slot)
     if not CursorHasItem() then
-        errorMessages = {}
+        equipErrorMessages = {}
         return
     end
 
@@ -543,11 +543,11 @@ function WHC.SetBlockEquipItems()
 
             local itemLink = GetContainerItemLink(bagId, slot)
             canEquipItem(itemLink)
-            if not errorMessages[1] then
+            if not equipErrorMessages[1] then
                 return BlizzardFunctions.UseContainerItem(bagId, slot, onSelf)
             end
 
-            printEquipBlockers()
+            printBlockers(equipErrorMessages)
         end
 
         -- Left-clicking a merchant item does not trigger CursorHasItem() to become true, so we only allow right-click buying,
@@ -586,38 +586,38 @@ function WHC.SetBlockEquipItems()
                 return BlizzardFunctions.PickupInventoryItem(invSlot)
             end
 
-            if not errorMessages[1] then
+            if not equipErrorMessages[1] then
                 return BlizzardFunctions.PickupInventoryItem(invSlot)
             end
 
-            printEquipBlockers()
+            printBlockers(equipErrorMessages)
         end
 
         -- Block other addons
         AutoEquipCursorItem = function()
-            if not errorMessages[1] then
+            if not equipErrorMessages[1] then
                 return BlizzardFunctions.AutoEquipCursorItem()
             end
 
-            printEquipBlockers()
+            printBlockers(equipErrorMessages)
         end
 
         -- Block other addons
         EquipCursorItem = function(invSlot)
-            if not errorMessages[1] then
+            if not equipErrorMessages[1] then
                 return BlizzardFunctions.EquipCursorItem(invSlot)
             end
 
-            printEquipBlockers()
+            printBlockers(equipErrorMessages)
         end
 
         -- Block Bind-on-Equip pop up
         EquipPendingItem = function(invSlot)
-            if not errorMessages[1] then
+            if not equipErrorMessages[1] then
                 return BlizzardFunctions.EquipCursorItem(invSlot)
             end
 
-            printEquipBlockers()
+            printBlockers(equipErrorMessages)
         end
     end
 end
@@ -678,21 +678,9 @@ function WHC.SetBlockMailItems()
 end
 --endregion
 
---region ====== Marathon Runner ======
+--region ====== Marathon Runner & Soft Hands ======
 local marathonRunnerLink = WHC.Achievements.MARATHON_RUNNER.itemLink
-
-local marathonRunnerBlockedSkills = {
-    ["Apprentice Riding"]          = true, -- English
-    ["Unerfahrener Reiter"]        = true, -- German
-    ["Aprendiz jinete"]            = true, -- Spanish
-    ["Apprenti cavalier"]          = true, -- French
-    ["Apprendista in Equitazione"] = true, -- Italian
-    ["Aprendiz de Montaria"]       = true, -- Portuguese
-    ["Верховая езда (ученик)"]     = true, -- Russian
-    ["초급 타기"]                   = true, -- Korean
-    ["初级骑术"]                    = true, -- Chinese (Simplified)
-    ["初級騎術"]                    = true, -- Chinese (Traditional)
-}
+local softHandsLink = WHC.Achievements.SOFT_HANDS.itemLink
 
 local marathonRunnerBlockedQuests = {
     [1661] = true,
@@ -722,20 +710,43 @@ local marathonRunnerBlockedQuests = {
     ["召喚地獄戰馬"]                    = true, -- Chinese (Traditional)
 }
 
-local marathonRunnerEventListener = CreateFrame("Frame")
-marathonRunnerEventListener:RegisterEvent("ADDON_LOADED")
-marathonRunnerEventListener:SetScript("OnEvent", function(self, eventName, addonName)
+--Base cost is 80 gold (800000 cp)
+--10% discount is 72 gold (720000 cp)
+--20% discount is 64 gold (640000 cp)
+local ridingCostInCopper = 639999
+
+local function canTrainSkill()
+    local trainSkillErrorMessages = {}
+
+    local skillIndex = GetTrainerSelectionIndex()
+    local money, _, profession = GetTrainerServiceCost(skillIndex)
+
+    WHC.DebugPrint(string.format("GetTrainerServiceCost money:%s profession:%s", tostring(money), tostring(profession)))
+
+    if WhcAchievementSettings.blockRidingSkill == 1 and money > ridingCostInCopper then
+        table.insert(trainSkillErrorMessages, achievementErrorMessage(marathonRunnerLink, "Buying riding skill is blocked."))
+    end
+
+    if WhcAchievementSettings.blockProfessions == 1 and profession > 0 then
+        table.insert(trainSkillErrorMessages, achievementErrorMessage(softHandsLink, "Buying primary profession is blocked."))
+    end
+
+    return trainSkillErrorMessages
+end
+
+local trainerUIEventListener = CreateFrame("Frame")
+trainerUIEventListener:RegisterEvent("ADDON_LOADED")
+trainerUIEventListener:SetScript("OnEvent", function(self, eventName, addonName)
     addonName = addonName or arg1
     if addonName ~= "Blizzard_TrainerUI" then
         return
     end
-    marathonRunnerEventListener:UnregisterEvent("ADDON_LOADED")
+    trainerUIEventListener:UnregisterEvent("ADDON_LOADED")
 
     if ClassTrainerTrainButton then
         hooksecurefunc(ClassTrainerTrainButton, "Enable", function()
-            local skillIndex = GetTrainerSelectionIndex()
-            local skillName = GetTrainerServiceInfo(skillIndex)
-            if WhcAchievementSettings.blockRidingSkill == 1 and marathonRunnerBlockedSkills[skillName] then
+            local trainSkillErrorsMessages = canTrainSkill()
+            if trainSkillErrorsMessages[1] then
                 ClassTrainerTrainButton:Disable()
             end
         end)
@@ -777,16 +788,16 @@ end
 BlizzardFunctions.BuyTrainerService = BuyTrainerService
 BlizzardFunctions.AcceptQuest = AcceptQuest
 BlizzardFunctions.GetQuestReward = GetQuestReward
-function WHC.SetBlockRidingSkill()
+function WHC.SetBlockTrainSkill()
     BuyTrainerService = BlizzardFunctions.BuyTrainerService
     AcceptQuest = BlizzardFunctions.AcceptQuest
     GetQuestReward = BlizzardFunctions.GetQuestReward
 
     if WhcAchievementSettings.blockRidingSkill == 1 then
         BuyTrainerService = function(index)
-            local skillName = GetTrainerServiceInfo(index)
-            if marathonRunnerBlockedSkills[skillName] then
-                return printAchievementInfo(marathonRunnerLink, "Buying riding skill is blocked.")
+            local trainSkillErrorsMessages = canTrainSkill()
+            if trainSkillErrorsMessages[1] then
+                return printBlockers(trainSkillErrorsMessages)
             end
 
             return BlizzardFunctions.BuyTrainerService(index)
