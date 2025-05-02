@@ -296,12 +296,15 @@ function WHC.Tab_Settings(content)
         WHC.SetBlockMailItems()
     end)
 
-    WHC_SETTINGS.onlyKillBoarsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Warning when not targeting boars or quilboars", WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.name))
-    WHC_SETTINGS.onlyKillBoarsCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.onlyKillBoars = math.abs(WhcAchievementSettings.onlyKillBoars - 1)
-        playCheckedSound(WhcAchievementSettings.onlyKillBoars)
-        WHC.SetWarningOnlyKill()
-    end)
+    -- There are too many quilboars to translate for 1.12
+    if RETAIL == 1 or WHC.client.isEnglish then
+        WHC_SETTINGS.onlyKillBoarsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Warning when not targeting boars or quilboars", WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.name))
+        WHC_SETTINGS.onlyKillBoarsCheckbox:SetScript("OnClick", function(self)
+            WhcAchievementSettings.onlyKillBoars = math.abs(WhcAchievementSettings.onlyKillBoars - 1)
+            playCheckedSound(WhcAchievementSettings.onlyKillBoars)
+            WHC.SetWarningOnlyKill()
+        end)
+    end
 
     WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(scrollContent, "[Time is Money] Achievement: Block auction house buying")
     WHC_SETTINGS.blockAuctionBuyCheckbox:SetScript("OnClick", function(self)

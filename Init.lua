@@ -32,8 +32,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
 
     local locale = GetLocale()
     WHC.client = {
-        locale = GetLocale()
-
+        isEnglish = locale == "enUS" or locale == "enGB"
     }
 
     local version = GetBuildInfo()

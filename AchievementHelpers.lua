@@ -1103,7 +1103,7 @@ local function getNpcID(unit)
         return 0
     end
 
-    local guid = UnitGUID(unit)
+    local guid = UnitGUID(unit) -- Only possible on 1.14
     local _, _, _, _, _, npcID = strsplit("-", guid)
     return tonumber(npcID)
 end
