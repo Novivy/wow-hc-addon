@@ -953,9 +953,13 @@ local thatWhichHasNoLifeLink = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.itemLink
 
 local quilboars = {
     -- Bristleback clan
+    [3259] = true,
     ["Bristleback Defender"] = true,
+    [3263] = true,
     ["Bristleback Geomancer"] = true,
+    [3258] = true,
     ["Bristleback Hunter"] = true,
+    [3232] = true,
     ["Bristleback Interloper"] = true,
     ["Bristleback Mystic"] = true,
     ["Bristleback Quilboar"] = true,
@@ -1050,15 +1054,33 @@ local quilboars = {
     ["Withered Warrior"]   = true, -- Undead
 }
 
+local boars = {
+    ["Withered Battle Boar"] = true, -- Undead
+    ["Battle Boar Horror"] = true, -- Undead
+    ["Helboar"] = true, -- Demon
+}
+
+local function npcID(unit)
+    if not UnitGUID then
+        return 0
+    end
+
+    local _, _, _, _, _, npcID = strsplit("-", guid)
+    return tonumber(npcID)
+end
+
 local onlyKillFrame = CreateFrame("Frame")
 onlyKillFrame:SetScript("OnEvent", function()
-    if not UnitExists("target") or not UnitCanAttack("player", "target") then
+    if not UnitExists("target") or not UnitCanAttack("player", "target") or UnitIsTrivial("target") or UnitIsPlayer("target") then
         return onlyKillFrame:Hide()
     end
 
     WHC.DebugPrint(" ")
+    WHC.DebugPrint(thatWhichHasNoLifeLink)
+    WHC.DebugPrint(lightbringerLink)
     WHC.DebugPrint("UnitCreatureType: ".. tostring(UnitCreatureType("target")))
     WHC.DebugPrint("UnitCreatureFamily: ".. tostring(UnitCreatureFamily("target")))
+    WHC.DebugPrint("UnitGUID: "..tostring(UnitGUID("target")))
 
     local creatureType =  UnitCreatureType("target") -- Demon, Undead, Beast, Humanoid. No idea if they are localised or not
     if WhcAchievementSettings.onlyKillDemons == 1 and creatureType ~= "Demon" then
@@ -1071,7 +1093,9 @@ onlyKillFrame:SetScript("OnEvent", function()
 
     local unitName = UnitName("target")
     local creatureFamily = UnitCreatureFamily("target") -- Boar. No idea if they are localised
-    local isBoarOrQuilboar = creatureType == "Beast" and creatureFamily == "Boar" or quilboars[unitName]
+    local isBoar = creatureType == "Beast" and creatureFamily == "Boar" or boars[unitName]
+    local isQuilboar = quilboars[unitName]
+    local isBoarOrQuilboar = isBoar or isQuilboar
     if WhcAchievementSettings.onlyKillBoars == 1 and not isBoarOrQuilboar then
         return onlyKillFrame:Show()
     end
