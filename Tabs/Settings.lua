@@ -150,6 +150,11 @@ function WHC.Tab_Settings(content)
     getNextOffsetY()
     createTitle(scrollContent, "Achievement Settings", 14)
 
+    local englishClientOnly = ""
+    if RETAIL == 0 then
+        englishClientOnly = ""
+    end
+
     WHC_SETTINGS.onlyKillDemonsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Warning when not targeting demons", WHC.Achievements.DEMON_SLAYER.name))
     WHC_SETTINGS.onlyKillDemonsCheckbox:SetScript("OnClick", function(self)
         WhcAchievementSettings.onlyKillDemons = math.abs(WhcAchievementSettings.onlyKillDemons - 1)

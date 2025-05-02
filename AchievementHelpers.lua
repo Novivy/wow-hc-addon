@@ -951,6 +951,48 @@ local demonSlayerLink = WHC.Achievements.DEMON_SLAYER.itemLink
 local lightbringerLink = WHC.Achievements.LIGHTBRINGER.itemLink
 local thatWhichHasNoLifeLink = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.itemLink
 
+local undeadType = {
+    ["Undead"] = true, -- English
+    ["Untoter"] = true, -- German
+    ["No-muerto"] = true, -- Spanish
+    ["No-muerto"] = true, -- Spanish (Mexico)
+    ["Mort-vivant"] = true, -- French
+    ["Non Morto"] = true, -- Italian
+    ["Morto-vivo"] = true, -- Portuguese
+    ["Нежить"] = true, -- Russian
+    ["언데드"] = true, -- Korean
+    ["亡灵"] = true, -- Chinese (Simplified)
+    ["亡靈"] = true, -- Chinese (Traditional)
+}
+
+local demonType = {
+    ["Dämon"] = true, -- English
+    ["Untoter"] = true, -- German
+    ["Demonio"] = true, -- Spanish
+    ["Demonio"] = true, -- Spanish (Mexico)
+    ["Démon"] = true, -- French
+    ["Demone"] = true, -- Italian
+    ["Demônio"] = true, -- Portuguese
+    ["Демон"] = true, -- Russian
+    ["악마"] = true, -- Korean
+    ["恶魔"] = true, -- Chinese (Simplified)
+    ["惡魔"] = true, -- Chinese (Traditional)
+}
+
+local boarFamily = {
+    ["Boar"] = true, -- English
+    ["Eber"] = true, -- German
+    ["Jabalí"] = true, -- Spanish
+    ["Jabalí"] = true, -- Spanish (Mexico)
+    ["Sanglier"] = true, -- French
+    ["Cinghiale"] = true, -- Italian
+    ["Javali"] = true, -- Portuguese
+    ["Вепрь"] = true, -- Russian
+    ["멧돼지"] = true, -- Korean
+    ["野猪"] = true, -- Chinese (Simplified)
+    ["野豬"] = true, -- Chinese (Traditional)
+}
+
 local quilboars = {
     -- Bristleback clan
     [3259] = true, ["Bristleback Defender"] = true,
@@ -1080,18 +1122,18 @@ onlyKillFrame:SetScript("OnEvent", function()
     WHC.DebugPrint("npcID: "..tostring(npcID("target")))
 
     local creatureType =  UnitCreatureType("target") -- Demon, Undead, Beast, Humanoid. No idea if they are localised or not
-    if WhcAchievementSettings.onlyKillDemons == 1 and creatureType ~= "Demon" then
+    if WhcAchievementSettings.onlyKillDemons == 1 and not demonType[creatureType] then
         return onlyKillFrame:Show()
     end
 
-    if WhcAchievementSettings.onlyKillUndead == 1 and creatureType ~= "Undead" then
+    if WhcAchievementSettings.onlyKillUndead == 1 and not undeadType[creatureType] then
         return onlyKillFrame:Show()
     end
 
     local unitName = UnitName("target")
     local npcID = getNpcID("target")
     local creatureFamily = UnitCreatureFamily("target") -- Boar. No idea if they are localised
-    local isBoar = creatureType == "Beast" and creatureFamily == "Boar" or boars[npcID] or boars[unitName]
+    local isBoar = boarFamily[creatureFamily] or boars[npcID] or boars[unitName]
     local isQuilboar = quilboars[npcID] or quilboars[unitName]
     local isBoarOrQuilboar = isBoar or isQuilboar
     if WhcAchievementSettings.onlyKillBoars == 1 and not isBoarOrQuilboar then

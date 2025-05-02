@@ -30,6 +30,12 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         class = class,
     }
 
+    local locale = GetLocale()
+    WHC.client = {
+        locale = GetLocale()
+
+    }
+
     local version = GetBuildInfo()
     if (version == "1.12.0" or version == "1.12.1") then
         RETAIL = 0
