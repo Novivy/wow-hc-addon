@@ -945,3 +945,145 @@ function WHC.SetBlockQuests()
     end
 end
 --endregion
+
+--region ====== Demon Slayer & Lightbringer & That Which Has No Life ======
+local demonSlayerLink = WHC.Achievements.DEMON_SLAYER.itemLink
+local lightbringerLink = WHC.Achievements.LIGHTBRINGER.itemLink
+local thatWhichHasNoLifeLink = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.itemLink
+
+local quilboars = {
+    -- Bristleback clan
+    ["Bristleback Defender"] = true,
+    ["Bristleback Geomancer"] = true,
+    ["Bristleback Hunter"] = true,
+    ["Bristleback Interloper"] = true,
+    ["Bristleback Mystic"] = true,
+    ["Bristleback Quilboar"] = true,
+    ["Bristleback Shaman"] = true,
+    ["Bristleback Thornweaver"] = true,
+    ["Bristleback Water Seeker"] = true,
+
+    -- Death's Head clan (Razorfen Kraul and Downs)
+    ["Death's Head Acolyte"] = true,
+    ["Death's Head Adept"] = true,
+    ["Death's Head Cultist"] = true,
+    ["Death's Head Geomancer"] = true,
+    ["Death's Head Necromancer"] = true,
+    ["Death's Head Priest"] = true,
+    ["Death's Head Sage"] = true,
+    ["Death's Head Seer"] = true,
+    ["Death's Head Shaman"] = true, -- Might be Season of Discovery mob
+    ["Death's Head Ward Keeper"] = true,
+    ["Death's Head Warrior"] = true, -- Undead
+
+    -- Razorfen clan (Razorfen Kraul)
+    ["Razorfen Battleguard"] = true,
+    ["Razorfen Beast Trainer"] = true,
+    ["Razorfen Beastmaster"] = true,
+    ["Razorfen Defender"] = true,
+    ["Razorfen Dustweaver"] = true,
+    ["Razorfen Earthbreaker"] = true,
+    ["Razorfen Geomancer"] = true,
+    ["Razorfen Groundshaker"] = true,
+    ["Razorfen Handler"] = true,
+    ["Razorfen Quilguard"] = true,
+    ["Razorfen Servitor"] = true,
+    ["Razorfen Spearhide"] = true,
+    ["Razorfen Stalker"] = true,
+    ["Razorfen Thornweaver"] = true,
+    ["Razorfen Totemic"] = true,
+    ["Razorfen Warden"] = true,
+    ["Razorfen Warrior"] = true,
+
+    -- Razormane clan
+    ["Razormane Battleguard"] = true,
+    ["Razormane Defender"] = true,
+    ["Razormane Dustrunner"] = true,
+    ["Razormane Geomancer"] = true,
+    ["Razormane Hunter"] = true,
+    ["Razormane Mystic"] = true,
+    ["Razormane Pathfinder"] = true,
+    ["Razormane Poacher"] = true,
+    ["Razormane Quilboar"] = true,
+    ["Razormane Scout"] = true,
+    ["Razormane Seer"] = true,
+    ["Razormane Stalker"] = true,
+    ["Razormane Thornweaver"] = true,
+    ["Razormane Warfrenzy"] = true,
+    ["Razormane Water Seeker"] = true,
+
+    -- Razorfen Kraul bosses
+    ["Roogug"] = true,
+    ["Aggem Thorncurse"] = true,
+    ["Death Speaker Jargba"] = true,
+    ["Overlord Ramtusk"] = true,
+    ["Charlga Razorflank"] = true,
+
+    -- Razorfen Down bosses
+    ["Plaguemaw the Rotting"] = true,
+    ["Ragglesnout"] = true,
+
+    -- Rare and special mobs
+    ["\"Squealer\" Thornmantle"] = true,
+    ["Ailgrha Splittusk"] = true, -- Might be Season of Discovery mob
+    ["Captain Flat Tusk"] = true,
+    ["Chief Sharptusk Thornmantle"] = true,
+    ["Crekori Mudwater"] = true, -- Might not exist in the game
+    ["Earthcaller Halmgar"] = true,
+    ["Elder Mystic Razorsnout"] = true,
+    ["Geolord Mottle"] = true,
+    ["Geopriest Gukk'rok"] = true,
+    ["Hagg Taurenbane"] = true,
+    ["Hirzek"] = true,
+    ["Kreenig Snarlsnout"] = true,
+    ["Kuz"] = true,
+    ["Lok Orcbane"] = true,
+    ["Mangletooth"] = true, -- Horde quest giver. Alliance might be able to kill him
+    ["Nak"] = true,
+    ["Quilguard Champion"] = true,
+    ["Snokh Blackspine"] = true,
+    ["Swinegart Spearhide"] = true,
+    ["Ward Guardian"] = true,
+    ["Withered Quilguard"] = true, -- Undead
+    ["Withered Reaver"]    = true, -- Undead
+    ["Withered Spearhide"] = true, -- Undead
+    ["Withered Warrior"]   = true, -- Undead
+}
+
+local onlyKillFrame = CreateFrame("Frame")
+onlyKillFrame:SetScript("OnEvent", function()
+    if not UnitExists("target") or not UnitCanAttack("player", "target") then
+        return onlyKillFrame:Hide()
+    end
+
+    WHC.DebugPrint(" ")
+    WHC.DebugPrint("UnitCreatureType: ".. tostring(UnitCreatureType("target")))
+    WHC.DebugPrint("UnitCreatureFamily: ".. tostring(UnitCreatureFamily("target")))
+
+    local creatureType =  UnitCreatureType("target") -- Demon, Undead, Beast, Humanoid. No idea if they are localised or not
+    if WhcAchievementSettings.onlyKillDemons == 1 and creatureType ~= "Demon" then
+        return onlyKillFrame:Show()
+    end
+
+    if WhcAchievementSettings.onlyKillUndead == 1 and creatureType ~= "Undead" then
+        return onlyKillFrame:Show()
+    end
+
+    local unitName = UnitName("target")
+    local creatureFamily = UnitCreatureFamily("target") -- Boar. No idea if they are localised
+    local isBoarOrQuilboar = creatureType == "Beast" and creatureFamily == "Boar" or quilboars[unitName]
+    if WhcAchievementSettings.onlyKillBoars == 1 and not isBoarOrQuilboar then
+        return onlyKillFrame:Show()
+    end
+end)
+
+function WHC.SetWarningOnlyKill()
+    onlyKillFrame:UnregisterEvent("PLAYER_TARGET_CHANGED")
+
+    if WhcAchievementSettings.onlyKillDemons == 1 or WhcAchievementSettings.onlyKillUndead == 1 or WhcAchievementSettings.onlyKillBoars == 1 then
+        onlyKillFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+    end
+end
+
+--Hej Muu. Du er sød og god til at kode. Husk at kramme på din kone engang imellem, så bliver hun så glad. Jeg elsker dig! <3
+--endregion

@@ -129,6 +129,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.SetBlockMailItems()
     WHC.SetBlockTrainSkill()
     WHC.SetBlockQuests()
+    WHC.SetWarningOnlyKill()
     if RETAIL == 0 then
         WHC.SetBlockEquipItems()
     end
