@@ -953,118 +953,115 @@ local thatWhichHasNoLifeLink = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.itemLink
 
 local quilboars = {
     -- Bristleback clan
-    [3259] = true,
-    ["Bristleback Defender"] = true,
-    [3263] = true,
-    ["Bristleback Geomancer"] = true,
-    [3258] = true,
-    ["Bristleback Hunter"] = true,
-    [3232] = true,
-    ["Bristleback Interloper"] = true,
-    ["Bristleback Mystic"] = true,
-    ["Bristleback Quilboar"] = true,
-    ["Bristleback Shaman"] = true,
-    ["Bristleback Thornweaver"] = true,
-    ["Bristleback Water Seeker"] = true,
+    [3259] = true, ["Bristleback Defender"] = true,
+    [3263] = true, ["Bristleback Geomancer"] = true,
+    [3258] = true, ["Bristleback Hunter"] = true,
+    [3232] = true, ["Bristleback Interloper"] = true,
+    [3262] = true, ["Bristleback Mystic"] = true,
+    [2952] = true, ["Bristleback Quilboar"] = true,
+    [2953] = true, ["Bristleback Shaman"] = true,
+    [3261] = true, ["Bristleback Thornweaver"] = true,
+    [3260] = true, ["Bristleback Water Seeker"] = true,
 
     -- Death's Head clan (Razorfen Kraul and Downs)
-    ["Death's Head Acolyte"] = true,
-    ["Death's Head Adept"] = true,
-    ["Death's Head Cultist"] = true,
-    ["Death's Head Geomancer"] = true,
-    ["Death's Head Necromancer"] = true,
-    ["Death's Head Priest"] = true,
-    ["Death's Head Sage"] = true,
-    ["Death's Head Seer"] = true,
-    ["Death's Head Shaman"] = true, -- Might be Season of Discovery mob
-    ["Death's Head Ward Keeper"] = true,
-    ["Death's Head Warrior"] = true, -- Undead
+    [4515] = true, ["Death's Head Acolyte"] = true,
+    [4516] = true, ["Death's Head Adept"] = true,
+    [7872] = true, ["Death's Head Cultist"] = true,
+    [7335] = true, ["Death's Head Geomancer"] = true,
+    [7337] = true, ["Death's Head Necromancer"] = true,
+    [4517] = true, ["Death's Head Priest"] = true,
+    [4518] = true, ["Death's Head Sage"] = true,
+    [4519] = true, ["Death's Head Seer"] = true,
+    [212674] = true, ["Death's Head Shaman"] = true, -- Might be Season of Discovery mob
+    [4625] = true, ["Death's Head Ward Keeper"] = true,
+    [218873] = true, ["Death's Head Warrior"] = true, -- Undead, Might be Season of Discovery mob
 
     -- Razorfen clan (Razorfen Kraul)
-    ["Razorfen Battleguard"] = true,
-    ["Razorfen Beast Trainer"] = true,
-    ["Razorfen Beastmaster"] = true,
-    ["Razorfen Defender"] = true,
-    ["Razorfen Dustweaver"] = true,
-    ["Razorfen Earthbreaker"] = true,
-    ["Razorfen Geomancer"] = true,
-    ["Razorfen Groundshaker"] = true,
-    ["Razorfen Handler"] = true,
-    ["Razorfen Quilguard"] = true,
-    ["Razorfen Servitor"] = true,
-    ["Razorfen Spearhide"] = true,
-    ["Razorfen Stalker"] = true,
-    ["Razorfen Thornweaver"] = true,
-    ["Razorfen Totemic"] = true,
-    ["Razorfen Warden"] = true,
-    ["Razorfen Warrior"] = true,
+    [7873] = true, ["Razorfen Battleguard"] = true,
+    [4531] = true, ["Razorfen Beast Trainer"] = true,
+    [4532] = true, ["Razorfen Beastmaster"] = true,
+    [4442] = true, ["Razorfen Defender"] = true,
+    [4522] = true, ["Razorfen Dustweaver"] = true,
+    [4525] = true, ["Razorfen Earthbreaker"] = true,
+    [4520] = true, ["Razorfen Geomancer"] = true,
+    [4523] = true, ["Razorfen Groundshaker"] = true,
+    [4530] = true, ["Razorfen Handler"] = true,
+    [4436] = true, ["Razorfen Quilguard"] = true,
+    [6132] = true, ["Razorfen Servitor"] = true,
+    [4438] = true, ["Razorfen Spearhide"] = true,
+    [6035] = true, ["Razorfen Stalker"] = true,
+    [7874] = true, ["Razorfen Thornweaver"] = true,
+    [4440] = true, ["Razorfen Totemic"] = true,
+    [4437] = true, ["Razorfen Warden"] = true,
+    [4435] = true, ["Razorfen Warrior"] = true,
 
     -- Razormane clan
-    ["Razormane Battleguard"] = true,
-    ["Razormane Defender"] = true,
-    ["Razormane Dustrunner"] = true,
-    ["Razormane Geomancer"] = true,
-    ["Razormane Hunter"] = true,
-    ["Razormane Mystic"] = true,
-    ["Razormane Pathfinder"] = true,
-    ["Razormane Poacher"] = true,
-    ["Razormane Quilboar"] = true,
-    ["Razormane Scout"] = true,
-    ["Razormane Seer"] = true,
-    ["Razormane Stalker"] = true,
-    ["Razormane Thornweaver"] = true,
-    ["Razormane Warfrenzy"] = true,
-    ["Razormane Water Seeker"] = true,
+    [3114] = true, ["Razormane Battleguard"] = true,
+    [3266] = true, ["Razormane Defender"] = true,
+    [3113] = true, ["Razormane Dustrunner"] = true,
+    [3269] = true, ["Razormane Geomancer"] = true,
+    [3265] = true, ["Razormane Hunter"] = true,
+    [3271] = true, ["Razormane Mystic"] = true,
+    [3456] = true, ["Razormane Pathfinder"] = true,
+    [208180] = true, ["Razormane Poacher"] = true, -- Might be Season of Discovery mob
+    [3111] = true, ["Razormane Quilboar"] = true,
+    [3112] = true, ["Razormane Scout"] = true,
+    [3458] = true, ["Razormane Seer"] = true,
+    [3457] = true, ["Razormane Stalker"] = true,
+    [3268] = true, ["Razormane Thornweaver"] = true,
+    [3459] = true, ["Razormane Warfrenzy"] = true,
+    [3267] = true, ["Razormane Water Seeker"] = true,
 
     -- Razorfen Kraul bosses
-    ["Roogug"] = true,
-    ["Aggem Thorncurse"] = true,
-    ["Death Speaker Jargba"] = true,
-    ["Overlord Ramtusk"] = true,
-    ["Charlga Razorflank"] = true,
+    [6168] = true, ["Roogug"] = true,
+    [4424] = true, ["Aggem Thorncurse"] = true,
+    [4428] = true, ["Death Speaker Jargba"] = true,
+    [4420] = true, ["Overlord Ramtusk"] = true,
+    [4421] = true, ["Charlga Razorflank"] = true,
 
     -- Razorfen Down bosses
-    ["Plaguemaw the Rotting"] = true,
-    ["Ragglesnout"] = true,
+    [7356] = true, ["Plaguemaw the Rotting"] = true,
+    [7354] = true, ["Ragglesnout"] = true,
 
     -- Rare and special mobs
-    ["\"Squealer\" Thornmantle"] = true,
-    ["Ailgrha Splittusk"] = true, -- Might be Season of Discovery mob
-    ["Captain Flat Tusk"] = true,
-    ["Chief Sharptusk Thornmantle"] = true,
-    ["Crekori Mudwater"] = true, -- Might not exist in the game
-    ["Earthcaller Halmgar"] = true,
-    ["Elder Mystic Razorsnout"] = true,
-    ["Geolord Mottle"] = true,
-    ["Geopriest Gukk'rok"] = true,
-    ["Hagg Taurenbane"] = true,
-    ["Hirzek"] = true,
-    ["Kreenig Snarlsnout"] = true,
-    ["Kuz"] = true,
-    ["Lok Orcbane"] = true,
-    ["Mangletooth"] = true, -- Horde quest giver. Alliance might be able to kill him
-    ["Nak"] = true,
-    ["Quilguard Champion"] = true,
-    ["Snokh Blackspine"] = true,
-    ["Swinegart Spearhide"] = true,
-    ["Ward Guardian"] = true,
-    ["Withered Quilguard"] = true, -- Undead
-    ["Withered Reaver"]    = true, -- Undead
-    ["Withered Spearhide"] = true, -- Undead
-    ["Withered Warrior"]   = true, -- Undead
+    [3229] = true, ["\"Squealer\" Thornmantle"] = true,
+    [216463] = true, ["Ailgrha Splittusk"] = true, -- Might be Season of Discovery mob
+    [5824] = true, ["Captain Flat Tusk"] = true,
+    [8554] = true, ["Chief Sharptusk Thornmantle"] = true,
+    [3437] = true, ["Crekori Mudwater"] = true, -- Might not exist in the game
+    [4842] = true, ["Earthcaller Halmgar"] = true,
+    [3270] = true, ["Elder Mystic Razorsnout"] = true,
+    [5826] = true, ["Geolord Mottle"] = true,
+    [5863] = true, ["Geopriest Gukk'rok"] = true,
+    [5859] = true, ["Hagg Taurenbane"] = true,
+    [212694] = true, ["Hirzek"] = true, -- Might be Season of Discovery mob
+    [3438] = true, ["Kreenig Snarlsnout"] = true,
+    [3436] = true, ["Kuz"] = true,
+    [3435] = true, ["Lok Orcbane"] = true,
+    [3430] = true, ["Mangletooth"] = true, -- Horde quest giver. Alliance might be able to kill him
+    [3434] = true, ["Nak"] = true,
+    [4623] = true, ["Quilguard Champion"] = true,
+    [16051] = true, ["Snokh Blackspine"] = true,
+    [5864] = true, ["Swinegart Spearhide"] = true,
+    [4427] = true, ["Ward Guardian"] = true,
+    [7329] = true, ["Withered Quilguard"] = true, -- Undead
+    [7328] = true, ["Withered Reaver"]    = true, -- Undead
+    [7332] = true, ["Withered Spearhide"] = true, -- Undead
+    [7327] = true, ["Withered Warrior"]   = true, -- Undead
 }
 
 local boars = {
-    ["Withered Battle Boar"] = true, -- Undead
-    ["Battle Boar Horror"] = true, -- Undead
-    ["Helboar"] = true, -- Demon
+    [7333] = true, ["Withered Battle Boar"] = true, -- Undead
+    [7334] = true, ["Battle Boar Horror"] = true, -- Undead
+    [5993] = true, ["Helboar"] = true, -- Demon
 }
 
-local function npcID(unit)
+local function getNpcID(unit)
     if not UnitGUID then
         return 0
     end
 
+    local guid = UnitGUID(unit)
     local _, _, _, _, _, npcID = strsplit("-", guid)
     return tonumber(npcID)
 end
@@ -1080,7 +1077,7 @@ onlyKillFrame:SetScript("OnEvent", function()
     WHC.DebugPrint(lightbringerLink)
     WHC.DebugPrint("UnitCreatureType: ".. tostring(UnitCreatureType("target")))
     WHC.DebugPrint("UnitCreatureFamily: ".. tostring(UnitCreatureFamily("target")))
-    WHC.DebugPrint("UnitGUID: "..tostring(UnitGUID("target")))
+    WHC.DebugPrint("npcID: "..tostring(npcID("target")))
 
     local creatureType =  UnitCreatureType("target") -- Demon, Undead, Beast, Humanoid. No idea if they are localised or not
     if WhcAchievementSettings.onlyKillDemons == 1 and creatureType ~= "Demon" then
@@ -1092,9 +1089,10 @@ onlyKillFrame:SetScript("OnEvent", function()
     end
 
     local unitName = UnitName("target")
+    local npcID = getNpcID("target")
     local creatureFamily = UnitCreatureFamily("target") -- Boar. No idea if they are localised
-    local isBoar = creatureType == "Beast" and creatureFamily == "Boar" or boars[unitName]
-    local isQuilboar = quilboars[unitName]
+    local isBoar = creatureType == "Beast" and creatureFamily == "Boar" or boars[npcID] or boars[unitName]
+    local isQuilboar = quilboars[npcID] or quilboars[unitName]
     local isBoarOrQuilboar = isBoar or isQuilboar
     if WhcAchievementSettings.onlyKillBoars == 1 and not isBoarOrQuilboar then
         return onlyKillFrame:Show()
