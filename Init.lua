@@ -74,6 +74,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAchievementSettings.blockRidingSkill = WhcAchievementSettings.blockRidingSkill or 0
     WhcAchievementSettings.blockProfessions = WhcAchievementSettings.blockProfessions or 0
     WhcAchievementSettings.blockQuests = WhcAchievementSettings.blockQuests or 0
+    WhcAchievementSettings.onlyKillUndead = WhcAchievementSettings.onlyKillUndead or 0
+    WhcAchievementSettings.onlyKillDemons = WhcAchievementSettings.onlyKillDemons or 0
+    WhcAchievementSettings.onlyKillBoars = WhcAchievementSettings.onlyKillBoars or 0
 
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
