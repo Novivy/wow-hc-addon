@@ -164,7 +164,7 @@ function WHC.Tab_Settings(content)
         WHC.SetBlockQuests()
     end)
 
-    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(scrollContent, string.format("[] Achievement: Block repairing items", WHC.Achievements.IRON_BONES.name))
+    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block repairing items", WHC.Achievements.IRON_BONES.name))
     WHC_SETTINGS.blockRepairCheckbox:SetScript("OnClick", function(self)
         WhcAchievementSettings.blockRepair = math.abs(WhcAchievementSettings.blockRepair - 1)
         playCheckedSound(WhcAchievementSettings.blockRepair)
