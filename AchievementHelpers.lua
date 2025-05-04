@@ -819,7 +819,7 @@ function WHC.SetBlockTrainSkill()
             local questID = getQuestID
             local questName = GetTitleText()
             if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
-                return printAchievementInfo(marathonRunnerLink, format("Accepting [%s] is blocked as the reward includes riding skill.", questName))
+                return printAchievementInfo(marathonRunnerLink, string.format("Accepting [%s] is blocked as the reward includes riding skill.", questName))
             end
 
             return BlizzardFunctions.AcceptQuest()
@@ -829,7 +829,7 @@ function WHC.SetBlockTrainSkill()
             local questID = getQuestID()
             local questName = GetTitleText()
             if marathonRunnerBlockedQuests[questID] or marathonRunnerBlockedQuests[questName] then
-                return printAchievementInfo(marathonRunnerLink, format("Completing [%s] is blocked as the reward includes riding skill.", questName))
+                return printAchievementInfo(marathonRunnerLink, string.format("Completing [%s] is blocked as the reward includes riding skill.", questName))
             end
 
             return BlizzardFunctions.GetQuestReward(itemChoice)
