@@ -952,7 +952,7 @@ local lightbringer = WHC.Achievements.LIGHTBRINGER
 local thatWhichHasNoLife = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE
 
 -- Remove false positives
--- Critters from level 1-5
+-- Critter are levels go all the way to 55 inside Stratholme
 -- Totems summoned by Quilboars
 local ignoreCreatureType = {
     ["Critter"] = true, -- English
