@@ -1191,15 +1191,16 @@ local function updateOnlyKillFrame(achievement, unitName)
 end
 
 onlyKillFrame:SetScript("OnEvent", function()
-    local creatureType = UnitCreatureType("target")
+    onlyKillFrame:Hide()
 
+    local creatureType = UnitCreatureType("target")
     if not UnitExists("target") or
             not UnitCanAttack("player", "target") or
             UnitIsTrivial("target") or
             ignoreCreatureType[creatureType] or
             UnitIsPlayer("target") or
             UnitIsDead("target") then
-        return onlyKillFrame:Hide()
+        return
     end
 
     local npcID = getNpcID("target")
