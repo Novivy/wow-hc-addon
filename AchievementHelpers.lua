@@ -947,9 +947,38 @@ end
 --endregion
 
 --region ====== Demon Slayer & Lightbringer & That Which Has No Life ======
-local demonSlayerLink = WHC.Achievements.DEMON_SLAYER.itemLink
-local lightbringerLink = WHC.Achievements.LIGHTBRINGER.itemLink
-local thatWhichHasNoLifeLink = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.itemLink
+local demonSlayer = WHC.Achievements.DEMON_SLAYER
+local lightbringer = WHC.Achievements.LIGHTBRINGER
+local thatWhichHasNoLife = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE
+
+-- Remove false positives
+-- Critters from level 1-5
+-- Totems summoned by Quilboars
+local ignoreCreatureType = {
+    ["Critter"] = true, -- English
+    ["Tier"] = true, -- German
+    ["Alimaña"] = true, -- Spanish
+    ["Alimaña"] = true, -- Spanish (Mexico)
+    ["Bestiole"] = true, -- French
+    ["Animale"] = true, -- Italian
+    ["Bicho"] = true, -- Portuguese
+    ["Зверек"] = true, -- Russian
+    ["동물"] = true, -- Korean
+    ["小生物"] = true, -- Chinese (Simplified)
+    ["小動物"] = true, -- Chinese (Traditional)
+
+    ["Totem"] = true, -- English
+    ["Totem"] = true, -- German
+    ["Tótem"] = true, -- Spanish
+    ["Tótem"] = true, -- Spanish (Mexico)
+    ["Totem"] = true, -- French
+    ["Totem"] = true, -- Italian
+    ["Totem"] = true, -- Portuguese
+    ["Тотем"] = true, -- Russian
+    ["토템"] = true, -- Korean
+    ["图腾"] = true, -- Chinese (Simplified)
+    ["圖騰"] = true, -- Chinese (Traditional)
+}
 
 local undeadType = {
     ["Undead"] = true, -- English
@@ -965,9 +994,26 @@ local undeadType = {
     ["亡靈"] = true, -- Chinese (Traditional)
 }
 
+-- Spawns from undead mobs in Duskwood. Gives 0 exp.
+-- List can be generalized to more mobs if significant mobs are found.
+local undeadIgnoreNpcs = {
+    [2462] = true,
+    ["Flesh Eating Worm"] = true, -- English
+    ["Fleischfressender Wurm"] = true, -- German
+    ["Gusano comecarnes"] = true, -- Spanish
+    ["Gusano carnívoro"] = true, -- Spanish (Mexico)
+    ["Ver mangeur de chair"] = true, -- French
+    ["Verme Carnivoro"] = true, -- Italian
+    ["Verme Come-carne"] = true, -- Portuguese
+    ["Кусеница"] = true, -- Russian
+    ["왕구더기"] = true, -- Korean
+    ["食腐虫"] = true, -- Chinese (Simplified)
+    ["食腐蟲"] = true, -- Chinese (Traditional)
+}
+
 local demonType = {
-    ["Dämon"] = true, -- English
-    ["Untoter"] = true, -- German
+    ["Demon"] = true, -- English
+    ["Dämon"] = true, -- German
     ["Demonio"] = true, -- Spanish
     ["Demonio"] = true, -- Spanish (Mexico)
     ["Démon"] = true, -- French
@@ -993,7 +1039,7 @@ local boarFamily = {
     ["野豬"] = true, -- Chinese (Traditional)
 }
 
-local quilboars = {
+local quilboarNpcs = {
     -- Bristleback clan
     [3259] = true, ["Bristleback Defender"] = true,
     [3263] = true, ["Bristleback Geomancer"] = true,
@@ -1005,7 +1051,7 @@ local quilboars = {
     [3261] = true, ["Bristleback Thornweaver"] = true,
     [3260] = true, ["Bristleback Water Seeker"] = true,
 
-    -- Death's Head clan (Razorfen Kraul and Downs)
+    -- Death's Head clan (Razorfen Kraul and Razorfen Downs)
     [4515] = true, ["Death's Head Acolyte"] = true,
     [4516] = true, ["Death's Head Adept"] = true,
     [7872] = true, ["Death's Head Cultist"] = true,
@@ -1083,7 +1129,7 @@ local quilboars = {
     [3430] = true, ["Mangletooth"] = true, -- Horde quest giver. Alliance might be able to kill him
     [3434] = true, ["Nak"] = true,
     [4623] = true, ["Quilguard Champion"] = true,
-    [16051] = true, ["Snokh Blackspine"] = true,
+    [16051] = true, ["Snokh Blackspine"] = true, -- Blackrock Depths - Jail Break event
     [5864] = true, ["Swinegart Spearhide"] = true,
     [4427] = true, ["Ward Guardian"] = true,
     [7329] = true, ["Withered Quilguard"] = true, -- Undead
@@ -1092,7 +1138,7 @@ local quilboars = {
     [7327] = true, ["Withered Warrior"]   = true, -- Undead
 }
 
-local boars = {
+local boarNpcs = {
     [7333] = true, ["Withered Battle Boar"] = true, -- Undead
     [7334] = true, ["Battle Boar Horror"] = true, -- Undead
     [5993] = true, ["Helboar"] = true, -- Demon
@@ -1108,40 +1154,77 @@ local function getNpcID(unit)
     return tonumber(npcID)
 end
 
-local onlyKillFrame = CreateFrame("Frame")
+local onlyKillFrame = CreateFrame("Frame", "OnlyKillFrame", UIParent, RETAIL_BACKDROP)
+onlyKillFrame:SetWidth(500)
+onlyKillFrame:SetHeight(150)
+onlyKillFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 250)
+onlyKillFrame:SetBackdrop({
+    bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
+    edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+    tile = true,
+    tileSize = 32,
+    edgeSize = 32,
+    insets = { left = 11, right = 12, top = 12, bottom = 11 }
+})
+onlyKillFrame:SetBackdropColor(0, 0, 0, 1)
+
+onlyKillFrame.logo = onlyKillFrame:CreateTexture(nil, "ARTWORK")
+onlyKillFrame.logo:SetWidth(60)
+onlyKillFrame.logo:SetHeight(60)
+onlyKillFrame.logo:SetPoint("TOP", onlyKillFrame, "TOP", 0, 20)
+
+onlyKillFrame.title = onlyKillFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+onlyKillFrame.title:SetPoint("TOP", onlyKillFrame, "TOP", 0, -50) -- Adjust y-offset based on logo size
+onlyKillFrame.title:SetFont("Fonts\\FRIZQT__.TTF", 18)
+onlyKillFrame.title:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+
+onlyKillFrame.desc1 = onlyKillFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+onlyKillFrame.desc1:SetPoint("TOP", onlyKillFrame.title, "TOP", 0, -30) -- Adjust y-offset based on logo size
+onlyKillFrame.desc1:SetFont("Fonts\\FRIZQT__.TTF", 16)
+onlyKillFrame.desc1:SetWidth(450)
+
+local function updateOnlyKillFrame(achievement, unitName)
+    onlyKillFrame.logo:SetTexture("Interface\\Icons\\"..achievement.icon)
+    onlyKillFrame.title:SetText(achievement.itemLink)
+    onlyKillFrame.desc1:SetText(string.format("Killing [%s] will fail your achievement!", unitName))
+    onlyKillFrame:Show()
+end
+
 onlyKillFrame:SetScript("OnEvent", function()
-    if not UnitExists("target") or not UnitCanAttack("player", "target") or UnitIsTrivial("target") or UnitIsPlayer("target") then
+    local creatureType = UnitCreatureType("target")
+
+    if not UnitExists("target") or
+            not UnitCanAttack("player", "target") or
+            UnitIsTrivial("target") or
+            ignoreCreatureType[creatureType] or
+            UnitIsPlayer("target") or
+            UnitIsDead("target") then
         return onlyKillFrame:Hide()
     end
 
-    WHC.DebugPrint(" ")
-    WHC.DebugPrint(thatWhichHasNoLifeLink)
-    WHC.DebugPrint(lightbringerLink)
-    WHC.DebugPrint("UnitCreatureType: ".. tostring(UnitCreatureType("target")))
-    WHC.DebugPrint("UnitCreatureFamily: ".. tostring(UnitCreatureFamily("target")))
-    WHC.DebugPrint("npcID: "..tostring(npcID("target")))
-
-    local creatureType =  UnitCreatureType("target") -- Demon, Undead, Beast, Humanoid. No idea if they are localised or not
-    if WhcAchievementSettings.onlyKillDemons == 1 and not demonType[creatureType] then
-        return onlyKillFrame:Show()
-    end
-
-    if WhcAchievementSettings.onlyKillUndead == 1 and not undeadType[creatureType] then
-        return onlyKillFrame:Show()
-    end
-
-    local unitName = UnitName("target")
     local npcID = getNpcID("target")
-    local creatureFamily = UnitCreatureFamily("target") -- Boar. No idea if they are localised
-    local isBoar = boarFamily[creatureFamily] or boars[npcID] or boars[unitName]
-    local isQuilboar = quilboars[npcID] or quilboars[unitName]
+    local unitName = UnitName("target")
+
+    if WhcAchievementSettings.onlyKillDemons == 1 and not demonType[creatureType] then
+        return updateOnlyKillFrame(demonSlayer, unitName)
+    end
+
+    local ignoreNonUndead = undeadIgnoreNpcs[npcID] or undeadIgnoreNpcs[unitName]
+    if WhcAchievementSettings.onlyKillUndead == 1 and not undeadType[creatureType] and not ignoreNonUndead then
+        return updateOnlyKillFrame(lightbringer, unitName)
+    end
+
+    local creatureFamily = UnitCreatureFamily("target")
+    local isBoar = boarFamily[creatureFamily] or boarNpcs[npcID] or boarNpcs[unitName]
+    local isQuilboar = quilboarNpcs[npcID] or quilboarNpcs[unitName]
     local isBoarOrQuilboar = isBoar or isQuilboar
     if WhcAchievementSettings.onlyKillBoars == 1 and not isBoarOrQuilboar then
-        return onlyKillFrame:Show()
+        return updateOnlyKillFrame(thatWhichHasNoLife, unitName)
     end
 end)
 
 function WHC.SetWarningOnlyKill()
+    onlyKillFrame:Hide()
     onlyKillFrame:UnregisterEvent("PLAYER_TARGET_CHANGED")
 
     if WhcAchievementSettings.onlyKillDemons == 1 or WhcAchievementSettings.onlyKillUndead == 1 or WhcAchievementSettings.onlyKillBoars == 1 then
