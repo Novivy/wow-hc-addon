@@ -945,3 +945,293 @@ function WHC.SetBlockQuests()
     end
 end
 --endregion
+
+--region ====== Demon Slayer & Lightbringer & That Which Has No Life ======
+local demonSlayer = WHC.Achievements.DEMON_SLAYER
+local lightbringer = WHC.Achievements.LIGHTBRINGER
+local thatWhichHasNoLife = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE
+
+-- Remove false positives
+-- Critter are levels go all the way to 55 inside Stratholme
+-- Totems summoned by Quilboars
+local ignoreCreatureType = {
+    ["Critter"] = true, -- English
+    ["Tier"] = true, -- German
+    ["Alimaña"] = true, -- Spanish
+    ["Alimaña"] = true, -- Spanish (Mexico)
+    ["Bestiole"] = true, -- French
+    ["Animale"] = true, -- Italian
+    ["Bicho"] = true, -- Portuguese
+    ["Зверек"] = true, -- Russian
+    ["동물"] = true, -- Korean
+    ["小生物"] = true, -- Chinese (Simplified)
+    ["小動物"] = true, -- Chinese (Traditional)
+
+    ["Totem"] = true, -- English
+    ["Totem"] = true, -- German
+    ["Tótem"] = true, -- Spanish
+    ["Tótem"] = true, -- Spanish (Mexico)
+    ["Totem"] = true, -- French
+    ["Totem"] = true, -- Italian
+    ["Totem"] = true, -- Portuguese
+    ["Тотем"] = true, -- Russian
+    ["토템"] = true, -- Korean
+    ["图腾"] = true, -- Chinese (Simplified)
+    ["圖騰"] = true, -- Chinese (Traditional)
+}
+
+local undeadType = {
+    ["Undead"] = true, -- English
+    ["Untoter"] = true, -- German
+    ["No-muerto"] = true, -- Spanish
+    ["No-muerto"] = true, -- Spanish (Mexico)
+    ["Mort-vivant"] = true, -- French
+    ["Non Morto"] = true, -- Italian
+    ["Morto-vivo"] = true, -- Portuguese
+    ["Нежить"] = true, -- Russian
+    ["언데드"] = true, -- Korean
+    ["亡灵"] = true, -- Chinese (Simplified)
+    ["亡靈"] = true, -- Chinese (Traditional)
+}
+
+-- Spawns from undead mobs in Duskwood. Gives 0 exp.
+-- List can be generalized to more mobs if significant mobs are found.
+local undeadIgnoreNpcs = {
+    [2462] = true,
+    ["Flesh Eating Worm"] = true, -- English
+    ["Fleischfressender Wurm"] = true, -- German
+    ["Gusano comecarnes"] = true, -- Spanish
+    ["Gusano carnívoro"] = true, -- Spanish (Mexico)
+    ["Ver mangeur de chair"] = true, -- French
+    ["Verme Carnivoro"] = true, -- Italian
+    ["Verme Come-carne"] = true, -- Portuguese
+    ["Кусеница"] = true, -- Russian
+    ["왕구더기"] = true, -- Korean
+    ["食腐虫"] = true, -- Chinese (Simplified)
+    ["食腐蟲"] = true, -- Chinese (Traditional)
+}
+
+local demonType = {
+    ["Demon"] = true, -- English
+    ["Dämon"] = true, -- German
+    ["Demonio"] = true, -- Spanish
+    ["Demonio"] = true, -- Spanish (Mexico)
+    ["Démon"] = true, -- French
+    ["Demone"] = true, -- Italian
+    ["Demônio"] = true, -- Portuguese
+    ["Демон"] = true, -- Russian
+    ["악마"] = true, -- Korean
+    ["恶魔"] = true, -- Chinese (Simplified)
+    ["惡魔"] = true, -- Chinese (Traditional)
+}
+
+local boarFamily = {
+    ["Boar"] = true, -- English
+    ["Eber"] = true, -- German
+    ["Jabalí"] = true, -- Spanish
+    ["Jabalí"] = true, -- Spanish (Mexico)
+    ["Sanglier"] = true, -- French
+    ["Cinghiale"] = true, -- Italian
+    ["Javali"] = true, -- Portuguese
+    ["Вепрь"] = true, -- Russian
+    ["멧돼지"] = true, -- Korean
+    ["野猪"] = true, -- Chinese (Simplified)
+    ["野豬"] = true, -- Chinese (Traditional)
+}
+
+local quilboarNpcs = {
+    -- Bristleback clan
+    [3259] = true, ["Bristleback Defender"] = true,
+    [3263] = true, ["Bristleback Geomancer"] = true,
+    [3258] = true, ["Bristleback Hunter"] = true,
+    [3232] = true, ["Bristleback Interloper"] = true,
+    [3262] = true, ["Bristleback Mystic"] = true,
+    [2952] = true, ["Bristleback Quilboar"] = true,
+    [2953] = true, ["Bristleback Shaman"] = true,
+    [3261] = true, ["Bristleback Thornweaver"] = true,
+    [3260] = true, ["Bristleback Water Seeker"] = true,
+
+    -- Death's Head clan (Razorfen Kraul and Razorfen Downs)
+    [4515] = true, ["Death's Head Acolyte"] = true,
+    [4516] = true, ["Death's Head Adept"] = true,
+    [7872] = true, ["Death's Head Cultist"] = true,
+    [7335] = true, ["Death's Head Geomancer"] = true,
+    [7337] = true, ["Death's Head Necromancer"] = true,
+    [4517] = true, ["Death's Head Priest"] = true,
+    [4518] = true, ["Death's Head Sage"] = true,
+    [4519] = true, ["Death's Head Seer"] = true,
+    [212674] = true, ["Death's Head Shaman"] = true, -- Might be Season of Discovery mob
+    [4625] = true, ["Death's Head Ward Keeper"] = true,
+    [218873] = true, ["Death's Head Warrior"] = true, -- Undead, Might be Season of Discovery mob
+
+    -- Razorfen clan (Razorfen Kraul)
+    [7873] = true, ["Razorfen Battleguard"] = true,
+    [4531] = true, ["Razorfen Beast Trainer"] = true,
+    [4532] = true, ["Razorfen Beastmaster"] = true,
+    [4442] = true, ["Razorfen Defender"] = true,
+    [4522] = true, ["Razorfen Dustweaver"] = true,
+    [4525] = true, ["Razorfen Earthbreaker"] = true,
+    [4520] = true, ["Razorfen Geomancer"] = true,
+    [4523] = true, ["Razorfen Groundshaker"] = true,
+    [4530] = true, ["Razorfen Handler"] = true,
+    [4436] = true, ["Razorfen Quilguard"] = true,
+    [6132] = true, ["Razorfen Servitor"] = true,
+    [4438] = true, ["Razorfen Spearhide"] = true,
+    [6035] = true, ["Razorfen Stalker"] = true,
+    [7874] = true, ["Razorfen Thornweaver"] = true,
+    [4440] = true, ["Razorfen Totemic"] = true,
+    [4437] = true, ["Razorfen Warden"] = true,
+    [4435] = true, ["Razorfen Warrior"] = true,
+
+    -- Razormane clan
+    [3114] = true, ["Razormane Battleguard"] = true,
+    [3266] = true, ["Razormane Defender"] = true,
+    [3113] = true, ["Razormane Dustrunner"] = true,
+    [3269] = true, ["Razormane Geomancer"] = true,
+    [3265] = true, ["Razormane Hunter"] = true,
+    [3271] = true, ["Razormane Mystic"] = true,
+    [3456] = true, ["Razormane Pathfinder"] = true,
+    [208180] = true, ["Razormane Poacher"] = true, -- Might be Season of Discovery mob
+    [3111] = true, ["Razormane Quilboar"] = true,
+    [3112] = true, ["Razormane Scout"] = true,
+    [3458] = true, ["Razormane Seer"] = true,
+    [3457] = true, ["Razormane Stalker"] = true,
+    [3268] = true, ["Razormane Thornweaver"] = true,
+    [3459] = true, ["Razormane Warfrenzy"] = true,
+    [3267] = true, ["Razormane Water Seeker"] = true,
+
+    -- Razorfen Kraul bosses
+    [6168] = true, ["Roogug"] = true,
+    [4424] = true, ["Aggem Thorncurse"] = true,
+    [4428] = true, ["Death Speaker Jargba"] = true,
+    [4420] = true, ["Overlord Ramtusk"] = true,
+    [4421] = true, ["Charlga Razorflank"] = true,
+
+    -- Razorfen Down bosses
+    [7356] = true, ["Plaguemaw the Rotting"] = true,
+    [7354] = true, ["Ragglesnout"] = true,
+
+    -- Rare and special mobs
+    [3229] = true, ["\"Squealer\" Thornmantle"] = true,
+    [216463] = true, ["Ailgrha Splittusk"] = true, -- Might be Season of Discovery mob
+    [5824] = true, ["Captain Flat Tusk"] = true,
+    [8554] = true, ["Chief Sharptusk Thornmantle"] = true,
+    [3437] = true, ["Crekori Mudwater"] = true, -- Might not exist in the game
+    [4842] = true, ["Earthcaller Halmgar"] = true,
+    [3270] = true, ["Elder Mystic Razorsnout"] = true,
+    [5826] = true, ["Geolord Mottle"] = true,
+    [5863] = true, ["Geopriest Gukk'rok"] = true,
+    [5859] = true, ["Hagg Taurenbane"] = true,
+    [212694] = true, ["Hirzek"] = true, -- Might be Season of Discovery mob
+    [3438] = true, ["Kreenig Snarlsnout"] = true,
+    [3436] = true, ["Kuz"] = true,
+    [3435] = true, ["Lok Orcbane"] = true,
+    [3430] = true, ["Mangletooth"] = true, -- Horde quest giver. Alliance might be able to kill him
+    [3434] = true, ["Nak"] = true,
+    [4623] = true, ["Quilguard Champion"] = true,
+    [16051] = true, ["Snokh Blackspine"] = true, -- Blackrock Depths - Jail Break event
+    [5864] = true, ["Swinegart Spearhide"] = true,
+    [4427] = true, ["Ward Guardian"] = true,
+    [7329] = true, ["Withered Quilguard"] = true, -- Undead
+    [7328] = true, ["Withered Reaver"]    = true, -- Undead
+    [7332] = true, ["Withered Spearhide"] = true, -- Undead
+    [7327] = true, ["Withered Warrior"]   = true, -- Undead
+}
+
+local boarNpcs = {
+    [7333] = true, ["Withered Battle Boar"] = true, -- Undead
+    [7334] = true, ["Battle Boar Horror"] = true, -- Undead
+    [5993] = true, ["Helboar"] = true, -- Demon
+}
+
+local function getNpcID(unit)
+    if not UnitGUID then
+        return 0
+    end
+
+    local guid = UnitGUID(unit) -- Only possible on 1.14
+    local _, _, _, _, _, npcID = strsplit("-", guid)
+    return tonumber(npcID)
+end
+
+local onlyKillFrame = CreateFrame("Frame", "OnlyKillFrame", UIParent, RETAIL_BACKDROP)
+onlyKillFrame:SetWidth(500)
+onlyKillFrame:SetHeight(150)
+onlyKillFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 250)
+onlyKillFrame:SetBackdrop({
+    bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
+    edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+    tile = true,
+    tileSize = 32,
+    edgeSize = 32,
+    insets = { left = 11, right = 12, top = 12, bottom = 11 }
+})
+onlyKillFrame:SetBackdropColor(0, 0, 0, 1)
+
+onlyKillFrame.logo = onlyKillFrame:CreateTexture(nil, "ARTWORK")
+onlyKillFrame.logo:SetWidth(60)
+onlyKillFrame.logo:SetHeight(60)
+onlyKillFrame.logo:SetPoint("TOP", onlyKillFrame, "TOP", 0, 20)
+
+onlyKillFrame.title = onlyKillFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+onlyKillFrame.title:SetPoint("TOP", onlyKillFrame, "TOP", 0, -50) -- Adjust y-offset based on logo size
+onlyKillFrame.title:SetFont("Fonts\\FRIZQT__.TTF", 18)
+onlyKillFrame.title:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+
+onlyKillFrame.desc1 = onlyKillFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+onlyKillFrame.desc1:SetPoint("TOP", onlyKillFrame.title, "TOP", 0, -30) -- Adjust y-offset based on logo size
+onlyKillFrame.desc1:SetFont("Fonts\\FRIZQT__.TTF", 16)
+onlyKillFrame.desc1:SetWidth(450)
+
+local function updateOnlyKillFrame(achievement, unitName)
+    onlyKillFrame.logo:SetTexture("Interface\\Icons\\"..achievement.icon)
+    onlyKillFrame.title:SetText(achievement.itemLink)
+    onlyKillFrame.desc1:SetText(string.format("Killing [%s] will fail your achievement!", unitName))
+    onlyKillFrame:Show()
+end
+
+onlyKillFrame:SetScript("OnEvent", function()
+    onlyKillFrame:Hide()
+
+    local creatureType = UnitCreatureType("target")
+    if not UnitExists("target") or
+            not UnitCanAttack("player", "target") or
+            UnitIsTrivial("target") or
+            ignoreCreatureType[creatureType] or
+            UnitIsPlayer("target") or
+            UnitIsDead("target") then
+        return
+    end
+
+    local npcID = getNpcID("target")
+    local unitName = UnitName("target")
+
+    if WhcAchievementSettings.onlyKillDemons == 1 and not demonType[creatureType] then
+        return updateOnlyKillFrame(demonSlayer, unitName)
+    end
+
+    local ignoreNonUndead = undeadIgnoreNpcs[npcID] or undeadIgnoreNpcs[unitName]
+    if WhcAchievementSettings.onlyKillUndead == 1 and not undeadType[creatureType] and not ignoreNonUndead then
+        return updateOnlyKillFrame(lightbringer, unitName)
+    end
+
+    local creatureFamily = UnitCreatureFamily("target")
+    local isBoar = boarFamily[creatureFamily] or boarNpcs[npcID] or boarNpcs[unitName]
+    local isQuilboar = quilboarNpcs[npcID] or quilboarNpcs[unitName]
+    local isBoarOrQuilboar = isBoar or isQuilboar
+    if WhcAchievementSettings.onlyKillBoars == 1 and not isBoarOrQuilboar then
+        return updateOnlyKillFrame(thatWhichHasNoLife, unitName)
+    end
+end)
+
+function WHC.SetWarningOnlyKill()
+    onlyKillFrame:Hide()
+    onlyKillFrame:UnregisterEvent("PLAYER_TARGET_CHANGED")
+
+    if WhcAchievementSettings.onlyKillDemons == 1 or WhcAchievementSettings.onlyKillUndead == 1 or WhcAchievementSettings.onlyKillBoars == 1 then
+        onlyKillFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+    end
+end
+
+--Hej Muu. Du er sød og god til at kode. Husk at kramme på din kone engang imellem, så bliver hun så glad. Jeg elsker dig! <3
+--endregion

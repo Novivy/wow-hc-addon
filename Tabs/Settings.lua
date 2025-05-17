@@ -150,6 +150,13 @@ function WHC.Tab_Settings(content)
     getNextOffsetY()
     createTitle(scrollContent, "Achievement Settings", 14)
 
+	WHC_SETTINGS.onlyKillDemonsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Warning when not targeting demons", WHC.Achievements.DEMON_SLAYER.name))
+	WHC_SETTINGS.onlyKillDemonsCheckbox:SetScript("OnClick", function(self)
+		WhcAchievementSettings.onlyKillDemons = math.abs(WhcAchievementSettings.onlyKillDemons - 1)
+		playCheckedSound(WhcAchievementSettings.onlyKillDemons)
+		WHC.SetWarningOnlyKill()
+	end)
+
     WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block flying service", WHC.Achievements.GROUNDED.name))
     WHC_SETTINGS.blockTaxiServiceCheckbox:SetScript("OnClick", function(self)
         WhcAchievementSettings.blockTaxiService = math.abs(WhcAchievementSettings.blockTaxiService - 1)
@@ -176,6 +183,13 @@ function WHC.Tab_Settings(content)
         WhcAchievementSettings.blockAuctionSell = math.abs(WhcAchievementSettings.blockAuctionSell - 1)
         playCheckedSound(WhcAchievementSettings.blockAuctionSell)
         WHC.SetBlockAuctionSell()
+    end)
+
+    WHC_SETTINGS.onlyKillUndeadCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Warning when not targeting undead", WHC.Achievements.LIGHTBRINGER.name))
+    WHC_SETTINGS.onlyKillUndeadCheckbox:SetScript("OnClick", function(self)
+        WhcAchievementSettings.onlyKillUndead = math.abs(WhcAchievementSettings.onlyKillUndead - 1)
+        playCheckedSound(WhcAchievementSettings.onlyKillUndead)
+        WHC.SetWarningOnlyKill()
     end)
 
     WHC_SETTINGS.blockInvitesCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block invites", WHC.Achievements.LONE_WOLF.name))
@@ -276,6 +290,16 @@ function WHC.Tab_Settings(content)
         playCheckedSound(WhcAchievementSettings.blockMailItems)
         WHC.SetBlockMailItems()
     end)
+
+    -- There are too many quilboars to translate for 1.12
+    if RETAIL == 1 or WHC.client.isEnglish then
+        WHC_SETTINGS.onlyKillBoarsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Warning when not targeting boars or quilboars", WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.name))
+        WHC_SETTINGS.onlyKillBoarsCheckbox:SetScript("OnClick", function(self)
+            WhcAchievementSettings.onlyKillBoars = math.abs(WhcAchievementSettings.onlyKillBoars - 1)
+            playCheckedSound(WhcAchievementSettings.onlyKillBoars)
+            WHC.SetWarningOnlyKill()
+        end)
+    end
 
     WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block auction house buying", WHC.Achievements.TIME_IS_MONEY.name))
     WHC_SETTINGS.blockAuctionBuyCheckbox:SetScript("OnClick", function(self)

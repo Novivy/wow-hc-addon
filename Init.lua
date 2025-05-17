@@ -30,6 +30,11 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         class = class,
     }
 
+    local locale = GetLocale()
+    WHC.client = {
+        isEnglish = locale == "enUS" or locale == "enGB"
+    }
+
     local version = GetBuildInfo()
     if (version == "1.12.0" or version == "1.12.1") then
         RETAIL = 0
@@ -74,6 +79,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAchievementSettings.blockRidingSkill = WhcAchievementSettings.blockRidingSkill or 0
     WhcAchievementSettings.blockProfessions = WhcAchievementSettings.blockProfessions or 0
     WhcAchievementSettings.blockQuests = WhcAchievementSettings.blockQuests or 0
+    WhcAchievementSettings.onlyKillDemons = WhcAchievementSettings.onlyKillDemons or 0
+    WhcAchievementSettings.onlyKillUndead = WhcAchievementSettings.onlyKillUndead or 0
+    WhcAchievementSettings.onlyKillBoars = WhcAchievementSettings.onlyKillBoars or 0
 
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
@@ -126,6 +134,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.SetBlockMailItems()
     WHC.SetBlockTrainSkill()
     WHC.SetBlockQuests()
+    WHC.SetWarningOnlyKill()
     if RETAIL == 0 then
         WHC.SetBlockEquipItems()
     end
