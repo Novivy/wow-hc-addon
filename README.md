@@ -1,6 +1,11 @@
 
 ## Changelog for next update
-
+- Settings checkbox for Marathon Runner achievement, blocking learning riding skill
+- Settings checkbox for Help Yourself achievement, auto abandoning non-class or profession quests
+- Settings checkbox for Soft Hands achievement, blocking learning primary professions
+- Settings checkbox for Demon Slayer, showing a warning when not targeting a demon
+- Settings checkbox for Lightbringer, showing a warning when not targeting an undead
+- Settings checkbox for That Which Has No Life, showing a warning when not targeting a boar or quilboar
 
 ## Future versions:
 - Disable the complaint system (right click on chat or character to report it) as report aren't sent to the server. Open the addon ticket form instead.

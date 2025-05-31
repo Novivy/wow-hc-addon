@@ -24,8 +24,15 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         return
     end
 
+    local class = UnitClass("player")
     WHC.player = {
         name = UnitName("player"),
+        class = class,
+    }
+
+    local locale = GetLocale()
+    WHC.client = {
+        isEnglish = locale == "enUS" or locale == "enGB"
     }
 
     local version = GetBuildInfo()
@@ -69,6 +76,12 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAchievementSettings.blockNonSelfMadeItems = WhcAchievementSettings.blockNonSelfMadeItems or 0
     WhcAchievementSettings.blockNonSelfMadeItemsTooltip = WhcAchievementSettings.blockNonSelfMadeItemsTooltip or 0
     WhcAchievementSettings.blockMailItems = WhcAchievementSettings.blockMailItems or 0
+    WhcAchievementSettings.blockRidingSkill = WhcAchievementSettings.blockRidingSkill or 0
+    WhcAchievementSettings.blockProfessions = WhcAchievementSettings.blockProfessions or 0
+    WhcAchievementSettings.blockQuests = WhcAchievementSettings.blockQuests or 0
+    WhcAchievementSettings.onlyKillDemons = WhcAchievementSettings.onlyKillDemons or 0
+    WhcAchievementSettings.onlyKillUndead = WhcAchievementSettings.onlyKillUndead or 0
+    WhcAchievementSettings.onlyKillBoars = WhcAchievementSettings.onlyKillBoars or 0
 
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
@@ -119,6 +132,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.SetBlockRepair()
     WHC.SetBlockTaxiService()
     WHC.SetBlockMailItems()
+    WHC.SetBlockTrainSkill()
+    WHC.SetBlockQuests()
+    WHC.SetWarningOnlyKill()
     if RETAIL == 0 then
         WHC.SetBlockEquipItems()
     end
