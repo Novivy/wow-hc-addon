@@ -125,6 +125,7 @@ WHC.Achievements = {
     SPECIAL_DELIVERIES     = { id = 16,    icon = "inv_crate_03",                        itemId = "707004", itemLink = "", name = "Special Deliveries",     desc = "Reach level 60 without ever getting goods or money from player mail (simple letters, NPC and AH allowed)." },
     THAT_WHICH_HAS_NO_LIFE = { id = 512,   icon = "ability_hunter_pet_boar",             itemId = "707011", itemLink = "", name = "That Which Has No Life", desc = "Reach level 60 only by killing boars or quilboars." },
     TIME_IS_MONEY          = { id = 2,     icon = "inv_misc_coin_05",                    itemId = "707001", itemLink = "", name = "Time is money",          desc = "Reach level 60 without ever using the auction house to buy an item." },
+    UNTALENTED          = { id = 65536,     icon = "inv_misc_coin_05",                    itemId = "707019", itemLink = "", name = "Untalented",          desc = "Reach level 60 without ever spending a talent point." },
 }
 
 local function achievementLink(achievement)
