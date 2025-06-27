@@ -49,52 +49,48 @@ local function bgSlot(content, index, icon, label, desc)
     labelDesc:SetPoint("LEFT", iconFrame, "RIGHT", 5, -7)
     labelDesc:SetTextColor(0.874, 0.874, 0.874)
 
-    if (index ~= 3) then
-        local iconHFrame = MerchantItemTemplate:CreateTexture("$parentNameFrame", "BACKGROUND")
-        iconHFrame:SetTexture("Interface\\GroupFrame\\UI-Group-PVP-Horde") -- INV_Misc_QuestionMark")
-        iconHFrame:SetWidth(24)
-        iconHFrame:SetHeight(24)
-        iconHFrame:SetPoint("TOPLEFT", MerchantItemTemplate, "TOPLEFT", 302, -31)
-        iconHFrame:SetDrawLayer("OVERLAY")
+    if (index < 3) then
+        -- Alliance
+        local iconAllianceFrame = MerchantItemTemplate:CreateTexture("$parentNameFrame", "BACKGROUND")
+        iconAllianceFrame:SetTexture("Interface\\GroupFrame\\UI-Group-PVP-Alliance") -- INV_Misc_QuestionMark")
+        iconAllianceFrame:SetWidth(24)
+        iconAllianceFrame:SetHeight(24)
+        iconAllianceFrame:SetPoint("TOPLEFT", MerchantItemTemplate, "TOPLEFT", 367, -31)
+        iconAllianceFrame:SetDrawLayer("OVERLAY")
 
+        local labelAlliance = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
+        labelAlliance:SetText("-")
+        labelAlliance:SetJustifyH("LEFT")
+        labelAlliance:SetWidth(50)
+        labelAlliance:SetHeight(30)
+        labelAlliance:SetPoint("TOPLEFT", iconAllianceFrame, "TOPLEFT", -15, 5)
+        labelAlliance:SetFont("Fonts\\FRIZQT__.TTF", 12)
+        MerchantItemTemplate.alliance = labelAlliance
 
-        local iconAFrame = MerchantItemTemplate:CreateTexture("$parentNameFrame", "BACKGROUND")
-        iconAFrame:SetTexture("Interface\\GroupFrame\\UI-Group-PVP-Alliance") -- INV_Misc_QuestionMark")
-        iconAFrame:SetWidth(24)
-        iconAFrame:SetHeight(24)
-        iconAFrame:SetPoint("TOPLEFT", MerchantItemTemplate, "TOPLEFT", 367, -31)
-        iconAFrame:SetDrawLayer("OVERLAY")
+        -- Horde
+        local iconHordeFrame = MerchantItemTemplate:CreateTexture("$parentNameFrame", "BACKGROUND")
+        iconHordeFrame:SetTexture("Interface\\GroupFrame\\UI-Group-PVP-Horde") -- INV_Misc_QuestionMark")
+        iconHordeFrame:SetWidth(24)
+        iconHordeFrame:SetHeight(24)
+        iconHordeFrame:SetPoint("TOPLEFT", MerchantItemTemplate, "TOPLEFT", 302, -31)
+        iconHordeFrame:SetDrawLayer("OVERLAY")
 
-
-        -- Name FontString
-        local labelH = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
-        labelH:SetText("-")
-        labelH:SetJustifyH("RIGHT")
-        labelH:SetWidth(50)
-        labelH:SetHeight(30)
-        labelH:SetPoint("TOPLEFT", iconHFrame, "TOPLEFT", -10, 5)
-        labelH:SetFont("Fonts\\FRIZQT__.TTF", 12)
-        MerchantItemTemplate.horde = labelH
-
-        -- Name FontString
-        local labelA = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
-        labelA:SetText("-")
-        labelA:SetJustifyH("LEFT")
-        labelA:SetWidth(50)
-        labelA:SetHeight(30)
-        labelA:SetPoint("TOPLEFT", iconAFrame, "TOPLEFT", -15, 5)
-        labelA:SetFont("Fonts\\FRIZQT__.TTF", 12)
-     MerchantItemTemplate.alliance = labelA
+        local labelHorde = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
+        labelHorde:SetText("-")
+        labelHorde:SetJustifyH("RIGHT")
+        labelHorde:SetWidth(50)
+        labelHorde:SetHeight(30)
+        labelHorde:SetPoint("TOPLEFT", iconHordeFrame, "TOPLEFT", -10, 5)
+        labelHorde:SetFont("Fonts\\FRIZQT__.TTF", 12)
+        MerchantItemTemplate.horde = labelHorde
 
         if (index == 0) then
-            UIWS = MerchantItemTemplate
+            WHC.Frames.UIBattleGrounds.ws = MerchantItemTemplate
         elseif (index == 1) then
-            UIAB = MerchantItemTemplate
+            WHC.Frames.UIBattleGrounds.ab = MerchantItemTemplate
         elseif (index == 2) then
-            UIAV = MerchantItemTemplate
+            WHC.Frames.UIBattleGrounds.av = MerchantItemTemplate
         end
-
-
 
         -- Name FontString
         local labelP = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
@@ -134,18 +130,12 @@ local function bgSlot(content, index, icon, label, desc)
         end
     end)
 
-
     if (index == 3) then
         createButton:SetButtonState("DISABLED")
-        UIspecialEvent = createButton
+        WHC.Frames.UIspecialEvent = createButton
     end
 end
 
-
-UIspecialEvent = nil
-UIWS = nil
-UIAB = nil
-UIAV = nil
 function WHC.Tab_PVP(content)
     bgSlot(content, 0, "warsong", "Warsong Gulch",
         "As a 10 vs 10 capture-the-flag battleground, the first faction to capture three flags is victorious")

@@ -46,8 +46,8 @@ function WHC.UIShowTabContent(tabIndex, arg1)
                 SendChatMessage(msg);
             end
         elseif (tabIndex == "PVP") then
-            if (UIspecialEvent ~= nil) then
-                UIspecialEvent:SetButtonState("DISABLED")
+            if (WHC.Frames.UIspecialEvent ~= nil) then
+                WHC.Frames.UIspecialEvent:SetButtonState("DISABLED")
             end
 
 
@@ -152,13 +152,13 @@ function WHC.InitializeUI()
     tabContainer:SetHeight(30)
     tabContainer:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 8, -20)
 
-
+    WHC.Frames.UItabHeader = {}
+    WHC.Frames.UItab = {}
 
     local i = 1;
     local widthTotal = 0
     for index, value in ipairs(tabKeys) do
         local tabHeader = CreateFrame("Button", "TabHeader" .. value, tabContainer)
-
 
         local width = 0
         if value == "General" then

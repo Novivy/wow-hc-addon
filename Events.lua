@@ -362,8 +362,8 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::event:") then
-        if (UIspecialEvent ~= nil) then
-            UIspecialEvent:SetButtonState("NORMAL")
+        if (WHC.Frames.UIspecialEvent ~= nil) then
+            WHC.Frames.UIspecialEvent:SetButtonState("NORMAL")
         end
         return 0
     end
@@ -375,24 +375,28 @@ local function handleChatEvent(arg1)
         if strfind(lowerArg, "::whc::bg:horde:") then
             if strfind(lowerArg, "::whc::bg:horde:ws:") then
                 local result = string.gsub(arg1, "::whc::bg:horde:ws:", "")
-                UIWS.horde:SetText(result)
+                WHC.Frames.UIBattleGrounds.ws.horde:SetText(result)
             elseif strfind(lowerArg, "::whc::bg:horde:ab") then
                 local result = string.gsub(arg1, "::whc::bg:horde:ab:", "")
-                UIAB.horde:SetText(result)
+                WHC.Frames.UIBattleGrounds.ab.horde:SetText(result)
             elseif strfind(lowerArg, "::whc::bg:horde:av") then
                 local result = string.gsub(arg1, "::whc::bg:horde:av:", "")
-                UIAV.horde:SetText(result)
+                WHC.Frames.UIBattleGrounds.av.horde:SetText(result)
             end
         elseif strfind(lowerArg, "::whc::bg:alliance:") then
             if strfind(lowerArg, "::whc::bg:alliance:ws:") then
                 local result = string.gsub(arg1, "::whc::bg:alliance:ws:", "")
+                WHC.Frames.UIBattleGrounds.ws.alliance:SetText(result)
+            elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:ab")) then
                 UIWS.alliance:SetText(result)
             elseif strfind(lowerArg, "::whc::bg:alliance:ab") then
                 local result = string.gsub(arg1, "::whc::bg:alliance:ab:", "")
+                WHC.Frames.UIBattleGrounds.ab.alliance:SetText(result)
+            elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:av")) then
                 UIAB.alliance:SetText(result)
             elseif strfind(lowerArg, "::whc::bg:alliance:av") then
                 local result = string.gsub(arg1, "::whc::bg:alliance:av:", "")
-                UIAV.alliance:SetText(result)
+                WHC.Frames.UIBattleGrounds.av.alliance:SetText(result)
             end
         end
         return 0
@@ -434,7 +438,7 @@ local function handleChatEvent(arg1)
             local title = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             title:SetPoint("TOP", urlFrame, "TOP", 0, -20)
             title:SetText(
-                    "|cffff8000WOW-HC addon|r is out of date.\n\nPlease update it to keep things running smoothly.\n\nCopy and paste this URL\ninto your browser:")
+                "|cffff8000WOW-HC addon|r is out of date.\n\nPlease update it to keep things running smoothly.\n\nCopy and paste this URL\ninto your browser:")
             title:SetWidth(220)
 
             -- URL input box
@@ -506,7 +510,7 @@ local function handleChatEvent(arg1)
             local title = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             title:SetPoint("TOP", urlFrame, "TOP", 0, -20)
             title:SetText(
-                    "Current raid difficulty:")
+                "Current raid difficulty:")
             title:SetWidth(220)
 
 
