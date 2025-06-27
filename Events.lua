@@ -308,7 +308,9 @@ local function handleChatEvent(arg1)
 
         return 0
         -- message(result)
-    elseif strfind(string.lower(arg1), string.lower("::whc::achievement:")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::achievement:")) then
         local result = string.gsub(arg1, "::whc::achievement:", "")
 
         result = tonumber(result)
@@ -320,36 +322,48 @@ local function handleChatEvent(arg1)
 
         return 0
         -- message(result)
-    elseif strfind(string.lower(arg1), string.lower("::whc::auction:deposit")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::auction:deposit")) then
         local result = string.gsub(arg1, "::whc::auction:deposit:", "")
 
         result = tonumber(result)
         WhcAddonSettings.auction_deposit = result
         return 0
-    elseif strfind(string.lower(arg1), string.lower("::whc::auction:short")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::auction:short")) then
         local result = string.gsub(arg1, "::whc::auction:short:", "")
 
         result = tonumber(result)
         WhcAddonSettings.auction_short = result
         return 0
-    elseif strfind(string.lower(arg1), string.lower("::whc::auction:medium")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::auction:medium")) then
         local result = string.gsub(arg1, "::whc::auction:medium:", "")
 
         result = tonumber(result)
         WhcAddonSettings.auction_medium = result
         return 0
-    elseif strfind(string.lower(arg1), string.lower("::whc::auction:long")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::auction:long")) then
         local result = string.gsub(arg1, "::whc::auction:long:", "")
 
         result = tonumber(result)
         WhcAddonSettings.auction_long = result
         return 0
-    elseif strfind(string.lower(arg1), string.lower("::whc::event:")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::event:")) then
         if (UIspecialEvent ~= nil) then
             UIspecialEvent:SetButtonState("NORMAL")
         end
         return 0
-    elseif strfind(string.lower(arg1), string.lower("::whc::bg:")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::bg:")) then
         if strfind(string.lower(arg1), string.lower("::whc::bg:horde:")) then
             if strfind(string.lower(arg1), string.lower("::whc::bg:horde:ws:")) then
                 local result = string.gsub(arg1, "::whc::bg:horde:ws:", "")
@@ -374,7 +388,9 @@ local function handleChatEvent(arg1)
             end
         end
         return 0
-    elseif strfind(string.lower(arg1), string.lower("::whc::debug:")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::debug:")) then
         local result = string.gsub(arg1, "::whc::debug:", "")
         if (RETAIL == 1) then
             SendChatMessage(result, "WHISPER", GetDefaultLanguage(), UnitName("player"));
@@ -383,7 +399,9 @@ local function handleChatEvent(arg1)
         end
 
         return 0
-    elseif strfind(string.lower(arg1), string.lower("::whc::outdated:")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::outdated:")) then
         if (WHC_ALERT_UPDATE) then
             WHC_ALERT_UPDATE:Show()
         else
@@ -408,7 +426,7 @@ local function handleChatEvent(arg1)
             local title = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             title:SetPoint("TOP", urlFrame, "TOP", 0, -20)
             title:SetText(
-                "|cffff8000WOW-HC addon|r is out of date.\n\nPlease update it to keep things running smoothly.\n\nCopy and paste this URL\ninto your browser:")
+                    "|cffff8000WOW-HC addon|r is out of date.\n\nPlease update it to keep things running smoothly.\n\nCopy and paste this URL\ninto your browser:")
             title:SetWidth(220)
 
             -- URL input box
@@ -443,7 +461,9 @@ local function handleChatEvent(arg1)
 
         return 0
         -- message(result)
-    elseif strfind(string.lower(arg1), string.lower("::whc::difficulty:lead:")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::difficulty:lead:")) then
         local result = string.gsub(arg1, "::whc::difficulty:lead:", "")
 
         result = tonumber(result)
@@ -478,7 +498,7 @@ local function handleChatEvent(arg1)
             local title = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             title:SetPoint("TOP", urlFrame, "TOP", 0, -20)
             title:SetText(
-                "Current raid difficulty:")
+                    "Current raid difficulty:")
             title:SetWidth(220)
 
 
@@ -526,22 +546,21 @@ local function handleChatEvent(arg1)
         end
         return 0
         -- message(result)
-    elseif strfind(string.lower(arg1), string.lower("::whc::difficulty:")) then
+    end
+
+    if strfind(string.lower(arg1), string.lower("::whc::difficulty:")) then
         local result = string.gsub(arg1, "::whc::difficulty:", "")
 
         result = tonumber(result)
-
-
-
         if (result == 1) then
             RAID = "Raid |cff06daf0(Dynamic difficulty)|r"
         else
             RAID = "Raid |cffffffff(Normal difficulty)|r"
         end
         return 0
-    else
-        return 1
     end
+
+    return 1
 end
 
 local function handleMonsterChatEvent(arg1)
@@ -549,9 +568,9 @@ local function handleMonsterChatEvent(arg1)
 
         WHC.LogDeathMessage(arg1)
         return 0
-    else
-        return 1
     end
+
+    return 1
 end
 
 if (RETAIL == 1) then
