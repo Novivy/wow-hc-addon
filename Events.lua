@@ -307,9 +307,9 @@ local function handleChatEvent(arg1)
     if string.find(lowerArg, "::whc::ticket:") then
         local result = string.gsub(arg1, "::whc::ticket:", "")
 
-        UItab["Support"].editBox:SetText(result)
-        UItab["Support"].createButton:SetText("Update ticket")
-        UItab["Support"].closeButton:SetText("Cancel ticket")
+        WHC.Frames.UItab["Support"].editBox:SetText(result)
+        WHC.Frames.UItab["Support"].createButton:SetText("Update ticket")
+        WHC.Frames.UItab["Support"].closeButton:SetText("Cancel ticket")
 
         return 0
         -- message(result)
