@@ -299,7 +299,12 @@ end)
 
 
 local function handleChatEvent(arg1)
-    if strfind(string.lower(arg1), string.lower("::whc::ticket:")) then
+    local lowerArg = string.lower(arg1)
+    if not string.find(lowerArg, "^::whc::") then
+        return 1
+    end
+
+    if string.find(lowerArg, "::whc::ticket:") then
         local result = string.gsub(arg1, "::whc::ticket:", "")
 
         UItab["Support"].editBox:SetText(result)
@@ -310,7 +315,7 @@ local function handleChatEvent(arg1)
         -- message(result)
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::achievement:")) then
+    if string.find(lowerArg, "^::whc::achievement:") then
         local result = string.gsub(arg1, "::whc::achievement:", "")
 
         result = tonumber(result)
@@ -324,7 +329,7 @@ local function handleChatEvent(arg1)
         -- message(result)
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::auction:deposit")) then
+    if string.find(lowerArg, "^::whc::auction:deposit") then
         local result = string.gsub(arg1, "::whc::auction:deposit:", "")
 
         result = tonumber(result)
@@ -332,7 +337,7 @@ local function handleChatEvent(arg1)
         return 0
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::auction:short")) then
+    if string.find(lowerArg, "^::whc::auction:short") then
         local result = string.gsub(arg1, "::whc::auction:short:", "")
 
         result = tonumber(result)
@@ -340,7 +345,7 @@ local function handleChatEvent(arg1)
         return 0
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::auction:medium")) then
+    if string.find(lowerArg, "^::whc::auction:medium") then
         local result = string.gsub(arg1, "::whc::auction:medium:", "")
 
         result = tonumber(result)
@@ -348,7 +353,7 @@ local function handleChatEvent(arg1)
         return 0
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::auction:long")) then
+    if string.find(lowerArg, "^::whc::auction:long") then
         local result = string.gsub(arg1, "::whc::auction:long:", "")
 
         result = tonumber(result)
@@ -356,33 +361,36 @@ local function handleChatEvent(arg1)
         return 0
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::event:")) then
+    if string.find(lowerArg, "^::whc::event:") then
         if (UIspecialEvent ~= nil) then
             UIspecialEvent:SetButtonState("NORMAL")
         end
         return 0
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::bg:")) then
-        if strfind(string.lower(arg1), string.lower("::whc::bg:horde:")) then
-            if strfind(string.lower(arg1), string.lower("::whc::bg:horde:ws:")) then
+    if string.find(lowerArg, "^::whc::bg:") then
+        local faction, bg, result = string.match(lowerArg, "^::whc::bg:(horde|alliance):(ws|ab|av):(.+)")
+
+
+        if strfind(lowerArg, "::whc::bg:horde:") then
+            if strfind(lowerArg, "::whc::bg:horde:ws:") then
                 local result = string.gsub(arg1, "::whc::bg:horde:ws:", "")
                 UIWS.horde:SetText(result)
-            elseif strfind(string.lower(arg1), string.lower("::whc::bg:horde:ab")) then
+            elseif strfind(lowerArg, "::whc::bg:horde:ab") then
                 local result = string.gsub(arg1, "::whc::bg:horde:ab:", "")
                 UIAB.horde:SetText(result)
-            elseif strfind(string.lower(arg1), string.lower("::whc::bg:horde:av")) then
+            elseif strfind(lowerArg, "::whc::bg:horde:av") then
                 local result = string.gsub(arg1, "::whc::bg:horde:av:", "")
                 UIAV.horde:SetText(result)
             end
-        elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:")) then
-            if strfind(string.lower(arg1), string.lower("::whc::bg:alliance:ws:")) then
+        elseif strfind(lowerArg, "::whc::bg:alliance:") then
+            if strfind(lowerArg, "::whc::bg:alliance:ws:") then
                 local result = string.gsub(arg1, "::whc::bg:alliance:ws:", "")
                 UIWS.alliance:SetText(result)
-            elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:ab")) then
+            elseif strfind(lowerArg, "::whc::bg:alliance:ab") then
                 local result = string.gsub(arg1, "::whc::bg:alliance:ab:", "")
                 UIAB.alliance:SetText(result)
-            elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:av")) then
+            elseif strfind(lowerArg, "::whc::bg:alliance:av") then
                 local result = string.gsub(arg1, "::whc::bg:alliance:av:", "")
                 UIAV.alliance:SetText(result)
             end
@@ -390,7 +398,7 @@ local function handleChatEvent(arg1)
         return 0
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::debug:")) then
+    if string.find(lowerArg, "^::whc::debug:") then
         local result = string.gsub(arg1, "::whc::debug:", "")
         if (RETAIL == 1) then
             SendChatMessage(result, "WHISPER", GetDefaultLanguage(), UnitName("player"));
@@ -401,7 +409,7 @@ local function handleChatEvent(arg1)
         return 0
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::outdated:")) then
+    if string.find(lowerArg, "^::whc::outdated:") then
         if (WHC_ALERT_UPDATE) then
             WHC_ALERT_UPDATE:Show()
         else
@@ -463,7 +471,7 @@ local function handleChatEvent(arg1)
         -- message(result)
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::difficulty:lead:")) then
+    if string.find(lowerArg, "^::whc::difficulty:lead:") then
         local result = string.gsub(arg1, "::whc::difficulty:lead:", "")
 
         result = tonumber(result)
@@ -548,7 +556,7 @@ local function handleChatEvent(arg1)
         -- message(result)
     end
 
-    if strfind(string.lower(arg1), string.lower("::whc::difficulty:")) then
+    if string.find(lowerArg, "^::whc::difficulty:") then
         local result = string.gsub(arg1, "::whc::difficulty:", "")
 
         result = tonumber(result)
@@ -559,12 +567,10 @@ local function handleChatEvent(arg1)
         end
         return 0
     end
-
-    return 1
 end
 
 local function handleMonsterChatEvent(arg1)
-    if (strfind(string.lower(arg1), string.lower("has died at level"))) then
+    if (strfind(string.lower(arg1), "has died at level")) then
 
         WHC.LogDeathMessage(arg1)
         return 0
