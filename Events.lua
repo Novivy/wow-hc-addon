@@ -304,7 +304,7 @@ local function handleChatEvent(arg1)
         return 1
     end
 
-    if string.find(lowerArg, "::whc::ticket:") then
+    if string.find(lowerArg, "^::whc::ticket:") then
         local result = string.gsub(arg1, "::whc::ticket:", "")
 
         WHC.Frames.UItab["Support"].editBox:SetText(result)
@@ -331,7 +331,7 @@ local function handleChatEvent(arg1)
 
     if string.find(lowerArg, "^::whc::auction:(deposit|short|medium|long):(%d+)") then
         local variable, result = string.match(lowerArg, "^::whc::auction:(deposit|short|medium|long):(%d+)")
-        WhcAddonSettings["action_"..variable] = tonumber(result)
+        WhcAddonSettings["auction_"..variable] = tonumber(result)
         return 0
     end
 
