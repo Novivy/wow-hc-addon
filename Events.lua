@@ -329,35 +329,9 @@ local function handleChatEvent(arg1)
         -- message(result)
     end
 
-    if string.find(lowerArg, "^::whc::auction:deposit") then
-        local result = string.gsub(arg1, "::whc::auction:deposit:", "")
-
-        result = tonumber(result)
-        WhcAddonSettings.auction_deposit = result
-        return 0
-    end
-
-    if string.find(lowerArg, "^::whc::auction:short") then
-        local result = string.gsub(arg1, "::whc::auction:short:", "")
-
-        result = tonumber(result)
-        WhcAddonSettings.auction_short = result
-        return 0
-    end
-
-    if string.find(lowerArg, "^::whc::auction:medium") then
-        local result = string.gsub(arg1, "::whc::auction:medium:", "")
-
-        result = tonumber(result)
-        WhcAddonSettings.auction_medium = result
-        return 0
-    end
-
-    if string.find(lowerArg, "^::whc::auction:long") then
-        local result = string.gsub(arg1, "::whc::auction:long:", "")
-
-        result = tonumber(result)
-        WhcAddonSettings.auction_long = result
+    if string.find(lowerArg, "^::whc::auction:(deposit|short|medium|long):(%d+)") then
+        local variable, result = string.match(lowerArg, "^::whc::auction:(deposit|short|medium|long):(%d+)")
+        WhcAddonSettings["action_"..variable] = tonumber(result)
         return 0
     end
 
@@ -368,37 +342,9 @@ local function handleChatEvent(arg1)
         return 0
     end
 
-    if string.find(lowerArg, "^::whc::bg:") then
+    if string.find(lowerArg, "^::whc::bg:(horde|alliance):(ws|ab|av):(.+)") then
         local faction, bg, result = string.match(lowerArg, "^::whc::bg:(horde|alliance):(ws|ab|av):(.+)")
-
-
-        if strfind(lowerArg, "::whc::bg:horde:") then
-            if strfind(lowerArg, "::whc::bg:horde:ws:") then
-                local result = string.gsub(arg1, "::whc::bg:horde:ws:", "")
-                WHC.Frames.UIBattleGrounds.ws.horde:SetText(result)
-            elseif strfind(lowerArg, "::whc::bg:horde:ab") then
-                local result = string.gsub(arg1, "::whc::bg:horde:ab:", "")
-                WHC.Frames.UIBattleGrounds.ab.horde:SetText(result)
-            elseif strfind(lowerArg, "::whc::bg:horde:av") then
-                local result = string.gsub(arg1, "::whc::bg:horde:av:", "")
-                WHC.Frames.UIBattleGrounds.av.horde:SetText(result)
-            end
-        elseif strfind(lowerArg, "::whc::bg:alliance:") then
-            if strfind(lowerArg, "::whc::bg:alliance:ws:") then
-                local result = string.gsub(arg1, "::whc::bg:alliance:ws:", "")
-                WHC.Frames.UIBattleGrounds.ws.alliance:SetText(result)
-            elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:ab")) then
-                UIWS.alliance:SetText(result)
-            elseif strfind(lowerArg, "::whc::bg:alliance:ab") then
-                local result = string.gsub(arg1, "::whc::bg:alliance:ab:", "")
-                WHC.Frames.UIBattleGrounds.ab.alliance:SetText(result)
-            elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:av")) then
-                UIAB.alliance:SetText(result)
-            elseif strfind(lowerArg, "::whc::bg:alliance:av") then
-                local result = string.gsub(arg1, "::whc::bg:alliance:av:", "")
-                WHC.Frames.UIBattleGrounds.av.alliance:SetText(result)
-            end
-        end
+        WHC.Frames.UIBattleGrounds[bg][faction]:SetText(result)
         return 0
     end
 
