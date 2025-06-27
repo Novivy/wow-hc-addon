@@ -924,7 +924,7 @@ blockQuestsEventListener:SetScript("OnEvent", function(self, eventName, a1)
                 SetAbandonQuest()
                 AbandonQuest()
                 PlaySound(abandonQuestSound())
-                printAchievementInfo(helpYourselfLink, string.format("Abandoning [%s] as it is not a class or profession quest", questTitle))
+                printAchievementInfo(helpYourselfLink, string.format("Abandoning [%s] as it is not a class or profession quest.", questTitle))
             end
         end
     end
@@ -1232,6 +1232,19 @@ function WHC.SetWarningOnlyKill()
         onlyKillFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     end
 end
+--endregion
 
---Hej Muu. Du er sød og god til at kode. Husk at kramme på din kone engang imellem, så bliver hun så glad. Jeg elsker dig! <3
+--region ====== Untalented ======
+local untalentedLink = WHC.Achievements.UNTALENTED.itemLink
+
+BlizzardFunctions.LearnTalent = LearnTalent
+function WHC.SetBlockTalents()
+    LearnTalent = BlizzardFunctions.LearnTalent
+
+    if WhcAchievementSettings.blockTalents == 1 then
+        LearnTalent = function()
+            printAchievementInfo(untalentedLink, "Learning talents is blocked.")
+        end
+    end
+end
 --endregion
