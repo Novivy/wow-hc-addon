@@ -16,7 +16,16 @@ else
 end
 
 WHC = CreateFrame("Frame")
-WHC.Frames = {}
+WHC.Frames = {
+    UIframe = nil,
+    UItabHeader = {},
+    UItab = {},
+    MapIcon = nil,
+    DeathLogFrame = nil,
+    Achievements = nil,
+    AchievementButtonCharacter = nil,
+    AchievementButtonInspect = nil,
+}
 WHC:RegisterEvent("ADDON_LOADED")
 WHC:SetScript("OnEvent", function(self, event, addonName)
     addonName = addonName or arg1
