@@ -329,9 +329,12 @@ local function handleChatEvent(arg1)
         -- message(result)
     end
 
-    if string.find(lowerArg, "^::whc::auction:(deposit|short|medium|long):(%d+)") then
-        local variable, result = string.match(lowerArg, "^::whc::auction:(deposit|short|medium|long):(%d+)")
-        WhcAddonSettings["auction_"..variable] = tonumber(result)
+    if string.find(lowerArg, "^::whc::auction:") then
+        local _, _ , variable, result = string.find(lowerArg, "^::whc::auction:(%l+):([%d\.]+)")
+        if WhcAddonSettings["auction_"..variable] then
+            WhcAddonSettings["auction_"..variable] = tonumber(result)
+        end
+
         return 0
     end
 
@@ -339,12 +342,16 @@ local function handleChatEvent(arg1)
         if (WHC.Frames.UIspecialEvent ~= nil) then
             WHC.Frames.UIspecialEvent:SetButtonState("NORMAL")
         end
+
         return 0
     end
 
-    if string.find(lowerArg, "^::whc::bg:(horde|alliance):(ws|ab|av):(.+)") then
-        local faction, bg, result = string.match(lowerArg, "^::whc::bg:(horde|alliance):(ws|ab|av):(.+)")
-        WHC.Frames.UIBattleGrounds[bg][faction]:SetText(result)
+    if string.find(lowerArg, "^::whc::bg:") then
+        local _, _, faction, bg, result = string.find(lowerArg, "^::whc::bg:(%l+):(%l+):(%d+)")
+        if WHC.Frames.UIBattleGrounds[bg] and WHC.Frames.UIBattleGrounds[bg][faction] then
+            WHC.Frames.UIBattleGrounds[bg][faction]:SetText(result)
+        end
+
         return 0
     end
 
@@ -517,6 +524,8 @@ local function handleChatEvent(arg1)
         end
         return 0
     end
+
+    return 1
 end
 
 local function handleMonsterChatEvent(arg1)
