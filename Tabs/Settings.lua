@@ -85,7 +85,18 @@ local function playCheckedSound(checked)
             sound = 856
         end
     end
+
     PlaySound(sound)
+end
+
+local function getCheckedValueAndPlaySound(checkBox)
+    local checked = 0
+    if checkBox:GetChecked() then
+        checked = 1
+    end
+
+    playCheckedSound(checked)
+    return checked
 end
 
 function WHC.Tab_Settings(content)
@@ -108,9 +119,8 @@ function WHC.Tab_Settings(content)
 
     offsetY = 0 -- reset for scroll frame
     WHC_SETTINGS.minimap = createSettingsCheckBox(scrollContent, "Display minimap button")
-    WHC_SETTINGS.minimap:SetScript("OnClick", function(self)
-        WhcAddonSettings.minimapicon = math.abs(WhcAddonSettings.minimapicon - 1)
-        playCheckedSound(WhcAddonSettings.minimapicon)
+    WHC_SETTINGS.minimap:SetScript("OnClick", function()
+        WhcAddonSettings.minimapicon = getCheckedValueAndPlaySound(WHC_SETTINGS.minimap)
 
         WHC.Frames.MapIcon:Hide()
         if (WhcAddonSettings.minimapicon == 1) then
@@ -119,9 +129,8 @@ function WHC.Tab_Settings(content)
     end)
 
     WHC_SETTINGS.achievementbtn = createSettingsCheckBox(scrollContent, "Display achievement button on inspect & character sheet")
-    WHC_SETTINGS.achievementbtn:SetScript("OnClick", function(self)
-        WhcAddonSettings.achievementbtn = math.abs(WhcAddonSettings.achievementbtn - 1)
-        playCheckedSound(WhcAddonSettings.achievementbtn)
+    WHC_SETTINGS.achievementbtn:SetScript("OnClick", function()
+        WhcAddonSettings.achievementbtn = getCheckedValueAndPlaySound(WHC_SETTINGS.achievementbtn)
 
         WHC.Frames.AchievementButtonCharacter:Hide()
         if (WhcAddonSettings.achievementbtn == 1) then
@@ -137,9 +146,8 @@ function WHC.Tab_Settings(content)
     end)
 
     WHC_SETTINGS.recentDeathsBtn = createSettingsCheckBox(scrollContent, "Display Recent deaths frame")
-    WHC_SETTINGS.recentDeathsBtn:SetScript("OnClick", function(self)
-        WhcAddonSettings.recentDeaths = math.abs(WhcAddonSettings.recentDeaths - 1)
-        playCheckedSound(WhcAddonSettings.recentDeaths)
+    WHC_SETTINGS.recentDeathsBtn:SetScript("OnClick", function()
+        WhcAddonSettings.recentDeaths = getCheckedValueAndPlaySound(WHC_SETTINGS.recentDeathsBtn)
 
         WHC.Frames.DeathLogFrame:Hide()
         if (WhcAddonSettings.recentDeaths == 1) then
@@ -150,68 +158,60 @@ function WHC.Tab_Settings(content)
     getNextOffsetY()
     createTitle(scrollContent, "Achievement Settings", 14)
 
-	WHC_SETTINGS.onlyKillDemonsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Warning when not targeting demons", WHC.Achievements.DEMON_SLAYER.name))
-	WHC_SETTINGS.onlyKillDemonsCheckbox:SetScript("OnClick", function(self)
-		WhcAchievementSettings.onlyKillDemons = math.abs(WhcAchievementSettings.onlyKillDemons - 1)
-		playCheckedSound(WhcAchievementSettings.onlyKillDemons)
+	WHC_SETTINGS.onlyKillDemonsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Warning when not targeting demons", WHC.Achievements.DEMON_SLAYER.itemLink))
+	WHC_SETTINGS.onlyKillDemonsCheckbox:SetScript("OnClick", function()
+		WhcAchievementSettings.onlyKillDemons = getCheckedValueAndPlaySound(WHC_SETTINGS.onlyKillDemonsCheckbox)
 		WHC.SetWarningOnlyKill()
 	end)
 
-    WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block flying service", WHC.Achievements.GROUNDED.name))
-    WHC_SETTINGS.blockTaxiServiceCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockTaxiService = math.abs(WhcAchievementSettings.blockTaxiService - 1)
-        playCheckedSound(WhcAchievementSettings.blockTaxiService)
+    WHC_SETTINGS.blockTaxiServiceCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block flying service", WHC.Achievements.GROUNDED.itemLink))
+    WHC_SETTINGS.blockTaxiServiceCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockTaxiService = getCheckedValueAndPlaySound(WHC_SETTINGS.blockTaxiServiceCheckbox)
         WHC.SetBlockTaxiService()
     end)
 
-    WHC_SETTINGS.blockQuestsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Auto-abandon non-class or profession quests", WHC.Achievements.HELP_YOURSELF.name))
-    WHC_SETTINGS.blockQuestsCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockQuests = math.abs(WhcAchievementSettings.blockQuests - 1)
-        playCheckedSound(WhcAchievementSettings.blockQuests)
+    WHC_SETTINGS.blockQuestsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Auto-abandon non-class or profession quests", WHC.Achievements.HELP_YOURSELF.itemLink))
+    WHC_SETTINGS.blockQuestsCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockQuests = getCheckedValueAndPlaySound(WHC_SETTINGS.blockQuestsCheckbox)
         WHC.SetBlockQuests()
     end)
 
-    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block repairing items", WHC.Achievements.IRON_BONES.name))
-    WHC_SETTINGS.blockRepairCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockRepair = math.abs(WhcAchievementSettings.blockRepair - 1)
-        playCheckedSound(WhcAchievementSettings.blockRepair)
+    WHC_SETTINGS.blockRepairCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block repairing items", WHC.Achievements.IRON_BONES.itemLink))
+    WHC_SETTINGS.blockRepairCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockRepair = getCheckedValueAndPlaySound(WHC_SETTINGS.blockRepairCheckbox)
         WHC.SetBlockRepair()
     end)
 
-    WHC_SETTINGS.blockAuctionSellCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block auction house selling", WHC.Achievements.KILLER_TRADER.name))
-    WHC_SETTINGS.blockAuctionSellCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockAuctionSell = math.abs(WhcAchievementSettings.blockAuctionSell - 1)
-        playCheckedSound(WhcAchievementSettings.blockAuctionSell)
+    WHC_SETTINGS.blockAuctionSellCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block auction house selling", WHC.Achievements.KILLER_TRADER.itemLink))
+    WHC_SETTINGS.blockAuctionSellCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockAuctionSell = getCheckedValueAndPlaySound(WHC_SETTINGS.blockAuctionSellCheckbox)
         WHC.SetBlockAuctionSell()
     end)
 
-    WHC_SETTINGS.onlyKillUndeadCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Warning when not targeting undead", WHC.Achievements.LIGHTBRINGER.name))
-    WHC_SETTINGS.onlyKillUndeadCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.onlyKillUndead = math.abs(WhcAchievementSettings.onlyKillUndead - 1)
-        playCheckedSound(WhcAchievementSettings.onlyKillUndead)
+    WHC_SETTINGS.onlyKillUndeadCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Warning when not targeting undead", WHC.Achievements.LIGHTBRINGER.itemLink))
+    WHC_SETTINGS.onlyKillUndeadCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.onlyKillUndead = getCheckedValueAndPlaySound(WHC_SETTINGS.onlyKillUndeadCheckbox)
         WHC.SetWarningOnlyKill()
     end)
 
-    WHC_SETTINGS.blockInvitesCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block invites", WHC.Achievements.LONE_WOLF.name))
-    WHC_SETTINGS.blockInvitesCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockInvites = math.abs(WhcAchievementSettings.blockInvites - 1)
-        playCheckedSound(WhcAchievementSettings.blockInvites)
+    WHC_SETTINGS.blockInvitesCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block invites", WHC.Achievements.LONE_WOLF.itemLink))
+    WHC_SETTINGS.blockInvitesCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockInvites = getCheckedValueAndPlaySound(WHC_SETTINGS.blockInvitesCheckbox)
         WHC.SetBlockInvites()
     end)
 
-    WHC_SETTINGS.blockRidingSkillCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block learning riding skill", WHC.Achievements.MARATHON_RUNNER.name))
-    WHC_SETTINGS.blockRidingSkillCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockRidingSkill = math.abs(WhcAchievementSettings.blockRidingSkill - 1)
-        playCheckedSound(WhcAchievementSettings.blockRidingSkill)
+    WHC_SETTINGS.blockRidingSkillCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block learning riding skill", WHC.Achievements.MARATHON_RUNNER.itemLink))
+    WHC_SETTINGS.blockRidingSkillCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockRidingSkill = getCheckedValueAndPlaySound(WHC_SETTINGS.blockRidingSkillCheckbox)
         WHC.SetBlockTrainSkill()
     end)
 
     if RETAIL == 0 then
-        WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block equipping magic items", WHC.Achievements.MISTER_WHITE.name))
-        WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function(self)
-            WhcAchievementSettings.blockMagicItems = math.abs(WhcAchievementSettings.blockMagicItems - 1)
-            playCheckedSound(WhcAchievementSettings.blockMagicItems)
+        WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block equipping magic items", WHC.Achievements.MISTER_WHITE.itemLink))
+        WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function()
+            WhcAchievementSettings.blockMagicItems = getCheckedValueAndPlaySound(WHC_SETTINGS.blockMagicItemsCheckbox)
             WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockMagicItems)
+
             if WhcAchievementSettings.blockMagicItems == 0 then
                 WhcAchievementSettings.blockMagicItemsTooltip = 0
                 WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMagicItemsTooltip))
@@ -222,25 +222,23 @@ function WHC.Tab_Settings(content)
 
         WHC_SETTINGS.blockMagicItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
         WHC_SETTINGS.blockMagicItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockMagicItems)
-        WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetScript("OnClick", function(self)
-            WhcAchievementSettings.blockMagicItemsTooltip = math.abs(WhcAchievementSettings.blockMagicItemsTooltip - 1)
-            playCheckedSound(WhcAchievementSettings.blockMagicItemsTooltip)
+        WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetScript("OnClick", function()
+            WhcAchievementSettings.blockMagicItemsTooltip = getCheckedValueAndPlaySound(WHC_SETTINGS.blockMagicItemsTooltipCheckbox)
         end)
     end
 
-    WHC_SETTINGS.blockTradesCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block trades", WHC.Achievements.MY_PRECIOUS.name))
-    WHC_SETTINGS.blockTradesCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockTrades = math.abs(WhcAchievementSettings.blockTrades - 1)
-        playCheckedSound(WhcAchievementSettings.blockTrades)
+    WHC_SETTINGS.blockTradesCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block trades", WHC.Achievements.MY_PRECIOUS.itemLink))
+    WHC_SETTINGS.blockTradesCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockTrades = getCheckedValueAndPlaySound(WHC_SETTINGS.blockTradesCheckbox)
         WHC.SetBlockTrades()
     end)
 
     if RETAIL == 0 then
-        WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block equipping armor items", WHC.Achievements.ONLY_FAN.name))
-        WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function(self)
-            WhcAchievementSettings.blockArmorItems = math.abs(WhcAchievementSettings.blockArmorItems - 1)
-            playCheckedSound(WhcAchievementSettings.blockArmorItems)
+        WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block equipping armor items", WHC.Achievements.ONLY_FAN.itemLink))
+        WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function()
+            WhcAchievementSettings.blockArmorItems = getCheckedValueAndPlaySound(WHC_SETTINGS.blockArmorItemsCheckbox)
             WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockArmorItems)
+
             if WhcAchievementSettings.blockArmorItems == 0 then
                 WhcAchievementSettings.blockArmorItemsTooltip = 0
                 WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockArmorItemsTooltip))
@@ -251,16 +249,15 @@ function WHC.Tab_Settings(content)
 
         WHC_SETTINGS.blockArmorItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
         WHC_SETTINGS.blockArmorItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockArmorItems)
-        WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetScript("OnClick", function(self)
-            WhcAchievementSettings.blockArmorItemsTooltip = math.abs(WhcAchievementSettings.blockArmorItemsTooltip - 1)
-            playCheckedSound(WhcAchievementSettings.blockArmorItemsTooltip)
+        WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetScript("OnClick", function()
+            WhcAchievementSettings.blockArmorItemsTooltip = getCheckedValueAndPlaySound(WHC_SETTINGS.blockArmorItemsTooltipCheckbox)
         end)
 
-        WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block equipping items you did not craft", WHC.Achievements.SELF_MADE.name))
-        WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function(self)
-            WhcAchievementSettings.blockNonSelfMadeItems = math.abs(WhcAchievementSettings.blockNonSelfMadeItems - 1)
-            playCheckedSound(WhcAchievementSettings.blockNonSelfMadeItems)
+        WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block equipping items you did not craft", WHC.Achievements.SELF_MADE.itemLink))
+        WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function()
+            WhcAchievementSettings.blockNonSelfMadeItems = getCheckedValueAndPlaySound(WHC_SETTINGS.blockNonSelfMadeItemsCheckbox)
             WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockNonSelfMadeItems)
+
             if WhcAchievementSettings.blockNonSelfMadeItems == 0 then
                 WhcAchievementSettings.blockNonSelfMadeItemsTooltip = 0
                 WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockNonSelfMadeItemsTooltip))
@@ -271,47 +268,41 @@ function WHC.Tab_Settings(content)
 
         WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox = createSettingsSubCheckBox(scrollContent, "Display tooltips on items you cannot equip")
         WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:setEnabled(WhcAchievementSettings.blockNonSelfMadeItems)
-        WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetScript("OnClick", function(self)
-            WhcAchievementSettings.blockNonSelfMadeItemsTooltip = math.abs(WhcAchievementSettings.blockNonSelfMadeItemsTooltip - 1)
-            playCheckedSound(WhcAchievementSettings.blockNonSelfMadeItemsTooltip)
+        WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetScript("OnClick", function()
+            WhcAchievementSettings.blockNonSelfMadeItemsTooltip = getCheckedValueAndPlaySound(WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox)
         end)
     end
 
-    WHC_SETTINGS.blockProfessionsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block learning primary professions", WHC.Achievements.SOFT_HANDS.name))
-    WHC_SETTINGS.blockProfessionsCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockProfessions = math.abs(WhcAchievementSettings.blockProfessions - 1)
-        playCheckedSound(WhcAchievementSettings.blockProfessions)
+    WHC_SETTINGS.blockProfessionsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block learning primary professions", WHC.Achievements.SOFT_HANDS.itemLink))
+    WHC_SETTINGS.blockProfessionsCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockProfessions = getCheckedValueAndPlaySound(WHC_SETTINGS.blockProfessionsCheckbox)
         WHC.SetBlockTrainSkill()
     end)
 
-    WHC_SETTINGS.blockMailItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block mail items and money", WHC.Achievements.SPECIAL_DELIVERIES.name))
-    WHC_SETTINGS.blockMailItemsCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockMailItems = math.abs(WhcAchievementSettings.blockMailItems - 1)
-        playCheckedSound(WhcAchievementSettings.blockMailItems)
+    WHC_SETTINGS.blockMailItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block mail items and money", WHC.Achievements.SPECIAL_DELIVERIES.itemLink))
+    WHC_SETTINGS.blockMailItemsCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockMailItems = getCheckedValueAndPlaySound(WHC_SETTINGS.blockMailItemsCheckbox)
         WHC.SetBlockMailItems()
     end)
 
     -- There are too many quilboars to translate for 1.12
     if RETAIL == 1 or WHC.client.isEnglish then
-        WHC_SETTINGS.onlyKillBoarsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Warning when not targeting boars or quilboars", WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.name))
-        WHC_SETTINGS.onlyKillBoarsCheckbox:SetScript("OnClick", function(self)
-            WhcAchievementSettings.onlyKillBoars = math.abs(WhcAchievementSettings.onlyKillBoars - 1)
-            playCheckedSound(WhcAchievementSettings.onlyKillBoars)
+        WHC_SETTINGS.onlyKillBoarsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Warning when not targeting boars or quilboars", WHC.Achievements.THAT_WHICH_HAS_NO_LIFE.itemLink))
+        WHC_SETTINGS.onlyKillBoarsCheckbox:SetScript("OnClick", function()
+            WhcAchievementSettings.onlyKillBoars = getCheckedValueAndPlaySound(WHC_SETTINGS.onlyKillBoarsCheckbox)
             WHC.SetWarningOnlyKill()
         end)
     end
 
-    WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block auction house buying", WHC.Achievements.TIME_IS_MONEY.name))
-    WHC_SETTINGS.blockAuctionBuyCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockAuctionBuy = math.abs(WhcAchievementSettings.blockAuctionBuy - 1)
-        playCheckedSound(WhcAchievementSettings.blockAuctionBuy)
+    WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block auction house buying", WHC.Achievements.TIME_IS_MONEY.itemLink))
+    WHC_SETTINGS.blockAuctionBuyCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockAuctionBuy = getCheckedValueAndPlaySound(WHC_SETTINGS.blockAuctionBuyCheckbox)
         WHC.SetBlockAuctionBuy()
     end)
 
-    WHC_SETTINGS.blockTalentsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block learning talents", WHC.Achievements.UNTALENTED.name))
-    WHC_SETTINGS.blockTalentsCheckbox:SetScript("OnClick", function(self)
-        WhcAchievementSettings.blockTalents = math.abs(WhcAchievementSettings.blockTalents - 1)
-        playCheckedSound(WhcAchievementSettings.blockTalents)
+    WHC_SETTINGS.blockTalentsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block learning talents", WHC.Achievements.UNTALENTED.itemLink))
+    WHC_SETTINGS.blockTalentsCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockTalents = getCheckedValueAndPlaySound(WHC_SETTINGS.blockTalentsCheckbox)
         WHC.SetBlockTalents()
     end)
 
