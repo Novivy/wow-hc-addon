@@ -1,9 +1,4 @@
--- Create the main frame
-UIframe = nil
-UItabHeader = {}
-UItab = {}
-tabKeys = { "General", "Achievements", "PVP", "Shop", "Support", "Settings" }
-
+local tabKeys = { "General", "Achievements", "PVP", "Shop", "Support", "Settings" }
 
 function WHC.CheckedValue(value)
     if RETAIL == 0 then
@@ -20,15 +15,15 @@ end
 -- Function to show the selected tab's content
 function WHC.UIShowTabContent(tabIndex, arg1)
     if tabIndex == 0 then
-        UIframe:Hide()
+        WHC.Frames.UIframe:Hide()
     else
-        UIframe:Show()
+        WHC.Frames.UIframe:Show()
         -- Hide all tab contents first
 
         if (tabIndex == "Support") then
-            UItab["Support"].editBox:SetText("")
-            UItab["Support"].createButton:SetText("Create ticket")
-            UItab["Support"].closeButton:SetText("Close")
+            WHC.Frames.UItab["Support"].editBox:SetText("")
+            WHC.Frames.UItab["Support"].createButton:SetText("Create ticket")
+            WHC.Frames.UItab["Support"].closeButton:SetText("Close")
             local msg = ".whc ticketget"
             if (RETAIL == 1) then
                 SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
@@ -51,8 +46,8 @@ function WHC.UIShowTabContent(tabIndex, arg1)
                 SendChatMessage(msg);
             end
         elseif (tabIndex == "PVP") then
-            if (UIspecialEvent ~= nil) then
-                UIspecialEvent:SetButtonState("DISABLED")
+            if (WHC.Frames.UIspecialEvent ~= nil) then
+                WHC.Frames.UIspecialEvent:SetButtonState("DISABLED")
             end
 
 
@@ -95,24 +90,24 @@ function WHC.UIShowTabContent(tabIndex, arg1)
         end
 
         for index, value in ipairs(tabKeys) do
-            if UItab[value] then
-                UItab[value]:Hide()
-                UItabHeader[value]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-InActiveTab")
-                UItabHeader[value].tabText:SetTextColor(0.933, 0.765, 0)
+            if WHC.Frames.UItab[value] then
+                WHC.Frames.UItab[value]:Hide()
+                WHC.Frames.UItabHeader[value]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-InActiveTab")
+                WHC.Frames.UItabHeader[value].tabText:SetTextColor(0.933, 0.765, 0)
             end
         end
 
-        if UItab[tabIndex] then
-            UItab[tabIndex]:Show()
-            UItabHeader[tabIndex]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-ActiveTab")
-            UItabHeader[tabIndex].tabText:SetTextColor(1, 1, 1)
+        if WHC.Frames.UItab[tabIndex] then
+            WHC.Frames.UItab[tabIndex]:Show()
+            WHC.Frames.UItabHeader[tabIndex]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-ActiveTab")
+            WHC.Frames.UItabHeader[tabIndex].tabText:SetTextColor(1, 1, 1)
 
             if (tabIndex == "Achievements") then
                 if (arg1 ~= nil) then
-                    UItab[tabIndex].desc1:SetText("\nListing |cff00C300" .. arg1 .. "|r's achievements")
+                    WHC.Frames.UItab[tabIndex].desc1:SetText("\nListing |cff00C300" .. arg1 .. "|r's achievements")
                 else
-                    UItab[tabIndex].desc1:SetText(
-                        "Achievements are optionnal goals that you start with but may lose depending on your actions")
+                    WHC.Frames.UItab[tabIndex].desc1:SetText(
+                        "Achievements are optional goals that you start with but may lose depending on your actions")
                 end
             end
         end
@@ -121,7 +116,7 @@ end
 
 function WHC.InitializeUI()
     local frame = CreateFrame("Frame", "MyMultiTabFrame", UIParent, RETAIL_BACKDROP)
-    UIframe = frame
+    WHC.Frames.UIframe = frame
     frame:SetWidth(500)
     frame:SetHeight(450)
     frame:SetPoint("CENTER", UIParent, "CENTER", 0, 100)
@@ -157,13 +152,13 @@ function WHC.InitializeUI()
     tabContainer:SetHeight(30)
     tabContainer:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 8, -20)
 
-
+    WHC.Frames.UItabHeader = {}
+    WHC.Frames.UItab = {}
 
     local i = 1;
     local widthTotal = 0
     for index, value in ipairs(tabKeys) do
         local tabHeader = CreateFrame("Button", "TabHeader" .. value, tabContainer)
-
 
         local width = 0
         if value == "General" then
@@ -206,13 +201,10 @@ function WHC.InitializeUI()
         tabHeader:SetHighlightTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight")
         tabHeader:EnableMouse(true)
 
-
-
         local tabText = tabHeader:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
         tabText:SetPoint("CENTER", tabHeader, "CENTER", 0, 3)
         tabText:SetText(value)
         tabHeader.tabText = tabText
-
 
         local index = value
         tabHeader:SetScript("OnClick", function()
@@ -220,7 +212,7 @@ function WHC.InitializeUI()
             WHC.UIShowTabContent(index)
         end)
 
-        UItabHeader[value] = tabHeader
+        WHC.Frames.UItabHeader[value] = tabHeader
 
 
         -- TABS Content
@@ -249,7 +241,7 @@ function WHC.InitializeUI()
             text:SetText("Content for Tab " .. value)
         end
 
-        UItab[value] = content
+        WHC.Frames.UItab[value] = content
 
         i = i + 1
         widthTotal = widthTotal + width
@@ -259,10 +251,10 @@ function WHC.InitializeUI()
     -- Slash command to toggle the frame
     SLASH_WOWHC1 = "/wowhc"
     SlashCmdList["WOWHC"] = function(msg)
-        if UIframe:IsVisible() then
-            UIframe:Hide()
+        if WHC.Frames.UIframe:IsVisible() then
+            WHC.Frames.UIframe:Hide()
         else
-            UIframe:Show()
+            WHC.Frames.UIframe:Show()
             WHC.UIShowTabContent("General") -- Initialize with the first tab visible
         end
     end

@@ -16,7 +16,23 @@ else
 end
 
 WHC = CreateFrame("Frame")
-WHC.Frames = {}
+-- Define the frame names here so my IDE can do a usage search.
+WHC.Frames = {
+    UIframe = nil,
+    UItabHeader = nil,
+    UItab = nil,
+    MapIcon = nil,
+    DeathLogFrame = nil,
+    Achievements = nil,
+    AchievementButtonCharacter = nil,
+    AchievementButtonInspect = nil,
+    UIBattleGrounds = {
+        ws = nil,
+        ab = nil,
+        av = nil,
+    },
+    UIspecialEvent = nil
+}
 WHC:RegisterEvent("ADDON_LOADED")
 WHC:SetScript("OnEvent", function(self, event, addonName)
     addonName = addonName or arg1

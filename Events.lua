@@ -302,9 +302,9 @@ local function handleChatEvent(arg1)
     if strfind(string.lower(arg1), string.lower("::whc::ticket:")) then
         local result = string.gsub(arg1, "::whc::ticket:", "")
 
-        UItab["Support"].editBox:SetText(result)
-        UItab["Support"].createButton:SetText("Update ticket")
-        UItab["Support"].closeButton:SetText("Cancel ticket")
+        WHC.Frames.UItab["Support"].editBox:SetText(result)
+        WHC.Frames.UItab["Support"].createButton:SetText("Update ticket")
+        WHC.Frames.UItab["Support"].closeButton:SetText("Cancel ticket")
 
         return 0
         -- message(result)
@@ -345,32 +345,32 @@ local function handleChatEvent(arg1)
         WhcAddonSettings.auction_long = result
         return 0
     elseif strfind(string.lower(arg1), string.lower("::whc::event:")) then
-        if (UIspecialEvent ~= nil) then
-            UIspecialEvent:SetButtonState("NORMAL")
+        if (WHC.Frames.UIspecialEvent ~= nil) then
+            WHC.Frames.UIspecialEvent:SetButtonState("NORMAL")
         end
         return 0
     elseif strfind(string.lower(arg1), string.lower("::whc::bg:")) then
         if strfind(string.lower(arg1), string.lower("::whc::bg:horde:")) then
             if strfind(string.lower(arg1), string.lower("::whc::bg:horde:ws:")) then
                 local result = string.gsub(arg1, "::whc::bg:horde:ws:", "")
-                UIWS.horde:SetText(result)
+                WHC.Frames.UIBattleGrounds.ws.horde:SetText(result)
             elseif strfind(string.lower(arg1), string.lower("::whc::bg:horde:ab")) then
                 local result = string.gsub(arg1, "::whc::bg:horde:ab:", "")
-                UIAB.horde:SetText(result)
+                WHC.Frames.UIBattleGrounds.ab.horde:SetText(result)
             elseif strfind(string.lower(arg1), string.lower("::whc::bg:horde:av")) then
                 local result = string.gsub(arg1, "::whc::bg:horde:av:", "")
-                UIAV.horde:SetText(result)
+                WHC.Frames.UIBattleGrounds.av.horde:SetText(result)
             end
         elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:")) then
             if strfind(string.lower(arg1), string.lower("::whc::bg:alliance:ws:")) then
                 local result = string.gsub(arg1, "::whc::bg:alliance:ws:", "")
-                UIWS.alliance:SetText(result)
+                WHC.Frames.UIBattleGrounds.ws.alliance:SetText(result)
             elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:ab")) then
                 local result = string.gsub(arg1, "::whc::bg:alliance:ab:", "")
-                UIAB.alliance:SetText(result)
+                WHC.Frames.UIBattleGrounds.ab.alliance:SetText(result)
             elseif strfind(string.lower(arg1), string.lower("::whc::bg:alliance:av")) then
                 local result = string.gsub(arg1, "::whc::bg:alliance:av:", "")
-                UIAV.alliance:SetText(result)
+                WHC.Frames.UIBattleGrounds.av.alliance:SetText(result)
             end
         end
         return 0
