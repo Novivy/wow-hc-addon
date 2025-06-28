@@ -308,5 +308,12 @@ function WHC.Tab_Settings(content)
         WHC.SetBlockAuctionBuy()
     end)
 
+    WHC_SETTINGS.blockTalentsCheckbox = createSettingsCheckBox(scrollContent, string.format("[%s] Achievement: Block learning talents", WHC.Achievements.UNTALENTED.name))
+    WHC_SETTINGS.blockTalentsCheckbox:SetScript("OnClick", function(self)
+        WhcAchievementSettings.blockTalents = math.abs(WhcAchievementSettings.blockTalents - 1)
+        playCheckedSound(WhcAchievementSettings.blockTalents)
+        WHC.SetBlockTalents()
+    end)
+
     return content;
 end
