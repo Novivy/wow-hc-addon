@@ -40,10 +40,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         return
     end
 
-    local class = UnitClass("player")
     WHC.player = {
         name = UnitName("player"),
-        class = class,
+        class = UnitClass("player"),
     }
 
     local locale = GetLocale()
