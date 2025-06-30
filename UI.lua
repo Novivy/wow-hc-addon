@@ -118,6 +118,7 @@ function WHC.InitializeUI()
     -- Close with escape key
     tinsert(UISpecialFrames, WHC:GetName());
 
+    WHC:Hide()
     WHC:SetWidth(500)
     WHC:SetHeight(450)
     WHC:SetPoint("CENTER", UIParent, "CENTER", 0, 100)
@@ -130,8 +131,14 @@ function WHC.InitializeUI()
         insets = { left = 11, right = 12, top = 12, bottom = 11 }
     })
     WHC:SetBackdropColor(0, 0, 0, 1)
-    WHC:Hide()
 
+    -- TODO test this
+    WHC:SetScript("OnShow", function()
+        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
+    end)
+    WHC:SetScript("OnHide", function()
+        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
+    end)
 
     local closeFrame = CreateFrame("Button", "GMToolGUIClose", WHC, "UIPanelCloseButton")
     closeFrame:SetWidth(30)
