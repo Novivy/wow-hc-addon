@@ -40,7 +40,7 @@ local BlizzardFunctions = {}
 -- Disables right-click menu buttons
 hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, name)
     for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
-        local button = _G["DropDownList1Button" .. i]
+        local button = getglobal("DropDownList1Button" .. i)
         if button then
             if button.value == "INVITE" and WhcAchievementSettings.blockInvites == 1 then
                 button:Disable()
@@ -371,9 +371,8 @@ local function isSelfMade(itemSubType, itemEquipLoc)
     end
 
     for i=1, GameTooltip:NumLines() do
-        local left = _G["GameTooltipTextLeft"..i]
-        local lineText = left:GetText()
-        local nameMatch = string.find(lineText, "<.* ("..WHC.player.name..")>")
+        local lineText = getglobal("GameTooltipTextLeft"..i):GetText()
+        local nameMatch = string.find(lineText, "^<.* ("..WHC.player.name..")>$")
         if nameMatch then
             return true
         end
@@ -404,7 +403,7 @@ local function setTooltipInfo(itemLink)
     end
 
     if WhcAchievementSettings.blockMagicItemsTooltip == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
-        local msg = "Cannot equip ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items>"
+        local msg = "Cannot equip "..getglobal("ITEM_QUALITY"..itemRarity.."_DESC").." items>"
         GameTooltip:AddLine("<Mister White: "..msg, 1, 0, 0)
     end
 
@@ -483,7 +482,7 @@ local function canEquipItem(itemLink)
     end
 
     if WhcAchievementSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
-        local msg = "Equipping ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." items are blocked."
+        local msg = "Equipping "..getglobal("ITEM_QUALITY"..itemRarity.."_DESC").." items are blocked."
         table.insert(equipErrorMessages, achievementErrorMessage(misterWhiteLink, msg))
     end
 
@@ -562,7 +561,7 @@ function WHC.SetBlockEquipItems()
             end
 
             if WhcAchievementSettings.blockMagicItems == 1 and itemRarity > 1 and not misterWhiteLinkAllowedItems[itemEquipLoc] then
-                local msg = "Buying ".._G["ITEM_QUALITY"..itemRarity.."_DESC"].." equipment must be done using right-click."
+                local msg = "Buying "..getglobal("ITEM_QUALITY"..itemRarity.."_DESC").." equipment must be done using right-click."
                 printAchievementInfo(misterWhiteLink, msg)
             end
 
