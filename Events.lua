@@ -245,34 +245,26 @@ function WHC.InitializeAchievementButtons()
     end
 end
 
+local function getAuctionButtonText(duration)
+    local plural = ""
+    if duration ~= 1 then
+        plural = "s"
+    end
+
+    return duration .. " day" .. plural
+end
+
 local auctionHouseEvents = CreateFrame("Frame")
 auctionHouseEvents:RegisterEvent("AUCTION_HOUSE_SHOW")
 auctionHouseEvents:SetScript("OnEvent", function()
-    local shortButton = AuctionsShortAuctionButton
-    local mediumButton = AuctionsMediumAuctionButton
-    local longButton = AuctionsLongAuctionButton
-
     local short = WhcAddonSettings.auction_short / 60 / 24
-
-    if (short == 1) then
-        getglobal(shortButton:GetName() .. "Text"):SetText(short .. " day");
-    else
-        getglobal(shortButton:GetName() .. "Text"):SetText(short .. " days");
-    end
+    getglobal(AuctionsShortAuctionButton:GetName() .. "Text"):SetText(getAuctionButtonText(short));
 
     local medium = WhcAddonSettings.auction_medium / 60 / 24
-    if (medium == 1) then
-        getglobal(mediumButton:GetName() .. "Text"):SetText(medium .. " day");
-    else
-        getglobal(mediumButton:GetName() .. "Text"):SetText(medium .. " days");
-    end
+    getglobal(AuctionsMediumAuctionButton:GetName() .. "Text"):SetText(getAuctionButtonText(medium));
 
     local long = WhcAddonSettings.auction_long / 60 / 24
-    if (long == 1) then
-        getglobal(longButton:GetName() .. "Text"):SetText(long .. " day");
-    else
-        getglobal(longButton:GetName() .. "Text"):SetText(long .. " days");
-    end
+    getglobal(AuctionsLongAuctionButton:GetName() .. "Text"):SetText(getAuctionButtonText(long));
 end)
 
 local xx_MoneyFrame_Update = MoneyFrame_Update

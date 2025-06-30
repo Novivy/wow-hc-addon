@@ -242,7 +242,7 @@ local ironBonesLink = WHC.Achievements.IRON_BONES.itemLink
 -- Disable repair buttons from Blizzard interface
 if MerchantRepairItemButton then
     hooksecurefunc(MerchantRepairItemButton, "Show", function()
-        repairItemIcon = MerchantRepairItemButton:GetRegions()
+        local repairItemIcon = MerchantRepairItemButton:GetRegions()
         SetDesaturation(repairItemIcon, nil)
         MerchantRepairItemButton:Enable()
 
