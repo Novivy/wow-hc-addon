@@ -219,7 +219,7 @@ local function createAchievementButton(frame, name)
 end
 
 function WHC.InitializeAchievementButtons()
-    WHC.Frames.AchievementButtonCharacter = createAchievementButton(getglobal("CharacterFrame"), "character")
+    WHC.Frames.AchievementButtonCharacter = createAchievementButton(CharacterFrame, "character")
 
     local inspectUIEventListener = CreateFrame("Frame")
     inspectUIEventListener:RegisterEvent("ADDON_LOADED")
@@ -228,8 +228,9 @@ function WHC.InitializeAchievementButtons()
         if addonName ~= "Blizzard_InspectUI" then
             return
         end
+        inspectUIEventListener:UnregisterEvent("ADDON_LOADED")
 
-        WHC.Frames.AchievementButtonInspect = createAchievementButton(getglobal("InspectFrame"), "inspect")
+        WHC.Frames.AchievementButtonInspect = createAchievementButton(InspectFrame, "inspect")
     end)
 
     if (RETAIL == 1) then

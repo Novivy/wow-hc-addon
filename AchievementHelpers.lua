@@ -9,36 +9,9 @@ local function printAchievementInfo(link, message)
     DEFAULT_CHAT_FRAME:AddMessage(achievementErrorMessage(link, message))
 end
 
-local _G = getfenv(0);
-local function hooksecurefunc(arg1, arg2, arg3)
-    if type(arg1) == "string" then
-        arg1, arg2, arg3 = _G, arg1, arg2
-    end
-    local orig = arg1[arg2]
-    arg1[arg2] = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
-        local silence = {
-            ["UnitPopup_OnUpdate"] = true,
-            ["SetBagItem"] = true,
-            ["SetInventoryItem"] = true,
-            ["SetMerchantItem"] = true,
-        }
-        if not silence[arg2] then
-            --WHC.DebugPrint("Original "..arg2)
-        end
-        local x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20 = orig(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
-
-        if not silence[arg2] then
-            --WHC.DebugPrint("Hook "..arg2)
-        end
-        arg3(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
-
-        return x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20
-    end
-end
-
 local BlizzardFunctions = {}
 -- Disables right-click menu buttons
-hooksecurefunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, name)
+WHC.HookSecureFunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, name)
     for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
         local button = getglobal("DropDownList1Button" .. i)
         if button then
@@ -58,7 +31,7 @@ local loneWolfLink = WHC.Achievements.LONE_WOLF.itemLink
 
 -- Disables friend list "Group Invite" button
 if FriendsFrameGroupInviteButton then
-    hooksecurefunc(FriendsFrameGroupInviteButton, "Enable", function()
+    WHC.HookSecureFunc(FriendsFrameGroupInviteButton, "Enable", function()
         if WhcAchievementSettings.blockInvites == 1 then
             FriendsFrameGroupInviteButton:Disable()
         end
@@ -67,7 +40,7 @@ end
 
 -- Disables who "Group Invite" button
 if WhoFrameGroupInviteButton then
-    hooksecurefunc(WhoFrameGroupInviteButton, "Enable", function()
+    WHC.HookSecureFunc(WhoFrameGroupInviteButton, "Enable", function()
         if WhcAchievementSettings.blockInvites == 1 then
             WhoFrameGroupInviteButton:Disable()
         end
@@ -77,7 +50,7 @@ end
 
 -- Disables guild details "Group Invite" button
 if GuildMemberGroupInviteButton then
-    hooksecurefunc(GuildMemberGroupInviteButton, "Enable", function()
+    WHC.HookSecureFunc(GuildMemberGroupInviteButton, "Enable", function()
         if WhcAchievementSettings.blockInvites == 1 then
             GuildMemberGroupInviteButton:Disable()
         end
@@ -154,7 +127,7 @@ killerTraderEventListener:SetScript("OnEvent", function(self, event, addonName)
     killerTraderEventListener:UnregisterEvent("ADDON_LOADED")
 
     if AuctionsCreateAuctionButton then
-        hooksecurefunc(AuctionsCreateAuctionButton, "Enable", function()
+        WHC.HookSecureFunc(AuctionsCreateAuctionButton, "Enable", function()
             if WhcAchievementSettings.blockAuctionSell == 1 then
                 AuctionsCreateAuctionButton:Disable()
             end
@@ -191,7 +164,7 @@ timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
     timeIsMoneyEventListener:UnregisterEvent("ADDON_LOADED")
 
     if BrowseBidButton then
-        hooksecurefunc(BrowseBidButton, "Enable", function()
+        WHC.HookSecureFunc(BrowseBidButton, "Enable", function()
             if WhcAchievementSettings.blockAuctionBuy == 1 then
                 BrowseBidButton:Disable()
             end
@@ -199,7 +172,7 @@ timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
     end
 
     if BrowseBuyoutButton then
-        hooksecurefunc(BrowseBuyoutButton, "Enable", function()
+        WHC.HookSecureFunc(BrowseBuyoutButton, "Enable", function()
             if WhcAchievementSettings.blockAuctionBuy == 1 then
                 BrowseBuyoutButton:Disable()
             end
@@ -207,7 +180,7 @@ timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
     end
 
     if BidBidButton then
-        hooksecurefunc(BidBidButton, "Enable", function()
+        WHC.HookSecureFunc(BidBidButton, "Enable", function()
             if WhcAchievementSettings.blockAuctionBuy == 1 then
                 BidBidButton:Disable()
             end
@@ -215,7 +188,7 @@ timeIsMoneyEventListener:SetScript("OnEvent", function(self, event, addonName)
     end
 
     if BidBuyoutButton then
-        hooksecurefunc(BidBuyoutButton, "Enable", function()
+        WHC.HookSecureFunc(BidBuyoutButton, "Enable", function()
             if WhcAchievementSettings.blockAuctionBuy == 1 then
                 BidBuyoutButton:Disable()
             end
@@ -241,7 +214,7 @@ local ironBonesLink = WHC.Achievements.IRON_BONES.itemLink
 
 -- Disable repair buttons from Blizzard interface
 if MerchantRepairItemButton then
-    hooksecurefunc(MerchantRepairItemButton, "Show", function()
+    WHC.HookSecureFunc(MerchantRepairItemButton, "Show", function()
         local repairItemIcon = MerchantRepairItemButton:GetRegions()
         SetDesaturation(repairItemIcon, nil)
         MerchantRepairItemButton:Enable()
@@ -254,7 +227,7 @@ if MerchantRepairItemButton then
 end
 
 if MerchantRepairAllButton then
-    hooksecurefunc(MerchantRepairAllButton, "Enable", function()
+    WHC.HookSecureFunc(MerchantRepairAllButton, "Enable", function()
         if WhcAchievementSettings.blockRepair == 1 then
             SetDesaturation(MerchantRepairAllIcon, 1)
             MerchantRepairAllButton:Disable()
@@ -420,13 +393,13 @@ local function setTooltipInfo(itemLink)
 end
 
 -- Update bag items
-hooksecurefunc(GameTooltip, "SetBagItem", function(tip, bagId, slot)
+WHC.HookSecureFunc(GameTooltip, "SetBagItem", function(tip, bagId, slot)
     local itemLink = GetContainerItemLink(bagId, slot)
     setTooltipInfo(itemLink)
 end)
 
 -- Update inventory and bank items
-hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
+WHC.HookSecureFunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
     local itemLink = GetInventoryItemLink(unit, slot)
     -- Inventory slots
     if slot < 20 then
@@ -455,18 +428,18 @@ hooksecurefunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
 end)
 
 -- Update vendor items
-hooksecurefunc(GameTooltip, "SetMerchantItem", function(tip, index)
+WHC.HookSecureFunc(GameTooltip, "SetMerchantItem", function(tip, index)
     local itemLink = GetMerchantItemLink(index)
     setTooltipInfo(itemLink)
 end)
 
 -- Update trade window items
-hooksecurefunc(GameTooltip, "SetTradePlayerItem", function(tip, tradeSlot)
+WHC.HookSecureFunc(GameTooltip, "SetTradePlayerItem", function(tip, tradeSlot)
     local itemLink = GetTradePlayerItemLink(tradeSlot)
     setTooltipInfo(itemLink)
 end)
 
-hooksecurefunc(GameTooltip, "SetTradeTargetItem", function(tip, tradeSlot)
+WHC.HookSecureFunc(GameTooltip, "SetTradeTargetItem", function(tip, tradeSlot)
     local itemLink = GetTradeTargetItemLink(tradeSlot)
     setTooltipInfo(itemLink)
 end)
@@ -502,7 +475,7 @@ local function printBlockers(errorMessages)
     end
 end
 
-hooksecurefunc("PickupContainerItem", function(bagId, slot)
+WHC.HookSecureFunc("PickupContainerItem", function(bagId, slot)
     if not CursorHasItem() then
         equipErrorMessages = {}
         return
@@ -755,7 +728,7 @@ trainerUIEventListener:SetScript("OnEvent", function(self, eventName, addonName)
     trainerUIEventListener:UnregisterEvent("ADDON_LOADED")
 
     if ClassTrainerTrainButton then
-        hooksecurefunc(ClassTrainerTrainButton, "Enable", function()
+        WHC.HookSecureFunc(ClassTrainerTrainButton, "Enable", function()
             local trainSkillErrorsMessages = canTrainSkill()
             if trainSkillErrorsMessages[1] then
                 ClassTrainerTrainButton:Disable()
@@ -773,7 +746,7 @@ local function getQuestID()
 end
 
 if QuestFrameAcceptButton then
-    hooksecurefunc(QuestFrameAcceptButton, "Enable", function()
+    WHC.HookSecureFunc(QuestFrameAcceptButton, "Enable", function()
         if WhcAchievementSettings.blockRidingSkill == 1 then
             local questID = getQuestID()
             local questName = GetTitleText()
@@ -785,7 +758,7 @@ if QuestFrameAcceptButton then
 end
 
 if QuestFrameCompleteQuestButton then
-    hooksecurefunc(QuestFrameCompleteQuestButton, "Enable", function()
+    WHC.HookSecureFunc(QuestFrameCompleteQuestButton, "Enable", function()
         if WhcAchievementSettings.blockRidingSkill == 1 then
             local questID = getQuestID()
             local questName = GetTitleText()
