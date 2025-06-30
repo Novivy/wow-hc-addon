@@ -13,9 +13,6 @@ playerLogin:SetScript("OnEvent", function(self, event)
         JoinChannelByName("world", nil, DEFAULT_CHAT_FRAME) -- Not working on retail version
     end
 
-
-
-
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
     if (RETAIL == 1) then
         SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
@@ -23,149 +20,49 @@ playerLogin:SetScript("OnEvent", function(self, event)
         SendChatMessage(msg);
     end
 
-
-    if (RETAIL == 1) then
-        GameTooltip:HookScript("OnTooltipSetItem", function(tooltip, ...)
-            if (GameTooltip.isBagHook == 1 and GameTooltipTextLeft2:GetText() == "Binds when picked up") then
-                tooltip:AddLine(
-                    "|cff06daf0You may trade this item with players\nwho were also eligible to loot it\n(for a limited time only)|r",
+    local GM_FONT_COLOR_CODE = "|cff06daf0"
+    WHC.HookSecureFunc(GameTooltip, "SetBagItem", function(self, container, slot)
+        if GameTooltipTextLeft2:GetText() == "Binds when picked up" then
+            GameTooltip:AddLine(
+                    GM_FONT_COLOR_CODE.. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE,
                     1, 1, 1, true)
+            GameTooltip:Show()
+        end
+    end)
 
+    local dynamicMounts = {
+        [23220] = true, ["Swift Dawnsaber"] = true,
+        [16084] = true, ["Mottled Red Raptor"] = true,
+        [17450] = true, ["Ivory Raptor"] = true,
+        [10790] = true, ["Tiger"] = true
+    }
 
-                tooltip:Show()
-            end
-        end)
-
-        local xx_SetBagItem = GameTooltip.SetBagItem
-        function GameTooltip.SetBagItem(self, container, slot)
-            GameTooltip.isBagHook = 1
-
-            return xx_SetBagItem(self, container, slot)
+    local function setDynamicMountSpeedText(tooltip)
+        local mountBuffID = 0
+        local mountBuffName = GameTooltipTextLeft1:GetText()
+        local test = ""
+        if tooltip.GetSpell then
+            mountBuffName, mountBuffID, test = tooltip:GetSpell() -- TODO: Test this on both version as it might return rank instead of spellID
+            WHC.DebugPrint(tostring(mountBuffName).. " " .. tostring(mountBuffID) .. " " .. tostring(test))
         end
 
-        GameTooltip:HookScript("OnHide", function()
-            GameTooltip.isBagHook = 0
-        end)
+        if dynamicMounts[mountBuffID] or dynamicMounts[mountBuffName] then
+            tooltip:ClearLines()
+            tooltip:AddLine(mountBuffName, 0.90, 0.80, 0.50, true)
+            tooltip:AddLine("This mount's speed changes depending on your Riding skill.", 1, 1, 1, true)
+            tooltip:Show()
+        end
+    end
 
-
+    if (RETAIL == 1) then
         GameTooltip:HookScript("OnTooltipSetSpell", function(tooltip, ...)
-            if (GameTooltipTextLeft1:GetText() == "Swift Dawnsaber") then
-                -- todo should check on spellId instead of name because of locales
-
-                tooltip:ClearLines()
-                tooltip:AddLine(
-                    "Swift Dawnsaber",
-                    0.90, 0.80, 0.50, true)
-                tooltip:AddLine(
-                    "This mount's speed changes depending on your Riding skill.",
-                    1, 1, 1, true)
-                tooltip:Show()
-            elseif (GameTooltipTextLeft1:GetText() == "Mottled Red Raptor") then
-                -- todo should check on spellId instead of name because of locales
-
-                tooltip:ClearLines()
-                tooltip:AddLine(
-                    "Mottled Red Raptor",
-                    0.90, 0.80, 0.50, true)
-                tooltip:AddLine(
-                    "This mount's speed changes depending on your Riding skill.",
-                    1, 1, 1, true)
-                tooltip:Show()
-            elseif (GameTooltipTextLeft1:GetText() == "Ivory Raptor") then
-                -- todo should check on spellId instead of name because of locales
-
-                tooltip:ClearLines()
-                tooltip:AddLine(
-                    "Ivory Raptor",
-                    0.90, 0.80, 0.50, true)
-                tooltip:AddLine(
-                    "This mount's speed changes depending on your Riding skill.",
-                    1, 1, 1, true)
-                tooltip:Show()
-            elseif (GameTooltipTextLeft1:GetText() == "Tiger") then
-                -- todo should check on spellId instead of name because of locales
-
-                tooltip:ClearLines()
-                tooltip:AddLine(
-                    "Tiger",
-                    0.90, 0.80, 0.50, true)
-                tooltip:AddLine(
-                    "This mount's speed changes depending on your Riding skill.",
-                    1, 1, 1, true)
-                tooltip:Show()
-            end
+            setDynamicMountSpeedText(tooltip)
         end)
     else
         local tooltip = CreateFrame("Frame", nil, GameTooltip)
         tooltip:SetScript("OnShow", function()
-            if (GameTooltip.isBagHook == 1 and GameTooltipTextLeft2:GetText() == "Binds when picked up") then
-                GameTooltip:AddLine(
-                    "|cff06daf0You may trade this item with players\nwho were also eligible to loot it\n(for a limited time only)|r",
-                    1, 1, 1, true)
-                GameTooltip:Show()
-            elseif (GameTooltipTextLeft1:GetText() == "Swift Dawnsaber") then
-                -- todo should check on spellId instead of name because of locales
-
-                GameTooltip:ClearLines()
-                GameTooltip:AddLine(
-                    "Swift Dawnsaber",
-                    0.90, 0.80, 0.50, true)
-                GameTooltip:AddLine(
-                    "This mount's speed changes depending on your Riding skill.",
-                    1, 1, 1, true)
-                GameTooltip:Show()
-            elseif (GameTooltipTextLeft1:GetText() == "Mottled Red Raptor") then
-                -- todo should check on spellId instead of name because of locales
-
-                GameTooltip:ClearLines()
-                GameTooltip:AddLine(
-                    "Mottled Red Raptor",
-                    0.90, 0.80, 0.50, true)
-                GameTooltip:AddLine(
-                    "This mount's speed changes depending on your Riding skill.",
-                    1, 1, 1, true)
-                GameTooltip:Show()
-            elseif (GameTooltipTextLeft1:GetText() == "Ivory Raptor") then
-                -- todo should check on spellId instead of name because of locales
-
-                GameTooltip:ClearLines()
-                GameTooltip:AddLine(
-                    "Ivory Raptor",
-                    0.90, 0.80, 0.50, true)
-                GameTooltip:AddLine(
-                    "This mount's speed changes depending on your Riding skill.",
-                    1, 1, 1, true)
-                GameTooltip:Show()
-            elseif (GameTooltipTextLeft1:GetText() == "Tiger") then
-                -- todo should check on spellId instead of name because of locales
-
-                GameTooltip:ClearLines()
-                GameTooltip:AddLine(
-                    "Tiger",
-                    0.90, 0.80, 0.50, true)
-                GameTooltip:AddLine(
-                    "This mount's speed changes depending on your Riding skill.",
-                    1, 1, 1, true)
-                GameTooltip:Show()
-            end
+            setDynamicMountSpeedText(GameTooltip)
         end)
-
-        tooltip:SetScript("OnHide", function()
-            GameTooltip.isBagHook = 0
-        end)
-
-        local xx_SetBagItem = GameTooltip.SetBagItem
-        function GameTooltip.SetBagItem(self, container, slot)
-            GameTooltip.isBagHook = 1
-            return xx_SetBagItem(self, container, slot)
-        end
-
-        local inInstance, instanceType = IsInInstance()
-        if (instanceType == "PVP") then
-            WHC.UpdateDeathWindow(true)
-        else
-            WHC.UpdateDeathWindow(false)
-        end
     end
 end)
 
