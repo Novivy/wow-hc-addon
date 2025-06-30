@@ -15,10 +15,9 @@ else
     RETAIL_BACKDROP = nil
 end
 
-WHC = CreateFrame("Frame")
+WHC = CreateFrame("Frame", "WowHcUIFrame", UIParent, RETAIL_BACKDROP)
 -- Define the frame names here so my IDE can do a usage search.
 WHC.Frames = {
-    UIframe = nil,
     UItabHeader = nil,
     UItab = nil,
     MapIcon = nil,

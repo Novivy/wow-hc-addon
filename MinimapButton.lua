@@ -15,7 +15,7 @@ function WHC.InitializeMinimapIcon()
     minimapIcon:SetClampedToScreen(true)
 
     minimapIcon:SetScript("OnClick", function()
-        if (WHC.Frames.UIframe:IsVisible()) then
+        if (WHC:IsVisible()) then
             WHC.UIShowTabContent(0)
         else
             WHC.UIShowTabContent("General")

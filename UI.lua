@@ -15,9 +15,9 @@ end
 -- Function to show the selected tab's content
 function WHC.UIShowTabContent(tabIndex, arg1)
     if tabIndex == 0 then
-        WHC.Frames.UIframe:Hide()
+        WHC:Hide()
     else
-        WHC.Frames.UIframe:Show()
+        WHC:Show()
         -- Hide all tab contents first
 
         if (tabIndex == "Support") then
@@ -115,12 +115,13 @@ function WHC.UIShowTabContent(tabIndex, arg1)
 end
 
 function WHC.InitializeUI()
-    local frame = CreateFrame("Frame", "MyMultiTabFrame", UIParent, RETAIL_BACKDROP)
-    WHC.Frames.UIframe = frame
-    frame:SetWidth(500)
-    frame:SetHeight(450)
-    frame:SetPoint("CENTER", UIParent, "CENTER", 0, 100)
-    frame:SetBackdrop({
+    -- Close with escape key
+    tinsert(UISpecialFrames, WHC:GetName());
+
+    WHC:SetWidth(500)
+    WHC:SetHeight(450)
+    WHC:SetPoint("CENTER", UIParent, "CENTER", 0, 100)
+    WHC:SetBackdrop({
         bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
         edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
         tile = true,
@@ -128,29 +129,29 @@ function WHC.InitializeUI()
         edgeSize = 32,
         insets = { left = 11, right = 12, top = 12, bottom = 11 }
     })
-    frame:SetBackdropColor(0, 0, 0, 1)
-    frame:Hide()
+    WHC:SetBackdropColor(0, 0, 0, 1)
+    WHC:Hide()
 
 
-    local closeFrame = CreateFrame("Button", "GMToolGUIClose", frame, "UIPanelCloseButton")
+    local closeFrame = CreateFrame("Button", "GMToolGUIClose", WHC, "UIPanelCloseButton")
     closeFrame:SetWidth(30)
     closeFrame:SetHeight(30)
-    closeFrame:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 7, 6)
+    closeFrame:SetPoint("TOPRIGHT", WHC, "TOPRIGHT", 7, 6)
     closeFrame:SetScript("OnClick", function()
-        frame:Hide()
+        WHC:Hide()
     end)
 
-    local logo = frame:CreateTexture(nil, "ARTWORK")
+    local logo = WHC:CreateTexture(nil, "ARTWORK")
     logo:SetTexture("Interface\\AddOns\\WOW_HC\\Images\\wow-hardcore-logo")
     logo:SetWidth(150)
     logo:SetHeight(75)
-    logo:SetPoint("TOP", frame, "TOP", 0, 42)
+    logo:SetPoint("TOP", WHC, "TOP", 0, 42)
 
 
-    local tabContainer = CreateFrame("Frame", "TabContainer", frame)
+    local tabContainer = CreateFrame("Frame", "TabContainer", WHC)
     tabContainer:SetWidth(500)
     tabContainer:SetHeight(30)
-    tabContainer:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 8, -20)
+    tabContainer:SetPoint("BOTTOMLEFT", WHC, "BOTTOMLEFT", 8, -20)
 
     WHC.Frames.UItabHeader = {}
     WHC.Frames.UItab = {}
@@ -216,10 +217,10 @@ function WHC.InitializeUI()
 
 
         -- TABS Content
-        local content = CreateFrame("Frame", "Tab" .. value .. "Content", frame)
+        local content = CreateFrame("Frame", "Tab" .. value .. "Content", WHC)
         content:SetWidth(500)
         content:SetHeight(440)
-        content:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -40)
+        content:SetPoint("TOPLEFT", WHC, "TOPLEFT", 0, -40)
         content:Hide()
 
 
@@ -251,10 +252,10 @@ function WHC.InitializeUI()
     -- Slash command to toggle the frame
     SLASH_WOWHC1 = "/wowhc"
     SlashCmdList["WOWHC"] = function(msg)
-        if WHC.Frames.UIframe:IsVisible() then
-            WHC.Frames.UIframe:Hide()
+        if WHC:IsVisible() then
+            WHC:Hide()
         else
-            WHC.Frames.UIframe:Show()
+            WHC:Show()
             WHC.UIShowTabContent("General") -- Initialize with the first tab visible
         end
     end
