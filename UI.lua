@@ -17,6 +17,10 @@ function WHC.UIShowTabContent(tabIndex, arg1)
     if tabIndex == 0 then
         WHC:Hide()
     else
+        if WHC:IsVisible() then
+            PlaySound(WHC.sounds.selectTab)
+        end
+
         WHC:Show()
         -- Hide all tab contents first
 
@@ -94,6 +98,7 @@ function WHC.UIShowTabContent(tabIndex, arg1)
                 WHC.Frames.UItab[value]:Hide()
                 WHC.Frames.UItabHeader[value]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-InActiveTab")
                 WHC.Frames.UItabHeader[value].tabText:SetTextColor(0.933, 0.765, 0)
+                WHC.Frames.UItabHeader[value]:Enable()
             end
         end
 
@@ -101,6 +106,7 @@ function WHC.UIShowTabContent(tabIndex, arg1)
             WHC.Frames.UItab[tabIndex]:Show()
             WHC.Frames.UItabHeader[tabIndex]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-ActiveTab")
             WHC.Frames.UItabHeader[tabIndex].tabText:SetTextColor(1, 1, 1)
+            WHC.Frames.UItabHeader[tabIndex]:Disable()
 
             if (tabIndex == "Achievements") then
                 if (arg1 ~= nil) then
@@ -132,12 +138,11 @@ function WHC.InitializeUI()
     })
     WHC:SetBackdropColor(0, 0, 0, 1)
 
-    -- TODO test this
     WHC:SetScript("OnShow", function()
-        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
+        PlaySound(WHC.sounds.openFrame)
     end)
     WHC:SetScript("OnHide", function()
-        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
+        PlaySound(WHC.sounds.closeFrame)
     end)
 
     local closeFrame = CreateFrame("Button", "GMToolGUIClose", WHC, "UIPanelCloseButton")

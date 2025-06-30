@@ -11,6 +11,7 @@
 - Settings checkbox for That Which Has No Life achievement, showing a warning when not targeting a boar or quilboar
 - Settings checkbox for Untalented achievement, blocking learning talents
 - Pressing ESC now closes the addon
+- Added sounds for opening and closing the addon, as well as selecting tabs
 
 ## Future versions:
 - Disable the complaint system (right click on chat or character to report it) as report aren't sent to the server. Open the addon ticket form instead.
