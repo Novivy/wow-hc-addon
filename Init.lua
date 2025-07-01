@@ -5,7 +5,6 @@ if (version == "1.12.0" or version == "1.12.1") then
     RETAIL = 0
 end
 
-
 RETAIL_BACKDROP = nil
 if (RETAIL == 1) then
     RETAIL_BACKDROP = "BackdropTemplate"

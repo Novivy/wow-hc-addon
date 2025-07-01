@@ -7,6 +7,7 @@
 ## SavedVariablesPerCharacter: WhcAchievementSettings
 
 Init.lua
+Util.lua
 Tabs\Settings.lua
 Tabs\Shop.lua
 Tabs\General.lua
@@ -17,7 +18,6 @@ UI.lua
 Death.lua
 RecentDeaths.lua
 Support.lua
-Debug.lua
 Events.lua
 MinimapButton.lua
 AchievementHelpers.lua
