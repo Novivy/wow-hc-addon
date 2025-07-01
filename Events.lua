@@ -232,18 +232,6 @@ function WHC.InitializeAchievementButtons()
 
         WHC.Frames.AchievementButtonInspect = createAchievementButton(InspectFrame, "inspect")
     end)
-
-    if (RETAIL == 1) then
-        CharacterFrame:HookScript("OnHide", function(self)
-            WHC.UIShowTabContent(0)
-        end)
-    else
-        xx_CharacterFrame_OnHide = CharacterFrame_OnHide
-        function CharacterFrame_OnHide()
-            xx_CharacterFrame_OnHide()
-            WHC.UIShowTabContent(0)
-        end
-    end
 end
 
 local function getAuctionButtonText(duration)

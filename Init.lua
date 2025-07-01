@@ -3,22 +3,17 @@ local version = GetBuildInfo()
 RETAIL = 1
 if (version == "1.12.0" or version == "1.12.1") then
     RETAIL = 0
-else
-    RETAIL = 1
 end
 
 
 RETAIL_BACKDROP = nil
 if (RETAIL == 1) then
     RETAIL_BACKDROP = "BackdropTemplate"
-else
-    RETAIL_BACKDROP = nil
 end
 
-WHC = CreateFrame("Frame")
+WHC = CreateFrame("Frame", "WowHcUIFrame", UIParent, RETAIL_BACKDROP)
 -- Define the frame names here so my IDE can do a usage search.
 WHC.Frames = {
-    UIframe = nil,
     UItabHeader = nil,
     UItab = nil,
     MapIcon = nil,
@@ -54,11 +49,22 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     if addonName ~= "WOW_HC" then
         return
     end
+    WHC:UnregisterEvent("ADDON_LOADED")
 
-    local class = UnitClass("player")
+    RETAIL = 1
+    local version = GetBuildInfo()
+    if (version == "1.12.0" or version == "1.12.1") then
+        RETAIL = 0
+    end
+
+    RETAIL_BACKDROP = nil
+    if (RETAIL == 1) then
+        RETAIL_BACKDROP = "BackdropTemplate"
+    end
+
     WHC.player = {
         name = UnitName("player"),
-        class = class,
+        class = UnitClass("player"),
     }
 
     local locale = GetLocale()
@@ -66,19 +72,13 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         isEnglish = locale == "enUS" or locale == "enGB"
     }
 
-    local version = GetBuildInfo()
-    if (version == "1.12.0" or version == "1.12.1") then
-        RETAIL = 0
-    else
-        RETAIL = 1
-    end
-
-
-    if (RETAIL == 1) then
-        RETAIL_BACKDROP = "BackdropTemplate"
-    else
-        RETAIL_BACKDROP = nil
-    end
+    WHC.sounds = {
+        checkBoxOn = RETAIL == 0 and "igMainMenuOptionCheckBoxOn" or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON,
+        checkBoxOff = RETAIL == 0 and "igMainMenuOptionCheckBoxOff" or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF,
+        openFrame = RETAIL == 0 and "igCharacterInfoOpen" or SOUNDKIT.IG_CHARACTER_INFO_OPEN,
+        closeFrame = RETAIL == 0 and "igCharacterInfoClose" or SOUNDKIT.IG_CHARACTER_INFO_CLOSE,
+        selectTab = RETAIL == 0 and "igCharacterInfoTab" or SOUNDKIT.IG_CHARACTER_INFO_TAB,
+    }
 
     WhcAddonSettings = WhcAddonSettings or {}
     -- Ensure the specific setting exists and has a default value
