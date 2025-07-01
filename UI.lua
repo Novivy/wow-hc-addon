@@ -17,10 +17,6 @@ function WHC.UIShowTabContent(tabIndex, arg1)
     if tabIndex == 0 then
         WHC:Hide()
     else
-        if WHC:IsVisible() then
-            PlaySound(WHC.sounds.selectTab)
-        end
-
         WHC:Show()
         -- Hide all tab contents first
 
@@ -223,6 +219,7 @@ function WHC.InitializeUI()
         tabHeader:SetScript("OnClick", function()
             --WHC.DebugPrint("click " .. index)
             WHC.UIShowTabContent(index)
+            PlaySound(WHC.sounds.selectTab)
         end)
 
         WHC.Frames.UItabHeader[value] = tabHeader
