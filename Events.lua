@@ -23,8 +23,8 @@ playerLogin:SetScript("OnEvent", function(self, event)
     local GM_FONT_COLOR_CODE = "|cff06daf0"
     WHC.HookSecureFunc(GameTooltip, "SetBagItem", function(self, container, slot)
         if GameTooltipTextLeft2:GetText() == "Binds when picked up" then
-            GameTooltip:AddLine(GM_FONT_COLOR_CODE .. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE,
-                    1, 1, 1, true)
+            local msg = GM_FONT_COLOR_CODE .. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE
+            GameTooltip:AddLine(msg, 1, 1, 1, true)
             GameTooltip:Show()
         end
     end)
@@ -47,7 +47,7 @@ playerLogin:SetScript("OnEvent", function(self, event)
 
         if dynamicMounts[mountBuffID] or dynamicMounts[mountBuffName] then
             tooltip:ClearLines()
-            tooltip:AddLine(mountBuffName, 0.90, 0.80, 0.50, true)
+            tooltip:AddLine(mountBuffName, 0.90, 0.80, 0.50, false)
             tooltip:AddLine("This mount's speed changes depending on your Riding skill.", 1, 1, 1, true)
             tooltip:Show()
         end
