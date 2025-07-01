@@ -23,8 +23,7 @@ playerLogin:SetScript("OnEvent", function(self, event)
     local GM_FONT_COLOR_CODE = "|cff06daf0"
     WHC.HookSecureFunc(GameTooltip, "SetBagItem", function(self, container, slot)
         if GameTooltipTextLeft2:GetText() == "Binds when picked up" then
-            GameTooltip:AddLine(
-                    GM_FONT_COLOR_CODE.. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE,
+            GameTooltip:AddLine(GM_FONT_COLOR_CODE .. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE,
                     1, 1, 1, true)
             GameTooltip:Show()
         end
