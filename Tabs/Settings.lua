@@ -74,16 +74,9 @@ local function createSettingsSubCheckBox(contentFrame, text)
 end
 
 local function playCheckedSound(checked)
-    local sound = "igMainMenuOptionCheckBoxOff"
+    local sound = WHC.sounds.checkBoxOff
     if checked == 1 then
-        sound = "igMainMenuOptionCheckBoxOn"
-    end
-
-    if RETAIL == 1 then
-        sound = 857
-        if checked == 1 then
-            sound = 856
-        end
+        sound = WHC.sounds.checkBoxOn
     end
 
     PlaySound(sound)
