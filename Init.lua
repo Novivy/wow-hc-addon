@@ -156,3 +156,42 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         WHC.SetBlockEquipItems()
     end
 end)
+
+local dynamicMounts = {
+    [23220] = true, ["Swift Dawnsaber"] = true,
+    [16084] = true, ["Mottled Red Raptor"] = true,
+    [17450] = true, ["Ivory Raptor"] = true,
+    [10790] = true, ["Tiger"] = true
+}
+
+local function setDynamicMountSpeedText(tooltip)
+    local mountBuffID = 0
+    local mountBuffName = GameTooltipTextLeft1:GetText()
+    if tooltip.GetSpell then
+        mountBuffName, mountBuffID = tooltip:GetSpell()
+        WHC.DebugPrint(tostring(mountBuffName).. " " .. tostring(mountBuffID))
+    end
+
+    if dynamicMounts[mountBuffID] or dynamicMounts[mountBuffName] then
+        tooltip:ClearLines()
+        tooltip:AddLine(mountBuffName, 0.90, 0.80, 0.50, false)
+        tooltip:AddLine("This mount's speed changes depending on your Riding skill.", 1, 1, 1, true)
+        tooltip:Show()
+    end
+end
+
+function WHC.InitializeDynamicMounts()
+
+end
+
+function WHC.InitializeTradableRaidLoot()
+    local GM_FONT_COLOR_CODE = "|cff06daf0"
+
+    WHC.HookSecureFunc(GameTooltip, "SetBagItem", function(self, container, slot)
+        if GameTooltipTextLeft2:GetText() == "Binds when picked up" then
+            local msg = GM_FONT_COLOR_CODE .. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE
+            GameTooltip:AddLine(msg, 1, 1, 1, true)
+            GameTooltip:Show()
+        end
+    end)
+end
