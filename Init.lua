@@ -168,8 +168,7 @@ function WHC.InitializeDynamicMounts()
         [10790] = true, ["Tiger"] = true
     }
 
-    local normalSpeed = "60%%"
-    local epicSpeed = "100%%"
+    local speedPattern = "%d?%d%d%%" -- matches 2-3 numbers and the % sign. Used to match 60% or 100%
     local dynamicRidingSpeed
 
     ExpandSkillHeader(0) -- Ensure all skills are expanded
@@ -179,40 +178,42 @@ function WHC.InitializeDynamicMounts()
 
         if minLevel == 40 and skillRank > 74 then
             if skillRank == 75 then
-                dynamicRidingSpeed = normalSpeed
+                dynamicRidingSpeed = "60%%"
             end
 
             if skillRank == 150 then
-                dynamicRidingSpeed = epicSpeed
+                dynamicRidingSpeed = "100%%"
             end
         end
     end
 
     local function setDynamicMountSpeedText(tooltip)
-        local mountBuffName = GameTooltipTextLeft1:GetText()
-        local mountBuffID
+        local mountName
+        local mountSpellID
         if tooltip.GetSpell then
-            _, mountBuffID = tooltip:GetSpell()
+            mountName, mountSpellID = tooltip:GetSpell()
         end
+        mountName = mountName or GameTooltipTextLeft1:GetText()
 
-        if dynamicMounts[mountBuffID] or dynamicMounts[mountBuffName] then
-            local artifactColor = ITEM_QUALITY_COLORS[6]
-            GameTooltipTextLeft1:SetTextColor(artifactColor.r, artifactColor.g, artifactColor.b)
+        if dynamicMounts[mountSpellID] or dynamicMounts[mountName] then
+            local buffDesc = GameTooltipTextLeft2:GetText()
+            local isBuff = string.find(buffDesc, speedPattern)
 
-            -- Buff text
-            local buffText = GameTooltipTextLeft2:GetText()
-            if string.find(buffText, normalSpeed) and dynamicRidingSpeed ~= normalSpeed then
-                local dynamicBuffText = string.gsub(buffText, normalSpeed, dynamicRidingSpeed)
-                GameTooltipTextLeft2:SetText(dynamicBuffText)
+            -- Make the spellbook name have artifact color
+            if not isBuff then
+                local artifactColor = ITEM_QUALITY_COLORS[6]
+                GameTooltipTextLeft1:SetTextColor(artifactColor.r, artifactColor.g, artifactColor.b)
             end
-            if string.find(buffText, epicSpeed) and dynamicRidingSpeed ~= epicSpeed then
-                local dynamicBuffText = string.gsub(buffText, epicSpeed, dynamicRidingSpeed)
+
+            -- Set buff text to the current speed
+            if isBuff then
+                local dynamicBuffText = string.gsub(buffDesc, speedPattern, dynamicRidingSpeed)
                 GameTooltipTextLeft2:SetText(dynamicBuffText)
             end
 
             -- Spellbook text
             if GameTooltipTextLeft3 then
-                GameTooltipTextLeft3:SetText(string.format("Summons and dismisses a rideable %s. This mount's speed changes depending on your Riding skill.", mountBuffName))
+                GameTooltipTextLeft3:SetText(string.format("Summons and dismisses a rideable %s. This mount's speed changes depending on your Riding skill.", mountName))
             end
 
             tooltip:Show()
