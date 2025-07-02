@@ -39,10 +39,9 @@ playerLogin:SetScript("OnEvent", function(self, event)
     local function setDynamicMountSpeedText(tooltip)
         local mountBuffID = 0
         local mountBuffName = GameTooltipTextLeft1:GetText()
-        local test = ""
         if tooltip.GetSpell then
-            mountBuffName, mountBuffID, test = tooltip:GetSpell() -- TODO: Test this on both version as it might return rank instead of spellID
-            WHC.DebugPrint(tostring(mountBuffName).. " " .. tostring(mountBuffID) .. " " .. tostring(test))
+            mountBuffName, mountBuffID = tooltip:GetSpell()
+            WHC.DebugPrint(tostring(mountBuffName).. " " .. tostring(mountBuffID))
         end
 
         if dynamicMounts[mountBuffID] or dynamicMounts[mountBuffName] then
