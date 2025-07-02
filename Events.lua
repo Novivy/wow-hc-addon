@@ -19,21 +19,6 @@ playerLogin:SetScript("OnEvent", function(self, event)
     else
         SendChatMessage(msg);
     end
-
-    if (RETAIL == 1) then
-        GameTooltip:HookScript("OnTooltipSetSpell", function(tooltip, ...)
-            setDynamicMountSpeedText(tooltip)
-        end)
-        GameTooltip:HookScript("OnTooltipSetUnit", function(tooltip, ...)
-            WHC.DebugPrint("OnTooltipSetUnit")
-            setDynamicMountSpeedText(tooltip)
-        end)
-    else
-        local tooltip = CreateFrame("Frame", nil, GameTooltip)
-        tooltip:SetScript("OnShow", function()
-            setDynamicMountSpeedText(GameTooltip)
-        end)
-    end
 end)
 
 local function createAchievementButton(frame, name)

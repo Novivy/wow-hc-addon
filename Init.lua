@@ -104,6 +104,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeMinimapIcon()
     WHC.InitializeDeathLogFrame()
     WHC.InitializeAchievementButtons()
+    WHC.InitializeDynamicMounts()
+    WHC.InitializeTradableRaidLoot()
+
 
     if (RETAIL == 1) then
         -- todo (low prio since ticket status block not displayed on retail)
@@ -157,31 +160,77 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     end
 end)
 
-local dynamicMounts = {
-    [23220] = true, ["Swift Dawnsaber"] = true,
-    [16084] = true, ["Mottled Red Raptor"] = true,
-    [17450] = true, ["Ivory Raptor"] = true,
-    [10790] = true, ["Tiger"] = true
-}
-
-local function setDynamicMountSpeedText(tooltip)
-    local mountBuffID = 0
-    local mountBuffName = GameTooltipTextLeft1:GetText()
-    if tooltip.GetSpell then
-        mountBuffName, mountBuffID = tooltip:GetSpell()
-        WHC.DebugPrint(tostring(mountBuffName).. " " .. tostring(mountBuffID))
-    end
-
-    if dynamicMounts[mountBuffID] or dynamicMounts[mountBuffName] then
-        tooltip:ClearLines()
-        tooltip:AddLine(mountBuffName, 0.90, 0.80, 0.50, false)
-        tooltip:AddLine("This mount's speed changes depending on your Riding skill.", 1, 1, 1, true)
-        tooltip:Show()
-    end
-end
-
 function WHC.InitializeDynamicMounts()
+    local dynamicMounts = {
+        [23220] = true, ["Swift Dawnsaber"] = true,
+        [16084] = true, ["Mottled Red Raptor"] = true,
+        [17450] = true, ["Ivory Raptor"] = true,
+        [10790] = true, ["Tiger"] = true
+    }
 
+    local normalSpeed = "60%%"
+    local epicSpeed = "100%%"
+    local dynamicRidingSpeed
+
+    ExpandSkillHeader(0) -- Ensure all skills are expanded
+    local numSkills = GetNumSkillLines();
+    for skillIndex=1, numSkills do
+        local _, _, _, skillRank, _, _, _, _, _, _, minLevel = GetSkillLineInfo(skillIndex)
+
+        if minLevel == 40 and skillRank > 74 then
+            if skillRank == 75 then
+                dynamicRidingSpeed = normalSpeed
+            end
+
+            if skillRank == 150 then
+                dynamicRidingSpeed = epicSpeed
+            end
+        end
+    end
+
+    local function setDynamicMountSpeedText(tooltip)
+        local mountBuffName = GameTooltipTextLeft1:GetText()
+        local mountBuffID
+        if tooltip.GetSpell then
+            _, mountBuffID = tooltip:GetSpell()
+        end
+
+        if dynamicMounts[mountBuffID] or dynamicMounts[mountBuffName] then
+            local artifactColor = ITEM_QUALITY_COLORS[6]
+            GameTooltipTextLeft1:SetTextColor(artifactColor.r, artifactColor.g, artifactColor.b)
+
+            -- Buff text
+            local buffText = GameTooltipTextLeft2:GetText()
+            if string.find(buffText, normalSpeed) and dynamicRidingSpeed ~= normalSpeed then
+                local dynamicBuffText = string.gsub(buffText, normalSpeed, dynamicRidingSpeed)
+                GameTooltipTextLeft2:SetText(dynamicBuffText)
+            end
+            if string.find(buffText, epicSpeed) and dynamicRidingSpeed ~= epicSpeed then
+                local dynamicBuffText = string.gsub(buffText, epicSpeed, dynamicRidingSpeed)
+                GameTooltipTextLeft2:SetText(dynamicBuffText)
+            end
+
+            -- Spellbook text
+            if GameTooltipTextLeft3 then
+                GameTooltipTextLeft3:SetText(string.format("Summons and dismisses a rideable %s. This mount's speed changes depending on your Riding skill.", mountBuffName))
+            end
+
+            tooltip:Show()
+        end
+    end
+
+    if RETAIL == 1 then
+        -- 1.14 spellbook
+        GameTooltip:HookScript("OnTooltipSetSpell", function(tooltip, ...)
+            setDynamicMountSpeedText(tooltip)
+        end)
+    end
+
+    -- 1.12 spellbook and buff + 1.14 buff
+    local tooltip = CreateFrame("Frame", nil, GameTooltip)
+    tooltip:SetScript("OnShow", function()
+        setDynamicMountSpeedText(GameTooltip)
+    end)
 end
 
 function WHC.InitializeTradableRaidLoot()
