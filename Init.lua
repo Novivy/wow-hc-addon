@@ -104,21 +104,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeMinimapIcon()
     WHC.InitializeDeathLogFrame()
     WHC.InitializeAchievementButtons()
+    WHC.InitializeSupport()
     WHC.InitializeDynamicMounts()
     WHC.InitializeTradableRaidLoot()
-
-
-    if (RETAIL == 1) then
-        -- todo (low prio since ticket status block not displayed on retail)
-    else
-        StaticPopupDialogs["HELP_TICKET"].OnAccept = function()
-            WHC.UIShowTabContent("Support")
-        end
-
-        StaticPopupDialogs["HELP_TICKET"].OnCancel = function()
-            WHC.UIShowTabContent("Support")
-        end
-    end
 
     if (WhcAddonSettings.minimapicon == 1) then
         WHC.Frames.MapIcon:Show()

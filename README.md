@@ -12,9 +12,9 @@
 - Settings checkbox for Untalented achievement, blocking learning talents
 - Pressing ESC now closes the addon
 - Added sounds for opening and closing the addon, as well as selecting tabs
+- Opens the Addon ticket system when right-clicking a player to report them.
 
 ## Future versions:
-- Disable the complaint system (right click on chat or character to report it) as report aren't sent to the server. Open the addon ticket form instead.
 - Prevent/disable auto-run when you are on a flypath
 - /world join after a few seconds to prevent replacing general
 - settings checkbox to allow /creature say to only display death announcements
