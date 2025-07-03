@@ -108,18 +108,6 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeDynamicMounts()
     WHC.InitializeTradableRaidLoot()
 
-    if (WhcAddonSettings.minimapicon == 1) then
-        WHC.Frames.MapIcon:Show()
-    else
-        WHC.Frames.MapIcon:Hide()
-    end
-
-    if (WhcAddonSettings.recentDeaths == 1) then
-        WHC.Frames.DeathLogFrame:Show()
-    else
-        WHC.Frames.DeathLogFrame:Hide()
-    end
-
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
     if (RETAIL == 1) then
         SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));

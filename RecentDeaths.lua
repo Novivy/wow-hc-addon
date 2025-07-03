@@ -85,6 +85,10 @@ function WHC.InitializeDeathLogFrame()
     end)
 
     WHC.Frames.DeathLogFrame = deathLogFrame
+    WHC.Frames.DeathLogFrame:Hide()
+    if (WhcAddonSettings.recentDeaths == 1) then
+        WHC.Frames.DeathLogFrame:Show()
+    end
 end
 
 local deathMessages = {}
