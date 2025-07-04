@@ -51,4 +51,8 @@ function WHC.InitializeMinimapIcon()
     border:SetHeight(66)
 
     WHC.Frames.MapIcon = minimapIcon
+    WHC.Frames.MapIcon:Hide()
+    if (WhcAddonSettings.minimapicon == 1) then
+        WHC.Frames.MapIcon:Show()
+    end
 end

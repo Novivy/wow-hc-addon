@@ -1,4 +1,3 @@
--- Debug.lua
 SLASH_ReloadUI1 = "/reloadui"
 SLASH_ReloadUI2 = "/reload"
 SlashCmdList["ReloadUI"] = function(msg, editbox)

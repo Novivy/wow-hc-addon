@@ -105,18 +105,8 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeDeathLogFrame()
     WHC.InitializeAchievementButtons()
     WHC.InitializeSupport()
-
-    if (WhcAddonSettings.minimapicon == 1) then
-        WHC.Frames.MapIcon:Show()
-    else
-        WHC.Frames.MapIcon:Hide()
-    end
-
-    if (WhcAddonSettings.recentDeaths == 1) then
-        WHC.Frames.DeathLogFrame:Show()
-    else
-        WHC.Frames.DeathLogFrame:Hide()
-    end
+    WHC.InitializeDynamicMounts()
+    WHC.InitializeTradableRaidLoot()
 
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
     if (RETAIL == 1) then
@@ -145,3 +135,89 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         WHC.SetBlockEquipItems()
     end
 end)
+
+function WHC.InitializeDynamicMounts()
+    local dynamicMounts = {
+        [23220] = true, ["Swift Dawnsaber"] = true,
+        [16084] = true, ["Mottled Red Raptor"] = true,
+        [17450] = true, ["Ivory Raptor"] = true,
+        [10790] = true, ["Tiger"] = true
+    }
+
+    local speedPattern = "%d?%d%d%%" -- matches 2-3 numbers and the % sign. Used to match 60% or 100%
+    local dynamicRidingSpeed
+
+    ExpandSkillHeader(0) -- Ensure all skills are expanded
+    local numSkills = GetNumSkillLines();
+    for skillIndex=1, numSkills do
+        local _, _, _, skillRank, _, _, _, _, _, _, minLevel = GetSkillLineInfo(skillIndex)
+
+        if minLevel == 40 and skillRank > 74 then
+            if skillRank == 75 then
+                dynamicRidingSpeed = "60%%"
+            end
+
+            if skillRank == 150 then
+                dynamicRidingSpeed = "100%%"
+            end
+        end
+    end
+
+    local function setDynamicMountSpeedText(tooltip)
+        local mountName
+        local mountSpellID
+        if tooltip.GetSpell then
+            mountName, mountSpellID = tooltip:GetSpell()
+        end
+        mountName = mountName or GameTooltipTextLeft1:GetText()
+
+        if dynamicMounts[mountSpellID] or dynamicMounts[mountName] then
+            local buffDesc = GameTooltipTextLeft2:GetText()
+            local isBuff = string.find(buffDesc, speedPattern)
+
+            -- Make the spellbook name have artifact color
+            if not isBuff then
+                local artifactColor = ITEM_QUALITY_COLORS[6]
+                GameTooltipTextLeft1:SetTextColor(artifactColor.r, artifactColor.g, artifactColor.b)
+            end
+
+            -- Set buff text to the current speed
+            if isBuff then
+                local dynamicBuffText = string.gsub(buffDesc, speedPattern, dynamicRidingSpeed)
+                GameTooltipTextLeft2:SetText(dynamicBuffText)
+            end
+
+            -- Spellbook text
+            if GameTooltipTextLeft3 then
+                GameTooltipTextLeft3:SetText(string.format("Summons and dismisses a rideable %s. This mount's speed changes depending on your Riding skill.", mountName))
+            end
+
+            tooltip:Show()
+        end
+    end
+
+    if RETAIL == 1 then
+        -- 1.14 spellbook
+        GameTooltip:HookScript("OnTooltipSetSpell", function(tooltip, ...)
+            setDynamicMountSpeedText(tooltip)
+        end)
+    end
+
+    -- 1.12 spellbook and buff + 1.14 buff
+    local tooltip = CreateFrame("Frame", nil, GameTooltip)
+    tooltip:SetScript("OnShow", function()
+        setDynamicMountSpeedText(GameTooltip)
+    end)
+end
+
+function WHC.InitializeTradableRaidLoot()
+    local GM_FONT_COLOR_CODE = "|cff06daf0"
+
+    WHC.HookSecureFunc(GameTooltip, "SetBagItem", function(self, container, slot)
+        if GameTooltipTextLeft2:GetText() == "Binds when picked up" then
+            local msg = GM_FONT_COLOR_CODE .. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE
+            GameTooltip:AddLine(msg, 1, 1, 1, true)
+            GameTooltip:Show()
+        end
+    end)
+end
