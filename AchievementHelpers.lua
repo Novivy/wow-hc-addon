@@ -345,7 +345,7 @@ local function isSelfMade(itemSubType, itemEquipLoc)
 
     for i=1, GameTooltip:NumLines() do
         local lineText = getglobal("GameTooltipTextLeft"..i):GetText()
-        local nameMatch = string.find(lineText, "^<.* ("..WHC.player.name..")>$")
+        local nameMatch = string.find(lineText, "<.* ("..WHC.player.name..")>")
         if nameMatch then
             return true
         end
