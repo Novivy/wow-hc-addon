@@ -53,8 +53,17 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     }
 
     local locale = GetLocale()
+    local is1_12 = version == "1.12.0" or version == "1.12.1"
     WHC.client = {
-        isEnglish = locale == "enUS" or locale == "enGB"
+        isEnglish = locale == "enUS" or locale == "enGB",
+        is1_12 = is1_12,
+        is1_14 = not is1_12
+    }
+
+    local realmName = GetRealmName()
+    WHC.server = {
+        name = realmName,
+        isHardcore = realmName == "Permadeath - EU"
     }
 
     WHC.sounds = {
@@ -107,6 +116,10 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeSupport()
     WHC.InitializeDynamicMounts()
     WHC.InitializeTradableRaidLoot()
+
+    if WHC.server.isHardcore then
+        WHC.InitializeDeathPopupAppeal()
+    end
 
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
     if (RETAIL == 1) then

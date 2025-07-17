@@ -118,19 +118,6 @@ function MoneyFrame_Update(frameName, money)
     end
 end
 
-local mapChangeEventHandler = CreateFrame("Frame")
-mapChangeEventHandler:RegisterEvent("PLAYER_ENTERING_WORLD")
-mapChangeEventHandler:SetScript("OnEvent", function(self, event)
-    local inInstance, instanceType = IsInInstance()
-    -- message(instanceType)
-    if (instanceType == "pvp") then
-        WHC.UpdateDeathWindow(true)
-    else
-        WHC.UpdateDeathWindow(false)
-    end
-end)
-
-
 local function handleChatEvent(arg1)
     local lowerArg = string.lower(arg1)
     if not string.find(lowerArg, "^::whc::") then
