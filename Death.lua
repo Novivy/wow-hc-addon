@@ -61,7 +61,9 @@ local function createUrlFrame()
     return urlFrame
 end
 
-local function addDeathPopupAppealButton(urlFrame)
+local function addDeathPopupAppealButton()
+    local urlFrame = createUrlFrame()
+
     local deathOverride = function (data, reason)
         if (reason == "override") then
             return
@@ -78,6 +80,7 @@ local function addDeathPopupAppealButton(urlFrame)
     else
         StaticPopupDialogs["DEATH"].OnCancel = deathOverride
     end
+    StaticPopupDialogs["DEATH"].DisplayButton2 = function() return true end
 end
 
 local function updateDeathPopupText()
@@ -90,22 +93,18 @@ local function updateDeathPopupText()
             StaticPopupDialogs["DEATH"].text = "YOU DIED";
             StaticPopupDialogs["DEATH"].button1 = "Release Spirit";
             StaticPopupDialogs["DEATH"].button2 = "";
-            StaticPopupDialogs["DEATH"].DisplayButton2 = function()
-                return false
-            end
+            StaticPopupDialogs["DEATH"].DisplayButton2 = function() return false end
         else
             DEATH_RELEASE = "Go again";
             StaticPopupDialogs["DEATH"].text = "|cffff0000YOU DIED|r";
             StaticPopupDialogs["DEATH"].button1 = "Go again";
             StaticPopupDialogs["DEATH"].button2 = "Appeal";
-            StaticPopupDialogs["DEATH"].DisplayButton2 = function()
-                return true
-            end
+            StaticPopupDialogs["DEATH"].DisplayButton2 = function() return true end
         end
     end)
 end
 
 function WHC.InitializeDeathPopupAppeal()
-    addDeathPopupAppealButton(createUrlFrame())
+    addDeathPopupAppealButton()
     updateDeathPopupText()
 end
