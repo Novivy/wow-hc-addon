@@ -119,7 +119,7 @@ function MoneyFrame_Update(frameName, money)
 end
 
 local updateAddonFrame
-local function createUpdateAddonFrame()
+local function initializeUpdateAddonFrame()
     updateAddonFrame = CreateFrame("Frame", "UpdateAddonFrame", UIParent, RETAIL_BACKDROP)
     updateAddonFrame:SetWidth(300)
     updateAddonFrame:SetHeight(210)
@@ -172,7 +172,7 @@ local function createUpdateAddonFrame()
 end
 
 local raidDifficultyFrame
-local function createRaidDifficultyFrame()
+local function initializeRaidDifficultyFrame()
     raidDifficultyFrame = CreateFrame("Frame", "RaidDifficultyFrame", UIParent, RETAIL_BACKDROP)
     raidDifficultyFrame:SetWidth(300)
     raidDifficultyFrame:SetHeight(160)
@@ -301,7 +301,7 @@ local function handleChatEvent(arg1)
 
     if string.find(lowerArg, "^::whc::outdated:") then
         if not updateAddonFrame then
-            createUpdateAddonFrame()
+            initializeUpdateAddonFrame()
         end
 
         updateAddonFrame:Show()
@@ -313,7 +313,7 @@ local function handleChatEvent(arg1)
         result = tonumber(result)
 
         if not raidDifficultyFrame then
-            createRaidDifficultyFrame()
+            initializeRaidDifficultyFrame()
         end
 
         raidDifficultyFrame:Show()
