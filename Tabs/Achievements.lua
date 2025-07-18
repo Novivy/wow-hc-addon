@@ -106,8 +106,6 @@ function WHC.ToggleAchievement(itemAch, failed)
     end
 end
 
-WHC.Frames.Achievements = {}
-
 WHC.Achievements = {
     DEMON_SLAYER           = { id = 16384, icon = "spell_shadow_unsummonbuilding",       itemId = "707016", itemLink = "", name = "Demon Slayer",           desc = "Reach level 60 only by killing demons." },
     GROUNDED               = { id = 4096,  icon = "spell_nature_strengthofearthtotem02", itemId = "707014", itemLink = "", name = "Grounded",               desc = "Reach level 60 without ever using flying services." },
@@ -178,6 +176,7 @@ function WHC.Tab_Achievements(content)
     scrollContent:SetHeight(800)
     scrollFrame:SetScrollChild(scrollContent) -- Attach the content frame to the scroll frame
 
+    WHC.Frames.Achievements = {}
     for i, achievement in ipairs(sortedAchievements) do
         local y = -10 - 53 * (i-1)
 
