@@ -75,7 +75,10 @@ function WHC.UIShowTabContent(tabIndex, arg1)
             WHC_SETTINGS.blockTalentsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTalents))
             WHC_SETTINGS.onlyKillDemonsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillDemons))
             WHC_SETTINGS.onlyKillUndeadCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillUndead))
-            WHC_SETTINGS.onlyKillBoarsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillBoars))
+
+            if RETAIL == 1 or WHC.client.isEnglish then
+                WHC_SETTINGS.onlyKillBoarsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillBoars))
+            end
 
             if RETAIL == 0 then
                 WHC_SETTINGS.blockMagicItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMagicItems))
