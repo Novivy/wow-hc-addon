@@ -13,17 +13,19 @@ function WHC.CheckedValue(value)
 end
 
 local function getColorCode(colorObject)
-    if not colorObject then return nil end
+    local colorStr = colorObject.colorStr
 
-    -- Scale the 0-1 values to 0-255
-    local r = colorObject.r * 255
-    local g = colorObject.g * 255
-    local b = colorObject.b * 255
+    if not colorStr then
+        -- Scale the 0-1 values to 0-255
+        local r = colorObject.r * 255
+        local g = colorObject.g * 255
+        local b = colorObject.b * 255
 
-    WHC.DebugPrint(string.format("%02x%02x%02x", r, g, b))
+        -- Format the numbers into a hex string (e.g., "ff33c9ff")
+        colorStr = string.format("ff%02x%02x%02x", r, g, b)
+    end
 
-    -- Format the numbers into a hex string (e.g., "cff33c9ff")
-    return string.format("|cff%02x%02x%02x", r, g, b)
+    return string.format("|c%s", colorStr)
 end
 
 
@@ -93,7 +95,7 @@ function WHC.UIShowTabContent(tabIndex, arg1)
         WHC_SETTINGS.onlyKillDemonsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillDemons))
         WHC_SETTINGS.onlyKillUndeadCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillUndead))
 
-		if RETAIL == 1 or WHC.client.isEnglish then
+        if RETAIL == 1 or WHC.client.isEnglish then
             WHC_SETTINGS.onlyKillBoarsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillBoars))
         end
 
@@ -126,15 +128,16 @@ function WHC.UIShowTabContent(tabIndex, arg1)
 
         if (tabIndex == "Achievements") then
             if (arg1 ~= nil) then
-                local _, englishClass = UnitClass("arg1")
+                local name = UnitName("target")
+                local _, englishClass = UnitClass("target")
+
                 local color = RAID_CLASS_COLORS[englishClass]
                 if englishClass == "SHAMAN" then
-                    color = {r = 0.14, g = 0.35, b = 1} -- TBC Shaman color
+                    color = {r = 0.14, g = 0.35, b = 1, colorStr = "ff2459ff"} -- TBC Shaman color
                 end
 
                 local classColorCode = getColorCode(color)
-
-                local player = classColorCode .. arg1 .. FONT_COLOR_CODE_CLOSE
+                local player = classColorCode .. name .. FONT_COLOR_CODE_CLOSE
                 WHC.Frames.UItab[tabIndex].desc1:SetText("\nListing " .. player .. "'s achievements")
             else
                 WHC.Frames.UItab[tabIndex].desc1:SetText(
