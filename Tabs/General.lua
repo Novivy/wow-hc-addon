@@ -62,7 +62,7 @@ local tabInfos = {
     { id = 2, icon = "raid",   name = "Dynamic Difficulty", desc = "Raid difficulty can be set to either Normal or Dynamic.\n\nThis setting scales the melee damage, health, mana, and loot of mobs based on the current raid size (with a minimum of 20 players)." },
     { id = 3, icon = "ach",    name = "Achievements",       desc = "Achievements are optional goals that you start with but may lose depending on your actions.\n\nClick on the Achievements tab below to view your character's achievements.\n\nYou can also inspect other players' achievements!" },
     { id = 4, icon = "chrono", name = "Chronoboon",         desc = "Embark on a mysterious cooking quest to upgrade your campfire to a spiritual one.\n\nThis upgrade will allow you to interact with it and suspend your world buffs whenever you wish." },
-    { id = 5, icon = "mag",    name = "Mak'gora",           desc = "Challenge players to a Duel to the Death by typing the |cffffd200.makgora|r command\n\nIf the challenged player accepts, you will fight to the death until only one remains.\n\nFleeing a Mak'gora will result in your immediate execution." },
+    { id = 5, icon = "mag",    name = "Mak'gora",           desc = "Challenge players to a Duel to the Death by typing the "..NORMAL_FONT_COLOR_CODE..".makgora"..FONT_COLOR_CODE_CLOSE.." command\n\nIf the challenged player accepts, you will fight to the death until only one remains.\n\nFleeing a Mak'gora will result in your immediate execution." },
 }
 
 function WHC.Tab_General(content)

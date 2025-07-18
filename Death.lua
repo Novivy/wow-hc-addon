@@ -95,7 +95,7 @@ local function updateDeathPopupText()
             StaticPopupDialogs["DEATH"].DisplayButton2 = function() return false end
         else
             DEATH_RELEASE = "Go again";
-            StaticPopupDialogs["DEATH"].text = "|cffff0000YOU DIED|r";
+            StaticPopupDialogs["DEATH"].text = WHC.COLORS.RED_FONT_COLOR_CODE .. "YOU DIED" .. FONT_COLOR_CODE_CLOSE;
             StaticPopupDialogs["DEATH"].button1 = "Go again";
             StaticPopupDialogs["DEATH"].button2 = "Appeal";
             StaticPopupDialogs["DEATH"].DisplayButton2 = function() return true end

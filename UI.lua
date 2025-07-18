@@ -12,6 +12,21 @@ function WHC.CheckedValue(value)
     return false
 end
 
+local function getColorCode(colorObject)
+    if not colorObject then return nil end
+
+    -- Scale the 0-1 values to 0-255
+    local r = colorObject.r * 255
+    local g = colorObject.g * 255
+    local b = colorObject.b * 255
+
+    WHC.DebugPrint(string.format("%02x%02x%02x", r, g, b))
+
+    -- Format the numbers into a hex string (e.g., "cff33c9ff")
+    return string.format("|cff%02x%02x%02x", r, g, b)
+end
+
+
 -- Function to show the selected tab's content
 function WHC.UIShowTabContent(tabIndex, arg1)
     if tabIndex == 0 then
@@ -111,7 +126,16 @@ function WHC.UIShowTabContent(tabIndex, arg1)
 
         if (tabIndex == "Achievements") then
             if (arg1 ~= nil) then
-                WHC.Frames.UItab[tabIndex].desc1:SetText("\nListing |cff00C300" .. arg1 .. "|r's achievements")
+                local _, englishClass = UnitClass("arg1")
+                local color = RAID_CLASS_COLORS[englishClass]
+                if englishClass == "SHAMAN" then
+                    color = {r = 0.14, g = 0.35, b = 1} -- TBC Shaman color
+                end
+
+                local classColorCode = getColorCode(color)
+
+                local player = classColorCode .. arg1 .. FONT_COLOR_CODE_CLOSE
+                WHC.Frames.UItab[tabIndex].desc1:SetText("\nListing " .. player .. "'s achievements")
             else
                 WHC.Frames.UItab[tabIndex].desc1:SetText(
                     "Achievements are optional goals that you start with but may lose depending on your actions")

@@ -1,8 +1,5 @@
-local addonPrefix = ITEM_QUALITY_COLORS[5].hex.."[WOW-HC.com]: "..FONT_COLOR_CODE_CLOSE
-
 local function achievementErrorMessage(link, message)
-    local achievementMsg = link..HIGHLIGHT_FONT_COLOR_CODE.." Achievement active. "
-    return addonPrefix..achievementMsg..message..FONT_COLOR_CODE_CLOSE
+    return WHC.ADDON_PREFIX..link..HIGHLIGHT_FONT_COLOR_CODE.." Achievement active. " .. message .. FONT_COLOR_CODE_CLOSE
 end
 
 local function printAchievementInfo(link, message)

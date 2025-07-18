@@ -12,7 +12,7 @@ function WHC.Tab_Shop(content)
 
     local desc2 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     desc2:SetPoint("TOP", desc1, "TOP", 0, -45) -- Adjust y-offset based on logo size
-    desc2:SetText("We do not provide any |cffe53c15Pay-to-Win|r content on this realm.")
+    desc2:SetText("We do not provide any " .. WHC.COLORS.ORANGE_FONT_COLOR_CODE .. "Pay-to-Win" .. FONT_COLOR_CODE_CLOSE .. " content on this realm.")
     desc2:SetWidth(230)
 
 

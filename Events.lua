@@ -139,8 +139,7 @@ local function createUpdateAddonFrame()
     -- Title
     local title = updateAddonFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     title:SetPoint("TOP", updateAddonFrame, "TOP", 0, -20)
-    title:SetText(
-            "|cffff8000WOW-HC addon|r is out of date.\n\nPlease update it to keep things running smoothly.\n\nCopy and paste this URL\ninto your browser:")
+    title:SetText(WHC.ADDON_PREFIX.."is out of date.\n\nPlease update it to keep things running smoothly.\n\nCopy and paste this URL\ninto your browser:")
     title:SetWidth(220)
 
     -- URL input box
@@ -319,10 +318,10 @@ local function handleChatEvent(arg1)
 
         raidDifficultyFrame:Show()
 
-        RAID = "Raid |cffffffff(Normal difficulty)|r"
+        RAID = "Raid " .. HIGHLIGHT_FONT_COLOR_CODE .. "(Normal difficulty)" .. FONT_COLOR_CODE_CLOSE
         raidDifficultyFrame.diff:SetText("Normal")
         if (result == 1) then
-            RAID = "Raid |cff06daf0(Dynamic difficulty)|r"
+            RAID = "Raid " .. WHC.COLORS.GM_FONT_COLOR_CODE .. "(Dynamic difficulty)" .. FONT_COLOR_CODE_CLOSE
             raidDifficultyFrame.diff:SetText("Dynamic")
         end
 
@@ -331,13 +330,13 @@ local function handleChatEvent(arg1)
 
     if string.find(lowerArg, "^::whc::difficulty:") then
         local result = string.gsub(arg1, "::whc::difficulty:", "")
-
         result = tonumber(result)
+
+        RAID = "Raid " .. HIGHLIGHT_FONT_COLOR_CODE .. "(Normal difficulty)" .. FONT_COLOR_CODE_CLOSE
         if (result == 1) then
-            RAID = "Raid |cff06daf0(Dynamic difficulty)|r"
-        else
-            RAID = "Raid |cffffffff(Normal difficulty)|r"
+            RAID = "Raid " .. WHC.COLORS.GM_FONT_COLOR_CODE .. "(Dynamic difficulty)" .. FONT_COLOR_CODE_CLOSE
         end
+
         return 0
     end
 

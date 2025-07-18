@@ -98,7 +98,7 @@ local messageRows = {} -- Table to store created font strings
 function WHC.LogDeathMessage(msg)
     if (WhcAddonSettings.recentDeaths == 1) then
         local serverTime = date("%H:%M")
-        local formattedMessage = string.format("|cffFFFF00%s|r %s", serverTime, msg)
+        local formattedMessage = WHC.COLORS.ACHIEVEMENT_COLOR_CODE .. serverTime .. FONT_COLOR_CODE_CLOSE .. " " .. msg
 
         table.insert(deathMessages, 1, formattedMessage) -- Insert at the beginning
 

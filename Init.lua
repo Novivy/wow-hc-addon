@@ -28,6 +28,16 @@ WHC.Frames = {
     UIspecialEvent = nil
 }
 
+WHC.COLORS = {
+    GM_BLUE_FONT_COLOR_CODE = "|cff06daf0",
+    ORANGE_FONT_COLOR_CODE = "|cffe53c15",
+    RED_FONT_COLOR_CODE = RED_FONT_COLOR_CODE or "|cffff2020", -- check if available on 1.12
+    ACHIEVEMENT_COLOR_CODE = ACHIEVEMENT_COLOR_CODE or "|cffffff00", -- check 1.12 but probably isnt ther because achievemnts arent a thing
+}
+
+-- TODO test if we can use ITEM_QUALITY_LEGENDARY for number 5
+WHC.ADDON_PREFIX = ITEM_QUALITY_COLORS[5].hex.."[WOW-HC addon]: "..FONT_COLOR_CODE_CLOSE
+
 WHC:RegisterEvent("ADDON_LOADED")
 WHC:SetScript("OnEvent", function(self, event, addonName)
     addonName = addonName or arg1
@@ -35,6 +45,16 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         return
     end
     WHC:UnregisterEvent("ADDON_LOADED")
+
+    WHC.DebugPrint("Poor "..tostring(ITEM_QUALITY_POOR))
+    WHC.DebugPrint("Common "..tostring(ITEM_QUALITY_COMMON))
+    WHC.DebugPrint("Uncommon "..tostring(ITEM_QUALITY_UNCOMMON))
+    WHC.DebugPrint("Rare "..tostring(ITEM_QUALITY_RARE))
+    WHC.DebugPrint("Epic "..tostring(ITEM_QUALITY_EPIC))
+    WHC.DebugPrint("Legendary "..tostring(ITEM_QUALITY_LEGENDARY))
+
+    WHC.DebugPrint("Red Color "..tostring(RED_FONT_COLOR_CODE))
+    WHC.DebugPrint("Achievement Color "..tostring(ACHIEVEMENT_COLOR_CODE))
 
     RETAIL = 1
     local version = GetBuildInfo()
@@ -224,11 +244,9 @@ function WHC.InitializeDynamicMounts()
 end
 
 function WHC.InitializeTradableRaidLoot()
-    local GM_FONT_COLOR_CODE = "|cff06daf0"
-
     WHC.HookSecureFunc(GameTooltip, "SetBagItem", function(self, container, slot)
         if GameTooltipTextLeft2:GetText() == "Binds when picked up" then
-            local msg = GM_FONT_COLOR_CODE .. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE
+            local msg = WHC.COLORS.GM_BLUE_FONT_COLOR_CODE .. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE
             GameTooltip:AddLine(msg, 1, 1, 1, true)
             GameTooltip:Show()
         end
