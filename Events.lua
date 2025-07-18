@@ -118,6 +118,120 @@ function MoneyFrame_Update(frameName, money)
     end
 end
 
+local updateAddonFrame
+local function createUpdateAddonFrame()
+    updateAddonFrame = CreateFrame("Frame", "UpdateAddonFrame", UIParent, RETAIL_BACKDROP)
+    updateAddonFrame:SetWidth(300)
+    updateAddonFrame:SetHeight(210)
+    updateAddonFrame:SetPoint("TOP", UIParent, "TOP", 0, -154)
+    updateAddonFrame:SetBackdrop({
+        bgFile = "Interface/RaidFrame/UI-RaidFrame-GroupBg",
+        edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+        tile = true,
+        tileSize = 300,
+        edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+
+    updateAddonFrame:SetFrameStrata("HIGH")
+    updateAddonFrame:SetFrameLevel(10)
+
+    -- Title
+    local title = updateAddonFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    title:SetPoint("TOP", updateAddonFrame, "TOP", 0, -20)
+    title:SetText(
+            "|cffff8000WOW-HC addon|r is out of date.\n\nPlease update it to keep things running smoothly.\n\nCopy and paste this URL\ninto your browser:")
+    title:SetWidth(220)
+
+    -- URL input box
+    local updateAddonEditBox = CreateFrame("EditBox", "UpdateAddonInputBox", updateAddonFrame)
+    updateAddonEditBox:SetWidth(250)
+    updateAddonEditBox:SetHeight(20)
+    updateAddonEditBox:SetPoint("TOP", title, "BOTTOM", 0, -20)
+    updateAddonEditBox:SetFontObject("ChatFontNormal")
+    updateAddonEditBox:SetText("https://wow-hc.com/addon")
+    updateAddonEditBox:SetJustifyH("CENTER")
+    updateAddonEditBox:SetAutoFocus(false)
+    updateAddonEditBox:HighlightText()
+    updateAddonEditBox:SetFocus()
+    updateAddonEditBox:SetTextColor(1, 0.631, 0.317)
+    updateAddonEditBox:SetScript("OnMouseDown", function(self)
+        updateAddonEditBox:HighlightText()
+        updateAddonEditBox:SetFocus()
+    end)
+
+    local closeButton = CreateFrame("Button", "CloseButton", updateAddonFrame, "UIPanelButtonGrayTemplate")
+    closeButton:SetWidth(100)
+    closeButton:SetHeight(30)
+    closeButton:SetPoint("BOTTOMLEFT", updateAddonFrame, "BOTTOMLEFT", 100, 24)
+    closeButton:SetText("Close")
+    closeButton:SetScript("OnClick", function()
+        updateAddonFrame:Hide()
+    end)
+
+    updateAddonFrame:Hide()
+end
+
+local raidDifficultyFrame
+local function createRaidDifficultyFrame()
+    raidDifficultyFrame = CreateFrame("Frame", "RaidDifficultyFrame", UIParent, RETAIL_BACKDROP)
+    raidDifficultyFrame:SetWidth(300)
+    raidDifficultyFrame:SetHeight(160)
+    raidDifficultyFrame:SetPoint("TOP", UIParent, "TOP", 0, -154)
+    raidDifficultyFrame:SetBackdrop({
+        bgFile = "Interface/RaidFrame/UI-RaidFrame-GroupBg",
+        edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+        tile = true,
+        tileSize = 300,
+        edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+
+    raidDifficultyFrame:SetFrameStrata("HIGH")
+    raidDifficultyFrame:SetFrameLevel(10)
+
+    -- Title
+    local title = raidDifficultyFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    title:SetPoint("TOP", raidDifficultyFrame, "TOP", 0, -20)
+    title:SetText("Current raid difficulty:")
+    title:SetWidth(220)
+
+
+    local desc = raidDifficultyFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    desc:SetPoint("TOP", title, "TOP", 0, -20)
+    desc:SetText("Loading..")
+    desc:SetFont("Fonts\\FRIZQT__.TTF", 18)
+    desc:SetTextColor(0.933, 0.765, 0)
+
+    raidDifficultyFrame.diff = desc;
+
+    local createButton = CreateFrame("Button", "CreateButtonShop", raidDifficultyFrame, "UIPanelButtonTemplate")
+    createButton:SetWidth(130)
+    createButton:SetHeight(35)
+    createButton:SetPoint("TOPLEFT", raidDifficultyFrame, "TOPLEFT", 85, -70)
+    createButton:SetText("SWITCH")
+    createButton:SetScript("OnClick", function()
+        local msg = ".diff"
+        if (RETAIL == 1) then
+            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+        else
+            SendChatMessage(msg);
+        end
+    end)
+
+    -- Create Close button
+    local closeButton = CreateFrame("Button", "CloseButton", raidDifficultyFrame, "UIPanelButtonGrayTemplate")
+    closeButton:SetWidth(100)
+    closeButton:SetHeight(30)
+    closeButton:SetPoint("TOPLEFT", raidDifficultyFrame, "TOPLEFT", 100, -110)
+    closeButton:SetText("Close")
+    closeButton:SetScript("OnClick", function()
+        raidDifficultyFrame:Hide()
+    end)
+
+    raidDifficultyFrame:Hide()
+end
+
 local function handleChatEvent(arg1)
     local lowerArg = string.lower(arg1)
     if not string.find(lowerArg, "^::whc::") then
@@ -187,150 +301,32 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::outdated:") then
-        if (WHC_ALERT_UPDATE) then
-            WHC_ALERT_UPDATE:Show()
-        else
-            -- Create the URL frame
-            local urlFrame = CreateFrame("Frame", "URLFrameUpdate", UIParent, RETAIL_BACKDROP)
-            urlFrame:SetWidth(300)
-            urlFrame:SetHeight(210)
-            urlFrame:SetPoint("TOP", UIParent, "TOP", 0, -154)
-            urlFrame:SetBackdrop({
-                bgFile = "Interface/RaidFrame/UI-RaidFrame-GroupBg",
-                edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
-                tile = true,
-                tileSize = 300,
-                edgeSize = 32,
-                insets = { left = 11, right = 12, top = 12, bottom = 11 }
-            })
-
-            urlFrame:SetFrameStrata("HIGH")
-            urlFrame:SetFrameLevel(10)
-
-            -- Title
-            local title = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-            title:SetPoint("TOP", urlFrame, "TOP", 0, -20)
-            title:SetText(
-                "|cffff8000WOW-HC addon|r is out of date.\n\nPlease update it to keep things running smoothly.\n\nCopy and paste this URL\ninto your browser:")
-            title:SetWidth(220)
-
-            -- URL input box
-            local urlEditBox = CreateFrame("EditBox", "URLInputBox", urlFrame)
-            urlEditBox:SetWidth(250)
-            urlEditBox:SetHeight(20)
-            urlEditBox:SetPoint("TOP", title, "BOTTOM", 0, -20)
-            urlEditBox:SetFontObject("ChatFontNormal")
-            urlEditBox:SetText("https://wow-hc.com/addon")
-            urlEditBox:SetJustifyH("CENTER")
-            urlEditBox:SetAutoFocus(false)
-            urlEditBox:HighlightText()
-            urlEditBox:SetFocus()
-            urlEditBox:SetTextColor(1, 0.631, 0.317)
-            urlEditBox:SetScript("OnMouseDown", function(self)
-                urlEditBox:HighlightText()
-                urlEditBox:SetFocus()
-            end)
-
-            local closeButton = CreateFrame("Button", "CloseButton", urlFrame, "UIPanelButtonGrayTemplate")
-            closeButton:SetWidth(100)
-            closeButton:SetHeight(30)
-            closeButton:SetPoint("BOTTOMLEFT", urlFrame, "BOTTOMLEFT", 100, 24)
-            closeButton:SetText("Close")
-            closeButton:SetScript("OnClick", function()
-                WHC_ALERT_UPDATE:Hide()
-            end)
-
-            urlFrame:Show()
-            WHC_ALERT_UPDATE = urlFrame
+        if not updateAddonFrame then
+            createUpdateAddonFrame()
         end
 
+        updateAddonFrame:Show()
         return 0
-        -- message(result)
     end
 
     if string.find(lowerArg, "^::whc::difficulty:lead:") then
         local result = string.gsub(arg1, "::whc::difficulty:lead:", "")
-
         result = tonumber(result)
 
+        if not raidDifficultyFrame then
+            createRaidDifficultyFrame()
+        end
+
+        raidDifficultyFrame:Show()
+
+        RAID = "Raid |cffffffff(Normal difficulty)|r"
+        raidDifficultyFrame.diff:SetText("Normal")
         if (result == 1) then
             RAID = "Raid |cff06daf0(Dynamic difficulty)|r"
-        else
-            RAID = "Raid |cffffffff(Normal difficulty)|r"
+            raidDifficultyFrame.diff:SetText("Dynamic")
         end
 
-        if (WHC_ALERT_DIFF) then
-            WHC_ALERT_DIFF:Show()
-        else
-            -- Create the URL frame
-            local urlFrame = CreateFrame("Frame", "URLFrameDiff", UIParent, RETAIL_BACKDROP)
-            urlFrame:SetWidth(300)
-            urlFrame:SetHeight(160)
-            urlFrame:SetPoint("TOP", UIParent, "TOP", 0, -154)
-            urlFrame:SetBackdrop({
-                bgFile = "Interface/RaidFrame/UI-RaidFrame-GroupBg",
-                edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
-                tile = true,
-                tileSize = 300,
-                edgeSize = 32,
-                insets = { left = 11, right = 12, top = 12, bottom = 11 }
-            })
-
-            urlFrame:SetFrameStrata("HIGH")
-            urlFrame:SetFrameLevel(10)
-
-            -- Title
-            local title = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-            title:SetPoint("TOP", urlFrame, "TOP", 0, -20)
-            title:SetText(
-                "Current raid difficulty:")
-            title:SetWidth(220)
-
-
-            local desc = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-            desc:SetPoint("TOP", title, "TOP", 0, -20)
-            desc:SetText("Loading..")
-            desc:SetFont("Fonts\\FRIZQT__.TTF", 18)
-            desc:SetTextColor(0.933, 0.765, 0)
-
-            urlFrame.diff = desc;
-
-
-            local createButton = CreateFrame("Button", "CreateButtonShop", urlFrame, "UIPanelButtonTemplate")
-            createButton:SetWidth(130)
-            createButton:SetHeight(35)
-            createButton:SetPoint("TOPLEFT", urlFrame, "TOPLEFT", 85, -70)
-            createButton:SetText("SWITCH")
-            createButton:SetScript("OnClick", function()
-                local msg = ".diff"
-                if (RETAIL == 1) then
-                    SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-                else
-                    SendChatMessage(msg);
-                end
-            end)
-
-            -- Create Close button
-            local closeButton = CreateFrame("Button", "CloseButton", urlFrame, "UIPanelButtonGrayTemplate")
-            closeButton:SetWidth(100)
-            closeButton:SetHeight(30)
-            closeButton:SetPoint("TOPLEFT", urlFrame, "TOPLEFT", 100, -110)
-            closeButton:SetText("Close")
-            closeButton:SetScript("OnClick", function()
-                WHC_ALERT_DIFF:Hide()
-            end)
-
-            urlFrame:Show()
-            WHC_ALERT_DIFF = urlFrame
-        end
-
-        if (result == 1) then
-            WHC_ALERT_DIFF.diff:SetText("Dynamic")
-        else
-            WHC_ALERT_DIFF.diff:SetText("Normal")
-        end
         return 0
-        -- message(result)
     end
 
     if string.find(lowerArg, "^::whc::difficulty:") then
@@ -373,8 +369,6 @@ if (RETAIL == 1) then
 else
     xx_ChatFrame_OnEvent = ChatFrame_OnEvent
 
-    WHC_ALERT_UPDATE = nil
-    WHC_ALERT_DIFF = nil
     function ChatFrame_OnEvent(event)
         if (event == "CHAT_MSG_RAID_BOSS_EMOTE" or event == "CHAT_MSG_MONSTER_EMOTE") then
             handleMonsterChatEvent(arg1)
