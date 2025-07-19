@@ -294,8 +294,9 @@ function WHC.InitializeUI()
     SlashCmdList["WOWHC"] = function(msg)
         if WHC:IsVisible() then
             WHC:Hide()
-        else
-            WHC.UIShowTabContent("General") -- Initialize with the first tab visible
+            return
         end
+
+        WHC.UIShowTabContent("General") -- Initialize with the first tab visible
     end
 end
