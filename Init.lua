@@ -28,6 +28,15 @@ WHC.Frames = {
     UIspecialEvent = nil
 }
 
+WHC.COLORS = {
+    GM_BLUE_FONT_COLOR_CODE = "|cff06daf0",
+    DARK_RED_FONT_COLOR_CODE = "|cffe53c15",
+    ACHIEVEMENT_COLOR_CODE = ACHIEVEMENT_COLOR_CODE or "|cffffff00", -- Added for 1.12
+}
+
+local ITEM_QUALITY_LEGENDARY = 5
+WHC.ADDON_PREFIX = ITEM_QUALITY_COLORS[ITEM_QUALITY_LEGENDARY].hex.."[WOW-HC addon]: "..FONT_COLOR_CODE_CLOSE
+
 WHC:RegisterEvent("ADDON_LOADED")
 WHC:SetScript("OnEvent", function(self, event, addonName)
     addonName = addonName or arg1
@@ -224,11 +233,9 @@ function WHC.InitializeDynamicMounts()
 end
 
 function WHC.InitializeTradableRaidLoot()
-    local GM_FONT_COLOR_CODE = "|cff06daf0"
-
     WHC.HookSecureFunc(GameTooltip, "SetBagItem", function(self, container, slot)
         if GameTooltipTextLeft2:GetText() == "Binds when picked up" then
-            local msg = GM_FONT_COLOR_CODE .. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE
+            local msg = WHC.COLORS.GM_BLUE_FONT_COLOR_CODE .. "You may trade this item with players who were also eligible to loot it (for a limited time only)" .. FONT_COLOR_CODE_CLOSE
             GameTooltip:AddLine(msg, 1, 1, 1, true)
             GameTooltip:Show()
         end

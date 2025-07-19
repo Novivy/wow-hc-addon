@@ -12,108 +12,136 @@ function WHC.CheckedValue(value)
     return false
 end
 
+local function getColorCode(colorObject)
+    local colorStr = colorObject.colorStr
+
+    if not colorStr then
+        -- Scale the 0-1 values to 0-255
+        local r = colorObject.r * 255
+        local g = colorObject.g * 255
+        local b = colorObject.b * 255
+
+        -- Format the numbers into a hex string (e.g., "ff33c9ff")
+        colorStr = string.format("ff%02x%02x%02x", r, g, b)
+    end
+
+    return string.format("|c%s", colorStr)
+end
+
+
 -- Function to show the selected tab's content
 function WHC.UIShowTabContent(tabIndex, arg1)
     if tabIndex == 0 then
         WHC:Hide()
-    else
-        WHC:Show()
-        -- Hide all tab contents first
+        return
+    end
 
-        if (tabIndex == "Support") then
-            WHC.Frames.UItab["Support"].editBox:SetText("")
-            WHC.Frames.UItab["Support"].createButton:SetText("Create ticket")
-            WHC.Frames.UItab["Support"].closeButton:SetText("Close")
-            local msg = ".whc ticketget"
-            if (RETAIL == 1) then
-                SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-            else
-                SendChatMessage(msg);
-            end
-        elseif (tabIndex == "Achievements") then
-            for key, value in pairs(WHC.Frames.Achievements) do
-                WHC.ToggleAchievement(value, true)
-            end
-
-            local msg = ".whc achievements"
-            if (arg1 == 1) then
-                msg = msg .. " target"
-            end
-
-            if (RETAIL == 1) then
-                SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-            else
-                SendChatMessage(msg);
-            end
-        elseif (tabIndex == "PVP") then
-            if (WHC.Frames.UIspecialEvent ~= nil) then
-                WHC.Frames.UIspecialEvent:SetButtonState("DISABLED")
-            end
-
-
-            local msg = ".whc event"
-            if (RETAIL == 1) then
-                SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-            else
-                SendChatMessage(msg);
-            end
-        elseif (tabIndex == "Settings") then
-            WHC_SETTINGS.minimap:SetChecked(WHC.CheckedValue(WhcAddonSettings.minimapicon))
-            WHC_SETTINGS.achievementbtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementbtn))
-            WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
-
-            WHC_SETTINGS.blockInvitesCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockInvites))
-            WHC_SETTINGS.blockTradesCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTrades))
-            WHC_SETTINGS.blockAuctionSellCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockAuctionSell))
-            WHC_SETTINGS.blockAuctionBuyCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockAuctionBuy))
-            WHC_SETTINGS.blockRepairCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRepair))
-            WHC_SETTINGS.blockTaxiServiceCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTaxiService))
-            WHC_SETTINGS.blockMailItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMailItems))
-            WHC_SETTINGS.blockRidingSkillCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRidingSkill))
-            WHC_SETTINGS.blockProfessionsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockProfessions))
-            WHC_SETTINGS.blockQuestsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockQuests))
-            WHC_SETTINGS.blockTalentsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTalents))
-            WHC_SETTINGS.onlyKillDemonsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillDemons))
-            WHC_SETTINGS.onlyKillUndeadCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillUndead))
-
-            if RETAIL == 1 or WHC.client.isEnglish then
-                WHC_SETTINGS.onlyKillBoarsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillBoars))
-            end
-
-            if RETAIL == 0 then
-                WHC_SETTINGS.blockMagicItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMagicItems))
-                WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMagicItemsTooltip))
-                WHC_SETTINGS.blockArmorItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockArmorItems))
-                WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockArmorItemsTooltip))
-                WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockNonSelfMadeItems))
-                WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockNonSelfMadeItemsTooltip))
-            end
-        elseif (tabIndex == "General") then
-            --
+    WHC:Show()
+    if (tabIndex == "General") then
+        --
+    elseif (tabIndex == "Achievements") then
+        for key, value in pairs(WHC.Frames.Achievements) do
+            WHC.ToggleAchievement(value, true)
         end
 
-        for index, value in ipairs(tabKeys) do
-            if WHC.Frames.UItab[value] then
-                WHC.Frames.UItab[value]:Hide()
-                WHC.Frames.UItabHeader[value]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-InActiveTab")
-                WHC.Frames.UItabHeader[value].tabText:SetTextColor(0.933, 0.765, 0)
-                WHC.Frames.UItabHeader[value]:Enable()
-            end
+        local msg = ".whc achievements"
+        if (arg1 == 1) then
+            msg = msg .. " target"
         end
 
-        if WHC.Frames.UItab[tabIndex] then
-            WHC.Frames.UItab[tabIndex]:Show()
-            WHC.Frames.UItabHeader[tabIndex]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-ActiveTab")
-            WHC.Frames.UItabHeader[tabIndex].tabText:SetTextColor(1, 1, 1)
-            WHC.Frames.UItabHeader[tabIndex]:Disable()
+        if (RETAIL == 1) then
+            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+        else
+            SendChatMessage(msg);
+        end
+    elseif (tabIndex == "PVP") then
+        if (WHC.Frames.UIspecialEvent ~= nil) then
+            WHC.Frames.UIspecialEvent:SetButtonState("DISABLED")
+        end
 
-            if (tabIndex == "Achievements") then
-                if (arg1 ~= nil) then
-                    WHC.Frames.UItab[tabIndex].desc1:SetText("\nListing |cff00C300" .. arg1 .. "|r's achievements")
-                else
-                    WHC.Frames.UItab[tabIndex].desc1:SetText(
-                        "Achievements are optional goals that you start with but may lose depending on your actions")
+
+        local msg = ".whc event"
+        if (RETAIL == 1) then
+            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+        else
+            SendChatMessage(msg);
+        end
+    elseif (tabIndex == "Support") then
+        WHC.Frames.UItab["Support"].editBox:SetText("")
+        WHC.Frames.UItab["Support"].createButton:SetText("Create ticket")
+        WHC.Frames.UItab["Support"].closeButton:SetText("Close")
+        local msg = ".whc ticketget"
+        if (RETAIL == 1) then
+            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+        else
+            SendChatMessage(msg);
+        end
+    elseif (tabIndex == "Settings") then
+        WHC_SETTINGS.minimap:SetChecked(WHC.CheckedValue(WhcAddonSettings.minimapicon))
+        WHC_SETTINGS.achievementbtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementbtn))
+        WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
+
+        WHC_SETTINGS.blockInvitesCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockInvites))
+        WHC_SETTINGS.blockTradesCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTrades))
+        WHC_SETTINGS.blockAuctionSellCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockAuctionSell))
+        WHC_SETTINGS.blockAuctionBuyCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockAuctionBuy))
+        WHC_SETTINGS.blockRepairCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRepair))
+        WHC_SETTINGS.blockTaxiServiceCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTaxiService))
+        WHC_SETTINGS.blockMailItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMailItems))
+        WHC_SETTINGS.blockRidingSkillCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRidingSkill))
+        WHC_SETTINGS.blockProfessionsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockProfessions))
+        WHC_SETTINGS.blockQuestsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockQuests))
+        WHC_SETTINGS.blockTalentsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTalents))
+        WHC_SETTINGS.onlyKillDemonsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillDemons))
+        WHC_SETTINGS.onlyKillUndeadCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillUndead))
+
+        if RETAIL == 1 or WHC.client.isEnglish then
+            WHC_SETTINGS.onlyKillBoarsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillBoars))
+        end
+
+        if RETAIL == 0 then
+            WHC_SETTINGS.blockMagicItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMagicItems))
+            WHC_SETTINGS.blockMagicItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockMagicItemsTooltip))
+            WHC_SETTINGS.blockArmorItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockArmorItems))
+            WHC_SETTINGS.blockArmorItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockArmorItemsTooltip))
+            WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockNonSelfMadeItems))
+            WHC_SETTINGS.blockNonSelfMadeItemsTooltipCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockNonSelfMadeItemsTooltip))
+        end
+    end
+
+    -- Hide all tab contents first
+    for index, value in ipairs(tabKeys) do
+        if WHC.Frames.UItab[value] then
+            WHC.Frames.UItab[value]:Hide()
+            WHC.Frames.UItabHeader[value]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-InActiveTab")
+            WHC.Frames.UItabHeader[value].tabText:SetTextColor(0.933, 0.765, 0)
+            WHC.Frames.UItabHeader[value]:Enable()
+        end
+    end
+
+    -- Show relevant tab
+    if WHC.Frames.UItab[tabIndex] then
+        WHC.Frames.UItab[tabIndex]:Show()
+        WHC.Frames.UItabHeader[tabIndex]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-ActiveTab")
+        WHC.Frames.UItabHeader[tabIndex].tabText:SetTextColor(1, 1, 1)
+        WHC.Frames.UItabHeader[tabIndex]:Disable()
+
+        if (tabIndex == "Achievements") then
+            if (arg1 ~= nil) then
+                local name = UnitName("target")
+                local _, englishClass = UnitClass("target")
+
+                local color = RAID_CLASS_COLORS[englishClass]
+                if englishClass == "SHAMAN" then
+                    color = {r = 0.14, g = 0.35, b = 1, colorStr = "ff2459ff"} -- TBC Shaman color
                 end
+
+                local classColorCode = getColorCode(color)
+                local player = classColorCode .. name .. FONT_COLOR_CODE_CLOSE
+                WHC.Frames.UItab[tabIndex].desc1:SetText("\nListing " .. player .. "'s achievements")
+            else
+                WHC.Frames.UItab[tabIndex].desc1:SetText(
+                    "Achievements are optional goals that you start with but may lose depending on your actions")
             end
         end
     end
@@ -266,9 +294,9 @@ function WHC.InitializeUI()
     SlashCmdList["WOWHC"] = function(msg)
         if WHC:IsVisible() then
             WHC:Hide()
-        else
-            WHC:Show()
-            WHC.UIShowTabContent("General") -- Initialize with the first tab visible
+            return
         end
+
+        WHC.UIShowTabContent("General") -- Initialize with the first tab visible
     end
 end
