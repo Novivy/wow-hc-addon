@@ -30,7 +30,7 @@ WHC.Frames = {
 
 WHC.COLORS = {
     GM_BLUE_FONT_COLOR_CODE = "|cff06daf0",
-    ORANGE_FONT_COLOR_CODE = "|cffe53c15",
+    DARK_RED_FONT_COLOR_CODE = "|cffe53c15",
     ACHIEVEMENT_COLOR_CODE = ACHIEVEMENT_COLOR_CODE or "|cffffff00", -- Added for 1.12
 }
 

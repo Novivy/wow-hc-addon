@@ -321,7 +321,7 @@ local function handleChatEvent(arg1)
         RAID = "Raid " .. HIGHLIGHT_FONT_COLOR_CODE .. "(Normal difficulty)" .. FONT_COLOR_CODE_CLOSE
         raidDifficultyFrame.diff:SetText("Normal")
         if (result == 1) then
-            RAID = "Raid " .. WHC.COLORS.GM_FONT_COLOR_CODE .. "(Dynamic difficulty)" .. FONT_COLOR_CODE_CLOSE
+            RAID = "Raid " .. WHC.COLORS.GM_BLUE_FONT_COLOR_CODE .. "(Dynamic difficulty)" .. FONT_COLOR_CODE_CLOSE
             raidDifficultyFrame.diff:SetText("Dynamic")
         end
 
@@ -334,7 +334,7 @@ local function handleChatEvent(arg1)
 
         RAID = "Raid " .. HIGHLIGHT_FONT_COLOR_CODE .. "(Normal difficulty)" .. FONT_COLOR_CODE_CLOSE
         if (result == 1) then
-            RAID = "Raid " .. WHC.COLORS.GM_FONT_COLOR_CODE .. "(Dynamic difficulty)" .. FONT_COLOR_CODE_CLOSE
+            RAID = "Raid " .. WHC.COLORS.GM_BLUE_FONT_COLOR_CODE .. "(Dynamic difficulty)" .. FONT_COLOR_CODE_CLOSE
         end
 
         return 0
