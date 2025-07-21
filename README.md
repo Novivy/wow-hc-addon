@@ -15,6 +15,9 @@
 - Opens the Addon ticket system when right-clicking a player to report them
 - Store bought dynamic speed mounts now show their current speed on the buff tooltip
 - Fixed achievement links not showing anything on 1.14
+- Fixed a bug preventing the 1.14 client from promoting / demoting guild members
+- Fixed a bug preventing the Sanctuary server from using Soulstone and Reincarnation
+
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
