@@ -14,7 +14,7 @@
 - Added sounds for opening and closing the addon, as well as selecting tabs
 - Opens the Addon ticket system when right-clicking a player to report them
 - Store bought dynamic speed mounts now show their current speed on the buff tooltip
-- Fixed achievement links now showing anything on 1.14
+- Fixed achievement links not showing anything on 1.14
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
