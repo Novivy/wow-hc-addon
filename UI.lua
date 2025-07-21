@@ -199,35 +199,29 @@ function WHC.InitializeUI()
     local widthTotal = 0
     for index, value in ipairs(tabKeys) do
         local tabHeader = CreateFrame("Button", "TabHeader" .. value, tabContainer)
+        tabHeader:SetHeight(30)
 
         local width = 0
         if value == "General" then
             tabHeader:SetWidth(90)
-            tabHeader:SetHeight(30)
             width = 91
         elseif value == "Achievements" then
             tabHeader:SetWidth(130)
-            tabHeader:SetHeight(30)
             width = 119
         elseif value == "PVP" then
             tabHeader:SetWidth(70)
-            tabHeader:SetHeight(30)
             width = 64
         elseif value == "Shop" then
             tabHeader:SetWidth(70)
-            tabHeader:SetHeight(30)
             width = 62
         elseif value == "Support" then
             tabHeader:SetWidth(84)
-            tabHeader:SetHeight(30)
             width = 76
         elseif value == "Settings" then
             tabHeader:SetWidth(86)
-            tabHeader:SetHeight(30)
             width = 0
         else
             tabHeader:SetWidth(120)
-            tabHeader:SetHeight(30)
             width = 90
         end
 
@@ -255,14 +249,12 @@ function WHC.InitializeUI()
 
         WHC.Frames.UItabHeader[value] = tabHeader
 
-
         -- TABS Content
         local content = CreateFrame("Frame", "Tab" .. value .. "Content", WHC)
         content:SetWidth(500)
         content:SetHeight(440)
         content:SetPoint("TOPLEFT", WHC, "TOPLEFT", 0, -40)
         content:Hide()
-
 
         if value == "Achievements" then
             content = WHC.Tab_Achievements(content)

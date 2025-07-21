@@ -131,13 +131,31 @@ local function achievementLink(achievement)
 end
 
 local sortedAchievements = {}
+local achievementsItemIDTable = {}
 for key, value in pairs(WHC.Achievements) do
     value.itemLink = achievementLink(value)
     table.insert(sortedAchievements, value)
+    achievementsItemIDTable[tonumber(value.itemId)] = value
 end
 table.sort(sortedAchievements, function(a, b)
     return a.name < b.name  -- Sort alphabetically by name
 end)
+
+local function initializeAchievementItemLinks()
+    WHC.HookSecureFunc("ChatFrame_OnHyperlinkShow", function(chatFrame, linkData, link, button)
+        local itemID = WHC.GetItemIDFromLink(linkData)
+        local achievement = achievementsItemIDTable[itemID]
+        local itemName = GetItemInfo(itemID)
+        if achievement and not itemName then
+            local titleColor = ITEM_QUALITY_COLORS[WHC.ITEM_QUALITY.LEGENDARY]
+            ItemRefTooltipTextLeft1:SetText(achievement.name)
+            ItemRefTooltipTextLeft1:SetTextColor(titleColor.r, titleColor.g, titleColor.b)
+            local descColor = ITEM_QUALITY_COLORS[WHC.ITEM_QUALITY.ARTIFACT]
+            ItemRefTooltip:AddLine(string.format("\"%s\"", achievement.desc), descColor.r, descColor.g, descColor.b, true)
+            ItemRefTooltip:Show()
+        end
+    end)
+end
 
 function WHC.Tab_Achievements(content)
     local title = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -190,6 +208,9 @@ function WHC.Tab_Achievements(content)
     desc2:SetWidth(450)
     desc2:SetFont("Fonts\\FRIZQT__.TTF", 10)
 
+    if RETAIL == 1 then
+        initializeAchievementItemLinks()
+    end
 
     return content;
 end

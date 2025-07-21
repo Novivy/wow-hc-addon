@@ -34,8 +34,17 @@ WHC.COLORS = {
     ACHIEVEMENT_COLOR_CODE = ACHIEVEMENT_COLOR_CODE or "|cffffff00", -- Added for 1.12
 }
 
-local ITEM_QUALITY_LEGENDARY = 5
-WHC.ADDON_PREFIX = ITEM_QUALITY_COLORS[ITEM_QUALITY_LEGENDARY].hex.."[WOW-HC addon]: "..FONT_COLOR_CODE_CLOSE
+WHC.ITEM_QUALITY = {
+    POOR = 0,      -- Gray
+    COMMON = 1,    -- White
+    UNCOMMON = 2,  -- Green
+    RARE = 3,      -- Blue
+    EPIC = 4,      -- Purple
+    LEGENDARY = 5, -- Orange
+    ARTIFACT = 6,  -- Light Gold
+}
+
+WHC.ADDON_PREFIX = ITEM_QUALITY_COLORS[WHC.ITEM_QUALITY.LEGENDARY].hex.."[WOW-HC addon]: "..FONT_COLOR_CODE_CLOSE
 
 WHC:RegisterEvent("ADDON_LOADED")
 WHC:SetScript("OnEvent", function(self, event, addonName)
