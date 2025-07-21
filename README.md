@@ -14,8 +14,10 @@
 - Added sounds for opening and closing the addon, as well as selecting tabs
 - Opens the Addon ticket system when right-clicking a player to report them
 - Store bought dynamic speed mounts now show their current speed on the buff tooltip
+- Fixed achievement links not showing anything on 1.14
 - Fixed a bug preventing the 1.14 client from promoting / demoting guild members
 - Fixed a bug preventing the Sanctuary server from using Soulstone and Reincarnation
+
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
@@ -26,7 +28,6 @@
 - proper custom titles (may need client mods, needs more researches)
 - when achievement failed, display custom box similar to wotlk achievements
 - fix 1.14 elevators sync by sending a packet when near (needs more researches)
-- fix 1.14 custom item display "?" (needs more researches, see _Potentialfix_questin_mark.lua)
 - fix 1.14 missing packet on jump while MCing (razor for example, needs more researches)
 
 

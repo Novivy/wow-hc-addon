@@ -315,19 +315,6 @@ local selfMadeAllowedItems = {
     ["釣魚竿"] = true,          -- Chinese (Traditional)
 }
 
-local function getItemIDFromLink(itemLink)
-    if not itemLink then
-        return
-    end
-
-    local foundID, _ , itemID = string.find(itemLink, "item:(%d+)")
-    if not foundID then
-        return
-    end
-
-    return tonumber(itemID)
-end
-
 -- TODO Make this more robust
 -- The <Made by xxx> is localized.
 -- This pattern works for English, German, French, Spanish, Portuguese, Italian, Russian
@@ -365,7 +352,7 @@ local function getItemInfo(itemId)
 end
 
 local function setTooltipInfo(itemLink)
-    local itemId = getItemIDFromLink(itemLink)
+    local itemId = WHC.GetItemIDFromLink(itemLink)
     local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
 
     if not itemEquipLoc or itemEquipLoc == "" then
@@ -400,7 +387,7 @@ WHC.HookSecureFunc(GameTooltip, "SetInventoryItem", function(tip, unit, slot)
     local itemLink = GetInventoryItemLink(unit, slot)
     -- Inventory slots
     if slot < 20 then
-        local itemId = getItemIDFromLink(itemLink)
+        local itemId = WHC.GetItemIDFromLink(itemLink)
         local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
         if not itemEquipLoc or itemEquipLoc == "" then
             return
@@ -445,7 +432,7 @@ local equipErrorMessages = {}
 local function canEquipItem(itemLink)
     equipErrorMessages = {}
 
-    local itemId = getItemIDFromLink(itemLink)
+    local itemId = WHC.GetItemIDFromLink(itemLink)
     local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
     if not itemEquipLoc or itemEquipLoc == "" or itemEquipLoc == "INVTYPE_BAG" then
         return
@@ -524,7 +511,7 @@ function WHC.SetBlockEquipItems()
         -- When the user tries to equip the item from the backpack, then we can validate with CursorHasItem()
         PickupMerchantItem = function(index)
             local itemLink = GetMerchantItemLink(index)
-            local itemId = getItemIDFromLink(itemLink)
+            local itemId = WHC.GetItemIDFromLink(itemLink)
             local itemRarity, itemSubType, itemEquipLoc = getItemInfo(itemId)
             if not itemEquipLoc or itemEquipLoc == "" or itemEquipLoc == "INVTYPE_BAG" then
                 return BlizzardFunctions.PickupMerchantItem(index)
@@ -614,7 +601,7 @@ local isMailAllowed = function(index, itemIndex)
     -- Making a copy of a mail works as normal
     if GetInboxItemLink and itemIndex then
         local itemLink = GetInboxItemLink(index, itemIndex)
-        local itemId = getItemIDFromLink(itemLink)
+        local itemId = WHC.GetItemIDFromLink(itemLink)
         return 8383 == itemId -- Plain Letter
     end
 

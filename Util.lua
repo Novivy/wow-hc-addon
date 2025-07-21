@@ -18,6 +18,19 @@ function WHC.HookSecureFunc(arg1, arg2, arg3)
     end
 end
 
+function WHC.GetItemIDFromLink(itemLink)
+    if not itemLink then
+        return
+    end
+
+    local foundID, _ , itemID = string.find(itemLink, "item:(%d+)")
+    if not foundID then
+        return
+    end
+
+    return tonumber(itemID)
+end
+
 -- Function to print debug messages
 function WHC.DebugPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage(tostring(message))
