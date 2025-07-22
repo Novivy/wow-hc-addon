@@ -14,11 +14,7 @@ playerLogin:SetScript("OnEvent", function(self, event)
     end
 
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
-    if (RETAIL == 1) then
-        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-    else
-        SendChatMessage(msg);
-    end
+    SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
 end)
 
 local function createAchievementButton(frame, name)
@@ -211,11 +207,7 @@ local function initializeRaidDifficultyFrame()
     createButton:SetText("SWITCH")
     createButton:SetScript("OnClick", function()
         local msg = ".diff"
-        if (RETAIL == 1) then
-            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-        else
-            SendChatMessage(msg);
-        end
+        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
     end)
 
     -- Create Close button
@@ -245,21 +237,16 @@ local function handleChatEvent(arg1)
         WHC.Frames.UItab["Support"].closeButton:SetText("Cancel ticket")
 
         return 0
-        -- message(result)
     end
 
     if string.find(lowerArg, "^::whc::achievement:") then
         local result = string.gsub(arg1, "::whc::achievement:", "")
-
         result = tonumber(result)
         if (WHC.Frames.Achievements[result]) then
             WHC.ToggleAchievement(WHC.Frames.Achievements[result], false)
-        else
-            -- message("error")
         end
 
         return 0
-        -- message(result)
     end
 
     if string.find(lowerArg, "^::whc::auction:") then
@@ -290,11 +277,7 @@ local function handleChatEvent(arg1)
 
     if string.find(lowerArg, "^::whc::debug:") then
         local result = string.gsub(arg1, "::whc::debug:", "")
-        if (RETAIL == 1) then
-            SendChatMessage(result, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-        else
-            SendChatMessage(result);
-        end
+        SendChatMessage(result, "WHISPER", GetDefaultLanguage(), UnitName("player"));
 
         return 0
     end

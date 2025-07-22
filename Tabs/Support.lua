@@ -24,8 +24,6 @@ function WHC.Tab_Support(content)
         "All other issues should be reported through our forums [wow-hc.com]")
     desc2:SetWidth(260)
 
-
-
     local label = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     label:SetPoint("TOP", desc2, "TOP", 0, -60) -- Adjust y-offset based on logo size
     label:SetText(
@@ -65,25 +63,10 @@ function WHC.Tab_Support(content)
     createButton:SetText("Create ticket")
     createButton:SetScript("OnClick", function()
         local issue = editBox:GetText()
-
-
-        if issue == "" then
-            message("Please describe your issue")
-            -- StaticPopupDialogs["ERROR_DIALOG"] = {
-            --     text = "Please describe your issue",
-            --     button1 = "OK",
-            --     timeout = 0,
-            --     whileDead = true,
-            --     hideOnEscape = true
-            -- }
-            -- StaticPopup_Show("ERROR_DIALOG")
-        else
+        if issue ~= "" then
             local msg = ".whc ticketcreate " .. issue
-        if (RETAIL == 1) then
             SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-        else
-            SendChatMessage(msg);
-        end
+
             WHC.UIShowTabContent(0)
         end
     end)
@@ -99,13 +82,9 @@ function WHC.Tab_Support(content)
     closeButton:SetText("Close")
     closeButton:SetScript("OnClick", function()
         local msg = ".whc ticketdelete"
-        if (RETAIL == 1) then
-            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-        else
-            SendChatMessage(msg);
-        end
-        WHC.UIShowTabContent(0)
+        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
 
+        WHC.UIShowTabContent(0)
     end)
     content.closeButton = closeButton;
 

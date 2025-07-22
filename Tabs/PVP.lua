@@ -122,12 +122,7 @@ local function bgSlot(content, index, icon, label, desc)
     createButton:SetText("JOIN")
     createButton:SetScript("OnClick", function()
         local msg = "." .. icon
-
-        if (RETAIL == 1) then
-            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-        else
-            SendChatMessage(msg);
-        end
+        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
     end)
 
     if (index == 3) then
