@@ -262,6 +262,10 @@ local function handleChatEvent(arg1)
         -- message(result)
     end
 
+    if string.find(lowerArg, "^::whc::restedxp:status:%d") then
+
+    end
+
     if string.find(lowerArg, "^::whc::auction:") then
         local _, _ , variable, result = string.find(lowerArg, "^::whc::auction:(%l+):([%d\.]+)")
         if WhcAddonSettings["auction_"..variable] then
