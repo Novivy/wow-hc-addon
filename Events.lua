@@ -344,24 +344,20 @@ if (RETAIL == 1) then
        handleMonsterChatEvent(message)
     end)
     ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", function(frame, event, message, sender, ...)
-        if (handleChatEvent(message) == 0) then
-            return true
-        end
+        return handleChatEvent(message) == 0
     end)
 else
     xx_ChatFrame_OnEvent = ChatFrame_OnEvent
 
     function ChatFrame_OnEvent(event)
+        if (event == "CHAT_MSG_SYSTEM" and handleChatEvent(arg1) == 0) then
+            return
+        end
+
         if (event == "CHAT_MSG_RAID_BOSS_EMOTE" or event == "CHAT_MSG_MONSTER_EMOTE") then
             handleMonsterChatEvent(arg1)
-                xx_ChatFrame_OnEvent(event)
-
-        elseif (event == "CHAT_MSG_SYSTEM") then
-            if (handleChatEvent(arg1) == 1) then
-                xx_ChatFrame_OnEvent(event)
-            end
-        else
-            xx_ChatFrame_OnEvent(event)
         end
+
+        xx_ChatFrame_OnEvent(event)
     end
 end
