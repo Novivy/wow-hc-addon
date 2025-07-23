@@ -15,6 +15,8 @@ playerLogin:SetScript("OnEvent", function(self, event)
 
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
     SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+
+    WHC.SetBlockRestedExp()
 end)
 
 local function createAchievementButton(frame, name)
@@ -244,6 +246,19 @@ local function handleChatEvent(arg1)
         result = tonumber(result)
         if (WHC.Frames.Achievements[result]) then
             WHC.ToggleAchievement(WHC.Frames.Achievements[result], false)
+        end
+
+        return 0
+    end
+
+    if string.find(lowerArg, "^::whc::restedxp:status:%d") then
+        local result = string.gsub(arg1, "::whc::restedxp:status:", "")
+        result = tonumber(result)
+
+        local isRestedExpBlocked = math.abs(result - 1)
+        if WhcAchievementSettings.blockRestedExp ~= isRestedExpBlocked then
+            local msg = ".restedxp"
+            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
         end
 
         return 0

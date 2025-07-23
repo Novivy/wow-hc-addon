@@ -123,6 +123,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAchievementSettings.blockProfessions = WhcAchievementSettings.blockProfessions or 0
     WhcAchievementSettings.blockQuests = WhcAchievementSettings.blockQuests or 0
     WhcAchievementSettings.blockTalents = WhcAchievementSettings.blockTalents or 0
+    WhcAchievementSettings.blockRestedExp = WhcAchievementSettings.blockRestedExp or 0
     WhcAchievementSettings.onlyKillDemons = WhcAchievementSettings.onlyKillDemons or 0
     WhcAchievementSettings.onlyKillUndead = WhcAchievementSettings.onlyKillUndead or 0
     WhcAchievementSettings.onlyKillBoars = WhcAchievementSettings.onlyKillBoars or 0
@@ -155,6 +156,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.SetBlockTrainSkill()
     WHC.SetBlockQuests()
     WHC.SetWarningOnlyKill()
+    -- WHC.SetBlockRestedExp() is called after the `PLAYER_LOGIN` event when the chat is ready
     if RETAIL == 0 then
         WHC.SetBlockEquipItems()
     end
