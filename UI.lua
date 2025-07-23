@@ -99,6 +99,7 @@ function WHC.UIShowTabContent(tabIndex, arg1)
         WHC_SETTINGS.blockProfessionsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockProfessions))
         WHC_SETTINGS.blockQuestsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockQuests))
         WHC_SETTINGS.blockTalentsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTalents))
+        WHC_SETTINGS.blockRestedExpCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRestedExp))
         WHC_SETTINGS.onlyKillDemonsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillDemons))
         WHC_SETTINGS.onlyKillUndeadCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillUndead))
 

@@ -1204,3 +1204,11 @@ function WHC.SetBlockTalents()
     end
 end
 --endregion
+
+--region ====== Untalented ======
+function WHC.SetBlockRestedExp()
+    -- Send event to the server. Handle the response in Events.lua
+    local msg = ".whc rested"
+    SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+end
+--endregion
