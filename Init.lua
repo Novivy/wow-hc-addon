@@ -140,13 +140,6 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         WHC.InitializeDeathPopupAppeal()
     end
 
-    local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
-    if (RETAIL == 1) then
-        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-    else
-        SendChatMessage(msg);
-    end
-
     if (WhcAddonSettings.splash == 0) then
         WhcAddonSettings.splash = 1
 

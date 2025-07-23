@@ -28,6 +28,19 @@ local function getColorCode(colorObject)
     return string.format("|c%s", colorStr)
 end
 
+local function getTargetAchievementsDescription()
+    local name = UnitName("target")
+    local _, englishClass = UnitClass("target")
+
+    local color = RAID_CLASS_COLORS[englishClass]
+    if englishClass == "SHAMAN" then
+        color = {r = 0.14, g = 0.35, b = 1, colorStr = "ff2459ff"} -- TBC Shaman color
+    end
+
+    local classColorCode = getColorCode(color)
+    local player = classColorCode .. name .. FONT_COLOR_CODE_CLOSE
+    return "\nListing " .. player .. "'s achievements"
+end
 
 -- Function to show the selected tab's content
 function WHC.UIShowTabContent(tabIndex, arg1)
@@ -40,42 +53,36 @@ function WHC.UIShowTabContent(tabIndex, arg1)
     if (tabIndex == "General") then
         --
     elseif (tabIndex == "Achievements") then
+        local msg = ".whc achievements"
+        local desc = "Achievements are optional goals that you start with but may lose depending on your actions"
+        if (arg1 ~= nil) then
+            msg = msg .. " target"
+            desc = getTargetAchievementsDescription()
+        end
+
+        WHC.Frames.UItab[tabIndex].desc1:SetText(desc)
+
+        -- Set all achievements as failed
         for key, value in pairs(WHC.Frames.Achievements) do
             WHC.ToggleAchievement(value, true)
         end
 
-        local msg = ".whc achievements"
-        if (arg1 == 1) then
-            msg = msg .. " target"
-        end
-
-        if (RETAIL == 1) then
-            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-        else
-            SendChatMessage(msg);
-        end
+        -- Update achievement status from server
+        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
     elseif (tabIndex == "PVP") then
         if (WHC.Frames.UIspecialEvent ~= nil) then
             WHC.Frames.UIspecialEvent:SetButtonState("DISABLED")
         end
 
-
         local msg = ".whc event"
-        if (RETAIL == 1) then
-            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-        else
-            SendChatMessage(msg);
-        end
+        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
     elseif (tabIndex == "Support") then
-        WHC.Frames.UItab["Support"].editBox:SetText("")
-        WHC.Frames.UItab["Support"].createButton:SetText("Create ticket")
-        WHC.Frames.UItab["Support"].closeButton:SetText("Close")
+        WHC.Frames.UItab[tabIndex].editBox:SetText("")
+        WHC.Frames.UItab[tabIndex].createButton:SetText("Create ticket")
+        WHC.Frames.UItab[tabIndex].closeButton:SetText("Close")
+
         local msg = ".whc ticketget"
-        if (RETAIL == 1) then
-            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-        else
-            SendChatMessage(msg);
-        end
+        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
     elseif (tabIndex == "Settings") then
         WHC_SETTINGS.minimap:SetChecked(WHC.CheckedValue(WhcAddonSettings.minimapicon))
         WHC_SETTINGS.achievementbtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementbtn))
@@ -125,25 +132,6 @@ function WHC.UIShowTabContent(tabIndex, arg1)
         WHC.Frames.UItabHeader[tabIndex]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-ActiveTab")
         WHC.Frames.UItabHeader[tabIndex].tabText:SetTextColor(1, 1, 1)
         WHC.Frames.UItabHeader[tabIndex]:Disable()
-
-        if (tabIndex == "Achievements") then
-            if (arg1 ~= nil) then
-                local name = UnitName("target")
-                local _, englishClass = UnitClass("target")
-
-                local color = RAID_CLASS_COLORS[englishClass]
-                if englishClass == "SHAMAN" then
-                    color = {r = 0.14, g = 0.35, b = 1, colorStr = "ff2459ff"} -- TBC Shaman color
-                end
-
-                local classColorCode = getColorCode(color)
-                local player = classColorCode .. name .. FONT_COLOR_CODE_CLOSE
-                WHC.Frames.UItab[tabIndex].desc1:SetText("\nListing " .. player .. "'s achievements")
-            else
-                WHC.Frames.UItab[tabIndex].desc1:SetText(
-                    "Achievements are optional goals that you start with but may lose depending on your actions")
-            end
-        end
     end
 end
 
