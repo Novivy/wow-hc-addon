@@ -255,7 +255,7 @@ local function handleChatEvent(arg1)
         local result = string.gsub(arg1, "::whc::restedxp:status:", "")
         result = tonumber(result)
 
-        local isRestedExpBlocked = math.abs( result- 1)
+        local isRestedExpBlocked = math.abs(result - 1)
         if WhcAchievementSettings.blockRestedExp ~= isRestedExpBlocked then
             local msg = ".restedxp"
             SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
