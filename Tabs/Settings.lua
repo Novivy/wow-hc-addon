@@ -247,6 +247,12 @@ function WHC.Tab_Settings(content)
         end)
     end
 
+    WHC_SETTINGS.blockRestedExpCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block rested exp", WHC.Achievements.RESTLESS.itemLink))
+    WHC_SETTINGS.blockRestedExpCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.blockRestedExp = getCheckedValueAndPlaySound(WHC_SETTINGS.blockRestedExpCheckbox)
+        --WHC.SetBlockTrainSkill()
+    end)
+
     if RETAIL == 0 then
         WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block equipping items you did not craft", WHC.Achievements.SELF_MADE.itemLink))
         WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function()
