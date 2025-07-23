@@ -19,7 +19,8 @@ function WHC.InitializeSupport()
         end
 
         StaticPopupDialogs["HELP_TICKET"].OnCancel = function()
-            WHC.UIShowTabContent(supportTabIndex)
+            local msg = ".whc ticketdelete"
+            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
         end
     end
 
