@@ -315,7 +315,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::bg:") then
-        local _, _, faction, bg, result = string.find(arg1, "^::whc::bg:(%l+):(%l+):(%d+)")
+        local _, _, faction, bg, result = string.find(lowerArg, "^::whc::bg:(%l+):(%l+):(%d+)")
         if WHC.Frames.UIBattleGrounds[bg] and WHC.Frames.UIBattleGrounds[bg][faction] then
             WHC.Frames.UIBattleGrounds[bg][faction]:SetText(result)
         end
