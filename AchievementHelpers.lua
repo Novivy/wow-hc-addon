@@ -1206,34 +1206,18 @@ end
 --endregion
 
 --region ====== Restless ======
-function WHC.SendRestedXpStatusCommand()
+function WHC.SendGetRestedXpStatusCommand()
     local msg = ".whc rested"
     SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
 end
 
-function WHC.RestedXpStatusCommandHandler(isRestedXpEnabled)
+function WHC.OnRestedXpStatusReceived(isRestedXpEnabled)
     WhcAchievementSettings.blockRestedExp = math.abs(isRestedXpEnabled - 1)
     WHC_SETTINGS.blockRestedExpCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRestedExp))
 end
 
-function WHC.SendRestedXpCommand()
+function WHC.SendToggleRestedXpCommand()
     local msg = ".restedxp"
     SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-end
-
-function WHC.RestedXpCommandHandler(serverMessage)
-    local _, _, status = string.find(serverMessage, "^Rested XP is now (%l+)\.")
-    if not status then
-        return
-    end
-
-    if status == "disabled" then
-        WhcAchievementSettings.blockRestedExp = 1
-    end
-    if status == "enabled" then
-        WhcAchievementSettings.blockRestedExp = 0
-    end
-
-    WHC_SETTINGS.blockRestedExpCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRestedExp))
 end
 --endregion

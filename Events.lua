@@ -16,7 +16,8 @@ playerLogin:SetScript("OnEvent", function(self, event)
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
     SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
 
-    WHC.SendRestedXpStatusCommand()
+    -- Initialize UI to same state as server
+    WHC.SendGetRestedXpStatusCommand()
 end)
 
 local function createAchievementButton(frame, name)
@@ -288,7 +289,7 @@ local function handleChatEvent(arg1)
         local result = string.gsub(arg1, "^::whc::restedxp:status:", "")
         result = tonumber(result)
 
-        WHC.RestedXpStatusCommandHandler(result)
+        WHC.OnRestedXpStatusReceived(result)
 
         return 0
     end
@@ -388,11 +389,7 @@ if (RETAIL == 1) then
         handleMonsterChatEvent(message)
     end)
     ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", function(frame, event, message, sender, ...)
-        if handleChatEvent(message) == 0 then
-            return true
-        end
-
-        WHC.RestedXpCommandHandler(message)
+        return handleChatEvent(message) == 0
     end)
 else
     xx_ChatFrame_OnEvent = ChatFrame_OnEvent
@@ -402,8 +399,6 @@ else
             if handleChatEvent(arg1) == 0 then
                 return
             end
-
-            WHC.RestedXpCommandHandler(arg1)
         end
 
         if (event == "CHAT_MSG_RAID_BOSS_EMOTE" or event == "CHAT_MSG_MONSTER_EMOTE") then

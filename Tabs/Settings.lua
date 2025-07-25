@@ -249,7 +249,7 @@ function WHC.Tab_Settings(content)
 
     WHC_SETTINGS.blockRestedExpCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block rested exp", WHC.Achievements.RESTLESS.itemLink))
     WHC_SETTINGS.blockRestedExpCheckbox:SetScript("OnClick", function()
-        WHC.SendRestedXpCommand()
+        WHC.SendToggleRestedXpCommand()
     end)
 
     if RETAIL == 0 then
