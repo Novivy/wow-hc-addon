@@ -156,7 +156,6 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.SetBlockTrainSkill()
     WHC.SetBlockQuests()
     WHC.SetWarningOnlyKill()
-    -- WHC.SetBlockRestedExp() is called after the `PLAYER_LOGIN` event when the chat is ready
     if RETAIL == 0 then
         WHC.SetBlockEquipItems()
     end
