@@ -12,38 +12,8 @@ function WHC.CheckedValue(value)
     return false
 end
 
-local function getColorCode(colorObject)
-    local colorStr = colorObject.colorStr
-
-    if not colorStr then
-        -- Scale the 0-1 values to 0-255
-        local r = colorObject.r * 255
-        local g = colorObject.g * 255
-        local b = colorObject.b * 255
-
-        -- Format the numbers into a hex string (e.g., "ff33c9ff")
-        colorStr = string.format("ff%02x%02x%02x", r, g, b)
-    end
-
-    return string.format("|c%s", colorStr)
-end
-
-local function getTargetAchievementsDescription()
-    local name = UnitName("target")
-    local _, englishClass = UnitClass("target")
-
-    local color = RAID_CLASS_COLORS[englishClass]
-    if englishClass == "SHAMAN" then
-        color = {r = 0.14, g = 0.35, b = 1, colorStr = "ff2459ff"} -- TBC Shaman color
-    end
-
-    local classColorCode = getColorCode(color)
-    local player = classColorCode .. name .. FONT_COLOR_CODE_CLOSE
-    return "\nListing " .. player .. "'s achievements"
-end
-
 -- Function to show the selected tab's content
-function WHC.UIShowTabContent(tabIndex, arg1)
+function WHC.UIShowTabContent(tabIndex)
     if tabIndex == 0 then
         WHC:Hide()
         return
@@ -53,21 +23,13 @@ function WHC.UIShowTabContent(tabIndex, arg1)
     if (tabIndex == "General") then
         --
     elseif (tabIndex == "Achievements") then
-        local msg = ".whc achievements"
-        local desc = "Achievements are optional goals that you start with but may lose depending on your actions"
-        if (arg1 ~= nil) then
-            msg = msg .. " target"
-            desc = getTargetAchievementsDescription()
-        end
-
-        WHC.Frames.UItab[tabIndex].desc1:SetText(desc)
-
         -- Set all achievements as failed
         for key, value in pairs(WHC.Frames.Achievements) do
             WHC.ToggleAchievement(value, true)
         end
 
         -- Update achievement status from server
+        local msg = ".whc achievements"
         SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
     elseif (tabIndex == "PVP") then
         if (WHC.Frames.UIspecialEvent ~= nil) then
