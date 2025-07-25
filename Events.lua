@@ -351,22 +351,46 @@ local function handleMonsterChatEvent(arg1)
     return 1
 end
 
+local function synchronizeRestlessSettingWithServer(message)
+    local _, _, status = string.find(message, "^Rested XP is now (%l+)\.")
+    if not status then
+        return
+    end
+
+    if status == "disabled" then
+        WhcAchievementSettings.blockRestedExp = 1
+    end
+    if status == "enabled" then
+        WhcAchievementSettings.blockRestedExp = 0
+    end
+
+    WHC_SETTINGS.blockRestedExpCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRestedExp))
+end
+
 if (RETAIL == 1) then
     ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_BOSS_EMOTE", function(frame, event, message, sender, ...)
         handleMonsterChatEvent(message)
     end)
     ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_EMOTE", function(frame, event, message, sender, ...)
-       handleMonsterChatEvent(message)
+        handleMonsterChatEvent(message)
     end)
     ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", function(frame, event, message, sender, ...)
-        return handleChatEvent(message) == 0
+        if handleChatEvent(message) == 0 then
+            return true
+        end
+
+        synchronizeRestlessSettingWithServer(message)
     end)
 else
     xx_ChatFrame_OnEvent = ChatFrame_OnEvent
 
     function ChatFrame_OnEvent(event)
-        if (event == "CHAT_MSG_SYSTEM" and handleChatEvent(arg1) == 0) then
-            return
+        if event == "CHAT_MSG_SYSTEM" then
+            if handleChatEvent(arg1) == 0 then
+                return
+            end
+
+            synchronizeRestlessSettingWithServer(arg1)
         end
 
         if (event == "CHAT_MSG_RAID_BOSS_EMOTE" or event == "CHAT_MSG_MONSTER_EMOTE") then
