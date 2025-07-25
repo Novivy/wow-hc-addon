@@ -253,7 +253,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::ticket:") then
-        local result = string.gsub(lowerArg, "^::whc::ticket:", "")
+        local result = string.gsub(arg1, "^::whc::ticket:", "")
 
         WHC.Frames.UItab["Support"].editBox:SetText(result)
         WHC.Frames.UItab["Support"].createButton:SetText("Update ticket")
@@ -275,7 +275,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::achievement:") then
-        local result = string.gsub(lowerArg, "^::whc::achievement:", "")
+        local result = string.gsub(arg1, "^::whc::achievement:", "")
         result = tonumber(result)
         if (WHC.Frames.Achievements[result]) then
             WHC.ToggleAchievement(WHC.Frames.Achievements[result], false)
@@ -298,7 +298,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::auction:") then
-        local _, _ , variable, result = string.find(lowerArg, "^::whc::auction:(%l+):([%d\.]+)")
+        local _, _ , variable, result = string.find(arg1, "^::whc::auction:(%l+):([%d\.]+)")
         if WhcAddonSettings["auction_"..variable] then
             WhcAddonSettings["auction_"..variable] = tonumber(result)
         end
@@ -315,7 +315,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::bg:") then
-        local _, _, faction, bg, result = string.find(lowerArg, "^::whc::bg:(%l+):(%l+):(%d+)")
+        local _, _, faction, bg, result = string.find(arg1, "^::whc::bg:(%l+):(%l+):(%d+)")
         if WHC.Frames.UIBattleGrounds[bg] and WHC.Frames.UIBattleGrounds[bg][faction] then
             WHC.Frames.UIBattleGrounds[bg][faction]:SetText(result)
         end
@@ -324,7 +324,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::debug:") then
-        local result = string.gsub(lowerArg, "^::whc::debug:", "")
+        local result = string.gsub(arg1, "^::whc::debug:", "")
         SendChatMessage(result, "WHISPER", GetDefaultLanguage(), UnitName("player"));
 
         return 0
@@ -340,7 +340,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::difficulty:lead:") then
-        local result = string.gsub(lowerArg, "^::whc::difficulty:lead:", "")
+        local result = string.gsub(arg1, "^::whc::difficulty:lead:", "")
         result = tonumber(result)
 
         if not raidDifficultyFrame then
@@ -360,7 +360,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::difficulty:") then
-        local result = string.gsub(lowerArg, "^::whc::difficulty:", "")
+        local result = string.gsub(arg1, "^::whc::difficulty:", "")
         result = tonumber(result)
 
         RAID = "Raid " .. HIGHLIGHT_FONT_COLOR_CODE .. "(Normal difficulty)" .. FONT_COLOR_CODE_CLOSE
