@@ -167,7 +167,7 @@ function WHC.Tab_Achievements(content)
 
     local desc1 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     desc1:SetPoint("TOP", title, "TOP", 0, -25) -- Adjust y-offset based on logo size
-    desc1:SetText("Loading...")
+    desc1:SetText("Achievements are optional goals that you start with but may lose depending on your actions")
     desc1:SetWidth(320)
 
     content.desc1 = desc1

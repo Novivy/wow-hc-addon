@@ -24,12 +24,8 @@ local function createAchievementButton(frame, name)
 
     viewAchButton:SetWidth(28)
     viewAchButton:SetHeight(28)
-
     viewAchButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -24, -41) -- Start position for the first tab
     viewAchButton:SetNormalTexture("Interface\\AddOns\\WOW_HC\\Images\\wow-hardcore-logo-round")
-
-    viewAchButton:EnableMouse(true)
-
     viewAchButton:SetFrameStrata("HIGH")
     viewAchButton:SetFrameLevel(10)
 
@@ -39,16 +35,7 @@ local function createAchievementButton(frame, name)
     border:SetWidth(64)
     border:SetHeight(64)
 
-    if (name == "character") then
-        viewAchButton:SetScript("OnClick", function()
-            WHC.UIShowTabContent("Achievements")
-        end)
-    else
-        viewAchButton:SetScript("OnClick", function()
-            WHC.UIShowTabContent("Achievements", UnitName("target"))
-        end)
-    end
-
+    viewAchButton:EnableMouse(true)
     viewAchButton:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(viewAchButton, "ANCHOR_CURSOR")
         GameTooltip:SetText("View character achievements", 1, 1, 1)
@@ -58,6 +45,10 @@ local function createAchievementButton(frame, name)
     viewAchButton:SetScript("OnLeave", function(self)
         GameTooltip:Hide()
         ResetCursor()
+    end)
+
+    viewAchButton:SetScript("OnClick", function()
+        WHC.UIShowTabContent("Achievements")
     end)
 
     viewAchButton:Hide()
@@ -225,6 +216,36 @@ local function initializeRaidDifficultyFrame()
     raidDifficultyFrame:Hide()
 end
 
+local function getColorCode(colorObject)
+    local colorStr = colorObject.colorStr
+
+    if not colorStr then
+        -- Scale the 0-1 values to 0-255
+        local r = colorObject.r * 255
+        local g = colorObject.g * 255
+        local b = colorObject.b * 255
+
+        -- Format the numbers into a hex string (e.g., "ff33c9ff")
+        colorStr = string.format("ff%02x%02x%02x", r, g, b)
+    end
+
+    return string.format("|c%s", colorStr)
+end
+
+local function getTargetAchievementsDescription()
+    local name = UnitName("target")
+    local _, englishClass = UnitClass("target")
+
+    local color = RAID_CLASS_COLORS[englishClass]
+    if englishClass == "SHAMAN" then
+        color = {r = 0.14, g = 0.35, b = 1, colorStr = "ff2459ff"} -- TBC Shaman color
+    end
+
+    local classColorCode = getColorCode(color)
+    local player = classColorCode .. name .. FONT_COLOR_CODE_CLOSE
+    return "\nListing " .. player .. "'s achievements"
+end
+
 local function handleChatEvent(arg1)
     local lowerArg = string.lower(arg1)
     if not string.find(lowerArg, "^::whc::") then
@@ -232,7 +253,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::ticket:") then
-        local result = string.gsub(arg1, "::whc::ticket:", "")
+        local result = string.gsub(arg1, "^::whc::ticket:", "")
 
         WHC.Frames.UItab["Support"].editBox:SetText(result)
         WHC.Frames.UItab["Support"].createButton:SetText("Update ticket")
@@ -241,8 +262,20 @@ local function handleChatEvent(arg1)
         return 0
     end
 
+    if string.find(lowerArg, "^::whc::achievement%-target:") then
+        local result = string.gsub(lowerArg, "^::whc::achievement%-target:", "")
+        local desc = "Achievements are optional goals that you start with but may lose depending on your actions"
+        if result ~= "0" then
+            desc = getTargetAchievementsDescription()
+        end
+
+        WHC.Frames.UItab["Achievements"].desc1:SetText(desc)
+
+        return 0
+    end
+
     if string.find(lowerArg, "^::whc::achievement:") then
-        local result = string.gsub(arg1, "::whc::achievement:", "")
+        local result = string.gsub(arg1, "^::whc::achievement:", "")
         result = tonumber(result)
         if (WHC.Frames.Achievements[result]) then
             WHC.ToggleAchievement(WHC.Frames.Achievements[result], false)
@@ -252,7 +285,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::restedxp:status:%d") then
-        local result = string.gsub(arg1, "::whc::restedxp:status:", "")
+        local result = string.gsub(arg1, "^::whc::restedxp:status:", "")
         result = tonumber(result)
 
         local isRestedExpBlocked = math.abs(result - 1)
@@ -291,7 +324,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::debug:") then
-        local result = string.gsub(arg1, "::whc::debug:", "")
+        local result = string.gsub(arg1, "^::whc::debug:", "")
         SendChatMessage(result, "WHISPER", GetDefaultLanguage(), UnitName("player"));
 
         return 0
@@ -307,7 +340,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::difficulty:lead:") then
-        local result = string.gsub(arg1, "::whc::difficulty:lead:", "")
+        local result = string.gsub(arg1, "^::whc::difficulty:lead:", "")
         result = tonumber(result)
 
         if not raidDifficultyFrame then
@@ -327,7 +360,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::difficulty:") then
-        local result = string.gsub(arg1, "::whc::difficulty:", "")
+        local result = string.gsub(arg1, "^::whc::difficulty:", "")
         result = tonumber(result)
 
         RAID = "Raid " .. HIGHLIGHT_FONT_COLOR_CODE .. "(Normal difficulty)" .. FONT_COLOR_CODE_CLOSE
