@@ -285,7 +285,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::restedxp:status:%d") then
-        local result = string.gsub(lowerArg, "^::whc::restedxp:status:", "")
+        local result = string.gsub(arg1, "^::whc::restedxp:status:", "")
         result = tonumber(result)
 
         local isRestedExpBlocked = math.abs(result - 1)
@@ -298,7 +298,7 @@ local function handleChatEvent(arg1)
     end
 
     if string.find(lowerArg, "^::whc::auction:") then
-        local _, _ , variable, result = string.find(arg1, "^::whc::auction:(%l+):([%d\.]+)")
+        local _, _ , variable, result = string.find(lowerArg, "^::whc::auction:(%l+):([%d\.]+)")
         if WhcAddonSettings["auction_"..variable] then
             WhcAddonSettings["auction_"..variable] = tonumber(result)
         end
