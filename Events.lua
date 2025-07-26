@@ -16,7 +16,8 @@ playerLogin:SetScript("OnEvent", function(self, event)
     local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
     SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
 
-    WHC.SetBlockRestedExp()
+    -- Initialize UI to same state as server
+    WHC.SendGetRestedXpStatusCommand()
 end)
 
 local function createAchievementButton(frame, name)
@@ -288,11 +289,7 @@ local function handleChatEvent(arg1)
         local result = string.gsub(arg1, "^::whc::restedxp:status:", "")
         result = tonumber(result)
 
-        local isRestedExpBlocked = math.abs(result - 1)
-        if WhcAchievementSettings.blockRestedExp ~= isRestedExpBlocked then
-            local msg = ".restedxp"
-            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-        end
+        WHC.OnRestedXpStatusReceived(result)
 
         return 0
     end
@@ -375,29 +372,13 @@ local function handleChatEvent(arg1)
 end
 
 local function handleMonsterChatEvent(arg1)
-    if (strfind(string.lower(arg1), "has died at level")) then
+    if (string.find(string.lower(arg1), "has died at level")) then
 
         WHC.LogDeathMessage(arg1)
         return 0
     end
 
     return 1
-end
-
-local function synchronizeRestlessSettingWithServer(message)
-    local _, _, status = string.find(message, "^Rested XP is now (%l+)\.")
-    if not status then
-        return
-    end
-
-    if status == "disabled" then
-        WhcAchievementSettings.blockRestedExp = 1
-    end
-    if status == "enabled" then
-        WhcAchievementSettings.blockRestedExp = 0
-    end
-
-    WHC_SETTINGS.blockRestedExpCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRestedExp))
 end
 
 if (RETAIL == 1) then
@@ -408,11 +389,7 @@ if (RETAIL == 1) then
         handleMonsterChatEvent(message)
     end)
     ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", function(frame, event, message, sender, ...)
-        if handleChatEvent(message) == 0 then
-            return true
-        end
-
-        synchronizeRestlessSettingWithServer(message)
+        return handleChatEvent(message) == 0
     end)
 else
     xx_ChatFrame_OnEvent = ChatFrame_OnEvent
@@ -422,8 +399,6 @@ else
             if handleChatEvent(arg1) == 0 then
                 return
             end
-
-            synchronizeRestlessSettingWithServer(arg1)
         end
 
         if (event == "CHAT_MSG_RAID_BOSS_EMOTE" or event == "CHAT_MSG_MONSTER_EMOTE") then

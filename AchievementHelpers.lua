@@ -1205,10 +1205,19 @@ function WHC.SetBlockTalents()
 end
 --endregion
 
---region ====== Untalented ======
-function WHC.SetBlockRestedExp()
-    -- Send event to the server. Handle the response in Events.lua
+--region ====== Restless ======
+function WHC.SendGetRestedXpStatusCommand()
     local msg = ".whc rested"
+    SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+end
+
+function WHC.OnRestedXpStatusReceived(isRestedXpEnabled)
+    WhcAchievementSettings.blockRestedExp = math.abs(isRestedXpEnabled - 1)
+    WHC_SETTINGS.blockRestedExpCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockRestedExp))
+end
+
+function WHC.SendToggleRestedXpCommand()
+    local msg = ".restedxp"
     SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
 end
 --endregion
