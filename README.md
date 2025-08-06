@@ -3,20 +3,6 @@
 
 
 ## Changelog for next update
-- Settings checkbox for Marathon Runner achievement, blocking learning riding skill
-- Settings checkbox for Help Yourself achievement, auto abandoning non-class or profession quests
-- Settings checkbox for Soft Hands achievement, blocking learning primary professions
-- Settings checkbox for Demon Slayer achievement, showing a warning when not targeting a demon
-- Settings checkbox for Lightbringer achievement, showing a warning when not targeting an undead
-- Settings checkbox for That Which Has No Life achievement, showing a warning when not targeting a boar or quilboar
-- Settings checkbox for Untalented achievement, blocking learning talents
-- Pressing ESC now closes the addon
-- Added sounds for opening and closing the addon, as well as selecting tabs
-- Opens the Addon ticket system when right-clicking a player to report them
-- Store bought dynamic speed mounts now show their current speed on the buff tooltip
-- Fixed achievement links not showing anything on 1.14
-- Fixed a bug preventing the 1.14 client from promoting / demoting guild members
-- Fixed a bug preventing the Sanctuary server from using Soulstone and Reincarnation
 
 
 ## Future versions:
@@ -32,6 +18,23 @@
 
 
 ## Past versions
+
+
+### 1.1
+- Settings checkbox for Marathon Runner achievement, blocking learning riding skill
+- Settings checkbox for Help Yourself achievement, auto abandoning non-class or profession quests
+- Settings checkbox for Soft Hands achievement, blocking learning primary professions
+- Settings checkbox for Demon Slayer achievement, showing a warning when not targeting a demon
+- Settings checkbox for Lightbringer achievement, showing a warning when not targeting an undead
+- Settings checkbox for That Which Has No Life achievement, showing a warning when not targeting a boar or quilboar
+- Settings checkbox for Untalented achievement, blocking learning talents
+- Pressing ESC now closes the addon
+- Added sounds for opening and closing the addon, as well as selecting tabs
+- Opens the Addon ticket system when right-clicking a player to report them
+- Store bought dynamic speed mounts now show their current speed on the buff tooltip
+- Fixed achievement links not showing anything on 1.14
+- Fixed a bug preventing the 1.14 client from promoting / demoting guild members
+- Fixed a bug preventing the Sanctuary server from using Soulstone and Reincarnation
 
 ### 1.0
 - Settings checkbox for Grounded achievement, blocking Flight paths
