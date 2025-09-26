@@ -658,7 +658,7 @@ local marathonRunnerBlockedQuests = {
     ["Invoca un malignoecus"]         = true, -- Spanish
     ["Invoca un corcel vil"]          = true, -- Spanish (Mexico)
     ["Invoquer un Palefroi corrompu"] = true, -- French
-    ["Summon Felsteed"]               = true, -- Italian TODO Wowhead does not have it. Apparently there is no official italian client, so this might not be an issue.
+    ["Summon Felsteed"]               = true, -- Italian
     ["Evocar Corcel Vil"]             = true, -- Portuguese
     ["Призывание коня Скверны"]       = true, -- Russian
     ["지옥마 소환"]                     = true, -- Korean
@@ -847,6 +847,12 @@ local previousNumQuests = 0
 local blockQuestsEventListener = CreateFrame("Frame")
 blockQuestsEventListener:SetScript("OnEvent", function(self, eventName, a1)
     eventName = eventName or event
+
+    -- prevent the handler from running before skills has been loaded
+    if GetNumSkillLines() == 0 then
+        return
+    end
+
     -- This event is always fired before quest is added to the quest log
     if eventName == "UNIT_QUEST_LOG_CHANGED" then
         ExpandQuestHeader(0) -- Ensure all quest headers are expanded
