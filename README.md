@@ -3,7 +3,7 @@
 
 
 ## Changelog for next update
-
+- Help Yourself achievement no longer abandons profession quests on login.
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
