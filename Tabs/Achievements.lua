@@ -145,6 +145,10 @@ end)
 local function initializeAchievementItemLinks()
     WHC.HookSecureFunc("ChatFrame_OnHyperlinkShow", function(chatFrame, linkData, link, button)
         local itemID = WHC.GetItemIDFromLink(linkData)
+        if not itemID then
+            return
+        end
+
         local achievement = achievementsItemIDTable[itemID]
         local itemName = GetItemInfo(itemID)
         if achievement and not itemName then
