@@ -3,7 +3,8 @@
 
 
 ## Changelog for next update
-- Help Yourself achievement no longer abandons profession quests on login.
+- Fixed Help Yourself achievement to no longer abandons profession quests on login.
+- Fixed 1.14 shift-clicking player names in the chat causing an error.
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
