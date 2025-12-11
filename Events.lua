@@ -20,6 +20,34 @@ playerLogin:SetScript("OnEvent", function(self, event)
     WHC.SendGetRestedXpStatusCommand()
 end)
 
+local skillsChanged = CreateFrame("Frame")
+skillsChanged:RegisterEvent("SKILL_LINES_CHANGED")
+skillsChanged:RegisterEvent("CHAT_MSG_SKILL")
+skillsChanged:SetScript("OnEvent", function(self, event)
+    if GetNumSkillLines() == 0 then
+        return
+    end
+
+    -- prevent infinite loop as ExpandSkillHeader(0) will fire the event
+    skillsChanged:UnregisterEvent("SKILL_LINES_CHANGED")
+
+    ExpandSkillHeader(0) -- Ensure all skills are expanded
+    local numSkills = GetNumSkillLines()
+    for skillIndex=1, numSkills do
+        local _, _, _, skillRank, _, _, _, _, _, _, minLevel = GetSkillLineInfo(skillIndex)
+
+        if minLevel == 40 and skillRank > 74 then
+            if skillRank == 75 then
+                WHC.player.dynamicRidingSpeed = "60%%"
+            end
+
+            if skillRank == 150 then
+                WHC.player.dynamicRidingSpeed = "100%%"
+            end
+        end
+    end
+end)
+
 local function createAchievementButton(frame, name)
     local viewAchButton = CreateFrame("Button", "TabCharFrame" .. name, frame)
 
