@@ -5,6 +5,7 @@
 ## Changelog for next update
 - Fixed Help Yourself achievement to no longer abandons profession quests on login.
 - Fixed 1.14 shift-clicking player names in the chat causing an error.
+- Fixed error when mousing over another player's dynamic mount buff
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath

@@ -68,6 +68,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.player = {
         name = UnitName("player"),
         class = UnitClass("player"),
+        dynamicRidingSpeed = "60%%"
     }
 
     local locale = GetLocale()
@@ -170,23 +171,6 @@ function WHC.InitializeDynamicMounts()
     }
 
     local speedPattern = "%d?%d%d%%" -- matches 2-3 numbers and the % sign. Used to match 60% or 100%
-    local dynamicRidingSpeed
-
-    ExpandSkillHeader(0) -- Ensure all skills are expanded
-    local numSkills = GetNumSkillLines();
-    for skillIndex=1, numSkills do
-        local _, _, _, skillRank, _, _, _, _, _, _, minLevel = GetSkillLineInfo(skillIndex)
-
-        if minLevel == 40 and skillRank > 74 then
-            if skillRank == 75 then
-                dynamicRidingSpeed = "60%%"
-            end
-
-            if skillRank == 150 then
-                dynamicRidingSpeed = "100%%"
-            end
-        end
-    end
 
     local function setDynamicMountSpeedText(tooltip)
         local mountName
@@ -208,7 +192,7 @@ function WHC.InitializeDynamicMounts()
 
             -- Set buff text to the current speed
             if isBuff then
-                local dynamicBuffText = string.gsub(buffDesc, speedPattern, dynamicRidingSpeed)
+                local dynamicBuffText = string.gsub(buffDesc, speedPattern, WHC.player.dynamicRidingSpeed)
                 GameTooltipTextLeft2:SetText(dynamicBuffText)
             end
 
