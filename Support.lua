@@ -32,14 +32,14 @@ function WHC.InitializeSupport()
     }
 
     -- 1.14: Right-clicking on a player to report them
-    WHC.HookSecureFunc("UnitPopup_OnUpdate", function(self, dropdownMenu, which, unit, name)
-        for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
-            local button = getglobal("DropDownList2Button" .. i)
-            if button and reportOptions[button.value] then
-                button:SetScript("OnClick", function()
-                    WHC.UIShowTabContent(supportTabIndex)
-                end)
+    local blizzardFunction_UnitPopup_OnClick = UnitPopup_OnClick
+    if RETAIL == 1 then
+        UnitPopup_OnClick = function(self)
+            if self and reportOptions[self.value] then
+                return WHC.UIShowTabContent(supportTabIndex)
             end
+
+            return blizzardFunction_UnitPopup_OnClick(self)
         end
-    end)
+    end
 end
