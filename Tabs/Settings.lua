@@ -199,6 +199,7 @@ function WHC.Tab_Settings(content)
         WHC.SetBlockTrainSkill()
     end)
 
+    -- Disable equipment achievements for 1.14 as UseContainerItem function is protected and cannot be overwritten
     if RETAIL == 0 then
         WHC_SETTINGS.blockMagicItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block equipping magic items", WHC.Achievements.MISTER_WHITE.itemLink))
         WHC_SETTINGS.blockMagicItemsCheckbox:SetScript("OnClick", function()
@@ -226,6 +227,7 @@ function WHC.Tab_Settings(content)
         WHC.SetBlockTrades()
     end)
 
+    -- Disable equipment achievements for 1.14 as UseContainerItem function is protected and cannot be overwritten
     if RETAIL == 0 then
         WHC_SETTINGS.blockArmorItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block equipping armor items", WHC.Achievements.ONLY_FAN.itemLink))
         WHC_SETTINGS.blockArmorItemsCheckbox:SetScript("OnClick", function()
@@ -252,6 +254,7 @@ function WHC.Tab_Settings(content)
         WHC.SendToggleRestedXpCommand()
     end)
 
+    -- Disable equipment achievements for 1.14 as UseContainerItem function is protected and cannot be overwritten
     if RETAIL == 0 then
         WHC_SETTINGS.blockNonSelfMadeItemsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block equipping items you did not craft", WHC.Achievements.SELF_MADE.itemLink))
         WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:SetScript("OnClick", function()

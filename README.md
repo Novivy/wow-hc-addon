@@ -5,6 +5,7 @@
 ## Changelog for next update
 - Fixed Help Yourself achievement to no longer abandons profession quests on login.
 - Fixed 1.14 shift-clicking player names in the chat causing an error.
+- Fixed 1.14 right-click menu stop working / showing support menu after reporting a player
 - Fixed error when mousing over another player's dynamic mount buff
 
 ## Future versions:
