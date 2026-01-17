@@ -7,6 +7,7 @@
 - Fixed 1.14 shift-clicking player names in the chat causing an error.
 - Fixed 1.14 right-click menu stop working / showing support menu after reporting a player
 - Fixed error when mousing over another player's dynamic mount buff
+- Changed the description for the slayer achievements
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
