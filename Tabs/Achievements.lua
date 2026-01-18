@@ -107,12 +107,12 @@ function WHC.ToggleAchievement(itemAch, failed)
 end
 
 WHC.Achievements = {
-    DEMON_SLAYER           = { id = 16384,  icon = "spell_shadow_unsummonbuilding",       itemId = "707016", itemLink = "", name = "Demon Slayer",           desc = "Reach level 60 only by killing demons." },
+    DEMON_SLAYER           = { id = 16384,  icon = "spell_shadow_unsummonbuilding",       itemId = "707016", itemLink = "", name = "Demon Slayer",           desc = "Reach level 60 while only gaining monster experience from demons." },
     GROUNDED               = { id = 4096,   icon = "spell_nature_strengthofearthtotem02", itemId = "707014", itemLink = "", name = "Grounded",               desc = "Reach level 60 without ever using flying services." },
     HELP_YOURSELF          = { id = 64,     icon = "inv_misc_note_02",                    itemId = "707006", itemLink = "", name = "Help Yourself",          desc = "Reach level 60 without ever turning in a quest (class and profession quests allowed)." },
     IRON_BONES             = { id = 1,      icon = "trade_blacksmithing",                 itemId = "707000", itemLink = "", name = "Iron Bones",             desc = "Reach level 60 without ever repairing the durability of an item." },
     KILLER_TRADER          = { id = 4,      icon = "inv_misc_coin_03",                    itemId = "707002", itemLink = "", name = "Killer Trader",          desc = "Reach level 60 without ever using the auction house to sell an item." },
-    LIGHTBRINGER           = { id = 32768,  icon = "spell_holy_holynova",                 itemId = "707017", itemLink = "", name = "Lightbringer",           desc = "Reach level 60 only by killing undead creatures." },
+    LIGHTBRINGER           = { id = 32768,  icon = "spell_holy_holynova",                 itemId = "707017", itemLink = "", name = "Lightbringer",           desc = "Reach level 60 while only gaining monster experience from undead creatures." },
     LONE_WOLF              = { id = 2048,   icon = "spell_nature_spiritwolf",             itemId = "707013", itemLink = "", name = "Lone Wolf",              desc = "Reach level 60 without ever grouping with other players." },
     MARATHON_RUNNER        = { id = 256,    icon = "inv_gizmo_rocketboot_01",             itemId = "707010", itemLink = "", name = "Marathon Runner",        desc = "Reach level 60 without ever learning a riding skill." },
     MISTER_WHITE           = { id = 128,    icon = "inv_shirt_white_01",                  itemId = "707007", itemLink = "", name = "Mister White",           desc = "Reach level 60 without ever equipping an uncommon or greater quality item (only white/grey items allowed. All ammunition and bags allowed)." },
@@ -122,7 +122,7 @@ WHC.Achievements = {
     SELF_MADE              = { id = 8192,   icon = "inv_hammer_20",                       itemId = "707015", itemLink = "", name = "Self-made",              desc = "Reach level 60 without ever equipping items that you did not craft yourself (all fishing poles, ammunition, and bags allowed)." },
     SOFT_HANDS             = { id = 1024,   icon = "spell_holy_layonhands",               itemId = "707012", itemLink = "", name = "Soft Hands",             desc = "Reach level 60 without ever learning any primary profession." },
     SPECIAL_DELIVERIES     = { id = 16,     icon = "inv_crate_03",                        itemId = "707004", itemLink = "", name = "Special Deliveries",     desc = "Reach level 60 without ever getting goods or money from player mail (simple letters, NPC and AH allowed)." },
-    THAT_WHICH_HAS_NO_LIFE = { id = 512,    icon = "ability_hunter_pet_boar",             itemId = "707011", itemLink = "", name = "That Which Has No Life", desc = "Reach level 60 only by killing boars or quilboars." },
+    THAT_WHICH_HAS_NO_LIFE = { id = 512,    icon = "ability_hunter_pet_boar",             itemId = "707011", itemLink = "", name = "That Which Has No Life", desc = "Reach level 60 while only gaining monster experience from boars and quilboars." },
     TIME_IS_MONEY          = { id = 2,      icon = "inv_misc_coin_05",                    itemId = "707001", itemLink = "", name = "Time is money",          desc = "Reach level 60 without ever using the auction house to buy an item." },
     UNTALENTED             = { id = 65536,  icon = "ability_marksmanship",                itemId = "707019", itemLink = "", name = "Untalented",             desc = "Reach level 60 without ever spending a talent point." },
 }
