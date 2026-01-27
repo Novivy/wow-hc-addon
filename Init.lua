@@ -186,7 +186,7 @@ function WHC.InitializeDynamicMounts()
 
             -- Make the spellbook name have artifact color
             if not isBuff then
-                local artifactColor = ITEM_QUALITY_COLORS[6]
+                local artifactColor = ITEM_QUALITY_COLORS[WHC.ITEM_QUALITY.ARTIFACT]
                 GameTooltipTextLeft1:SetTextColor(artifactColor.r, artifactColor.g, artifactColor.b)
             end
 

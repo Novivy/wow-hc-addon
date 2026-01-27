@@ -128,7 +128,7 @@ WHC.Achievements = {
 }
 
 local function achievementLink(achievement)
-    return ITEM_QUALITY_COLORS[5].hex.."|Hitem:"..achievement.itemId..":0:0:0|h["..achievement.name.."]|h"..FONT_COLOR_CODE_CLOSE
+    return ITEM_QUALITY_COLORS[WHC.ITEM_QUALITY.LEGENDARY].hex.."|Hitem:"..achievement.itemId..":0:0:0|h["..achievement.name.."]|h"..FONT_COLOR_CODE_CLOSE
 end
 
 local sortedAchievements = {}
