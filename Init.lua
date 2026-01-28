@@ -136,7 +136,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeSupport()
     WHC.InitializeDynamicMounts()
     WHC.InitializeTradableRaidLoot()
-    WHC.InitializeUncommonItemLinksFix()
+    WHC.InitializeItemSuffixLinksFix()
 
     if WHC.server.isHardcore then
         WHC.InitializeDeathPopupAppeal()
@@ -230,7 +230,7 @@ function WHC.InitializeTradableRaidLoot()
     end)
 end
 
-function WHC.InitializeUncommonItemLinksFix()
+function WHC.InitializeItemSuffixLinksFix()
     local blizzardFunction_ItemRefTooltip_SetHyperlink = ItemRefTooltip.SetHyperlink
     function ItemRefTooltip:SetHyperlink(link)
         if WHC.client.is1_12 then
