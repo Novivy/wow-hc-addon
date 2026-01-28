@@ -73,8 +73,8 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
 
     local locale = GetLocale()
     local is1_12 = version == "1.12.0" or version == "1.12.1"
-    local isSuperWow = true
-    if not GetPlayerBuffID or not CombatLogAdd or not SpellInfo then isSuperWow = false end
+    local isSuperWow = false
+    if is1_12 and GetPlayerBuffID and CombatLogAdd and SpellInfo then isSuperWow = true end
 
     WHC.client = {
         isEnglish = locale == "enUS" or locale == "enGB",
