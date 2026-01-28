@@ -136,6 +136,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeSupport()
     WHC.InitializeDynamicMounts()
     WHC.InitializeTradableRaidLoot()
+    WHC.InitializeUncommonItemLinksFix()
 
     if WHC.server.isHardcore then
         WHC.InitializeDeathPopupAppeal()
@@ -227,4 +228,32 @@ function WHC.InitializeTradableRaidLoot()
             GameTooltip:Show()
         end
     end)
+end
+
+function WHC.InitializeUncommonItemLinksFix()
+    local blizzardFunction_ItemRefTooltip_SetHyperlink = ItemRefTooltip.SetHyperlink
+    function ItemRefTooltip:SetHyperlink(link)
+        if WHC.client.is1_12 then
+            local isMatch, _, itemId, enchantId, gemIDs, suffixId, uniqueId = string.find(link, "item:(%d+):(%d*):(%d*:%d*:%d*:%d*):(%d*):(%d*)")
+            if isMatch and suffixId then
+                -- Converting 1.14 empty strings to 1.12 0s to indicate no value
+                enchantId = enchantId ~= "" and enchantId or 0
+                uniqueId = uniqueId ~= "" and uniqueId or 0
+                link = string.format("item:%s:%s:%s:%s", itemId, enchantId, suffixId, uniqueId)
+            end
+        end
+
+        if WHC.client.is1_14 then
+            local isMatch, _, itemId, enchantId, suffixId, uniqueId = string.find(link, "item:(%d+):(%d+):(%d+):(%d+)$")
+            if isMatch and suffixId ~= "0" then
+                -- Converting 1.12 0s to 1.14 empty strings to indicate no value
+                enchantId = enchantId ~= "0" and enchantId or ""
+                uniqueId = uniqueId ~= "0" and uniqueId or ""
+                local gemID1, gemID2, gemID3, gemID4 = "", "", "", ""
+                link = string.format("item:%s:%s:%s:%s:%s:%s:%s:%s", itemId, enchantId, gemID1, gemID2, gemID3, gemID4, suffixId, uniqueId)
+            end
+        end
+
+        return blizzardFunction_ItemRefTooltip_SetHyperlink(ItemRefTooltip, link)
+    end
 end
