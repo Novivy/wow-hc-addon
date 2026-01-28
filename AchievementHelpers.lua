@@ -1107,13 +1107,19 @@ local boarNpcs = {
 }
 
 local function getNpcID(unit)
-    if not UnitGUID then
-        return 0
+    if UnitGUID then
+        local guid = UnitGUID(unit) -- Only possible on 1.14
+        local _, _, _, _, _, npcID = strsplit("-", guid)
+        return tonumber(npcID)
     end
 
-    local guid = UnitGUID(unit) -- Only possible on 1.14
-    local _, _, _, _, _, npcID = strsplit("-", guid)
-    return tonumber(npcID)
+    if WHC.client.isSuperWow then
+        local _, guid = UnitExists(unit) -- Superwow guid
+        local npcIDHex = string.sub(guid, 9, 12)
+        return tonumber(npcIDHex, 16)
+    end
+
+    return 0
 end
 
 local onlyKillFrame = CreateFrame("Frame", "OnlyKillFrame", UIParent, RETAIL_BACKDROP)
