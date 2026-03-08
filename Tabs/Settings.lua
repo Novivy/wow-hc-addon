@@ -311,6 +311,12 @@ function WHC.Tab_Settings(content)
         WHC.SetWarningOnlyKill()
     end)
 
+    WHC_SETTINGS.onlyKillMurlocsCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Warning when not targeting murlocs", WHC.Achievements.TIDEHUNTER.itemLink))
+    WHC_SETTINGS.onlyKillMurlocsCheckbox:SetScript("OnClick", function()
+        WhcAchievementSettings.onlyKillMurlocs = getCheckedValueAndPlaySound(WHC_SETTINGS.onlyKillMurlocsCheckbox)
+        WHC.SetWarningOnlyKill()
+    end)
+
     WHC_SETTINGS.blockAuctionBuyCheckbox = createSettingsCheckBox(scrollContent, string.format("%s Achievement: Block auction house buying", WHC.Achievements.TIME_IS_MONEY.itemLink))
     WHC_SETTINGS.blockAuctionBuyCheckbox:SetScript("OnClick", function()
         WhcAchievementSettings.blockAuctionBuy = getCheckedValueAndPlaySound(WHC_SETTINGS.blockAuctionBuyCheckbox)
@@ -331,7 +337,7 @@ function WHC.Tab_Settings(content)
 
     if WHC.client.is1_12 and not WHC.client.isSuperWow and not WHC.client.isEnglish then
         WHC_SETTINGS.onlyKillBoarsCheckbox:setEnabled(0, "The 1.12 client cannot get the NPC ID and can only use the english NPC name to validate if the mob can be killed.\n\nUse SuperWoW or an english client to activate this achievement.")
-        -- The same for Murloc achievement
+        WHC_SETTINGS.onlyKillMurlocsCheckbox:setEnabled(0, "The 1.12 client cannot get the NPC ID and can only use the english NPC name to validate if the mob can be killed.\n\nUse SuperWoW or an english client to activate this achievement.")
     end
 
     return content;

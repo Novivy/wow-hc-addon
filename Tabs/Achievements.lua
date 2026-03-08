@@ -123,6 +123,7 @@ WHC.Achievements = {
     SOFT_HANDS             = { id = 1024,   icon = "spell_holy_layonhands",               itemId = "707012", itemLink = "", name = "Soft Hands",             desc = "Reach level 60 without ever learning any primary profession." },
     SPECIAL_DELIVERIES     = { id = 16,     icon = "inv_crate_03",                        itemId = "707004", itemLink = "", name = "Special Deliveries",     desc = "Reach level 60 without ever getting goods or money from player mail (simple letters, NPC and AH allowed)." },
     THAT_WHICH_HAS_NO_LIFE = { id = 512,    icon = "ability_hunter_pet_boar",             itemId = "707011", itemLink = "", name = "That Which Has No Life", desc = "Reach level 60 while only gaining monster experience from boars and quilboars." },
+    TIDEHUNTER             = { id = 262144, icon = "inv_misc_head_murloc_01",             itemId = "707021", itemLink = "", name = "Tidehunter",             desc = "Reach level 60 while only gaining monster experience from murlocs." },
     TIME_IS_MONEY          = { id = 2,      icon = "inv_misc_coin_05",                    itemId = "707001", itemLink = "", name = "Time is money",          desc = "Reach level 60 without ever using the auction house to buy an item." },
     UNTALENTED             = { id = 65536,  icon = "ability_marksmanship",                itemId = "707019", itemLink = "", name = "Untalented",             desc = "Reach level 60 without ever spending a talent point." },
 }

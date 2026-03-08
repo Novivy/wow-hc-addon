@@ -912,10 +912,11 @@ end
 local demonSlayer = WHC.Achievements.DEMON_SLAYER
 local lightbringer = WHC.Achievements.LIGHTBRINGER
 local thatWhichHasNoLife = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE
+local tidehunter = WHC.Achievements.TIDEHUNTER
 
 -- Remove false positives
 -- Critter are levels go all the way to 55 inside Stratholme
--- Totems summoned by Quilboars
+-- Totems summoned by Quilboars and Murlocs
 local ignoreCreatureType = {
     ["Critter"] = true, -- English
     ["Tier"] = true, -- German
@@ -942,23 +943,8 @@ local ignoreCreatureType = {
     ["圖騰"] = true, -- Chinese (Traditional)
 }
 
-local undeadType = {
-    ["Undead"] = true, -- English
-    ["Untoter"] = true, -- German
-    ["No-muerto"] = true, -- Spanish
-    ["No-muerto"] = true, -- Spanish (Mexico)
-    ["Mort-vivant"] = true, -- French
-    ["Non Morto"] = true, -- Italian
-    ["Morto-vivo"] = true, -- Portuguese
-    ["Нежить"] = true, -- Russian
-    ["언데드"] = true, -- Korean
-    ["亡灵"] = true, -- Chinese (Simplified)
-    ["亡靈"] = true, -- Chinese (Traditional)
-}
-
 -- Spawns from undead mobs in Duskwood. Gives 0 exp.
--- List can be generalized to more mobs if significant mobs are found.
-local undeadIgnoreNpcs = {
+local ignoreNpcs = {
     [2462] = true,
     ["Flesh Eating Worm"] = true, -- English
     ["Fleischfressender Wurm"] = true, -- German
@@ -971,6 +957,20 @@ local undeadIgnoreNpcs = {
     ["왕구더기"] = true, -- Korean
     ["食腐虫"] = true, -- Chinese (Simplified)
     ["食腐蟲"] = true, -- Chinese (Traditional)
+}
+
+local undeadType = {
+    ["Undead"] = true, -- English
+    ["Untoter"] = true, -- German
+    ["No-muerto"] = true, -- Spanish
+    ["No-muerto"] = true, -- Spanish (Mexico)
+    ["Mort-vivant"] = true, -- French
+    ["Non Morto"] = true, -- Italian
+    ["Morto-vivo"] = true, -- Portuguese
+    ["Нежить"] = true, -- Russian
+    ["언데드"] = true, -- Korean
+    ["亡灵"] = true, -- Chinese (Simplified)
+    ["亡靈"] = true, -- Chinese (Traditional)
 }
 
 local demonType = {
@@ -1106,6 +1106,117 @@ local boarNpcs = {
     [5993] = true, ["Helboar"] = true, -- Demon
 }
 
+local murlocNpcs = {
+    [285] = true, ["Murloc"] = true,
+    [126] = true, ["Murloc Coastrunner"] = true,
+    [46]  = true, ["Murloc Forager"] = true,
+    [458] = true, ["Murloc Hunter"] = true,
+    [456] = true, ["Murloc Minor Oracle"] = true,
+    [513] = true, ["Murloc Netter"] = true,
+    [517] = true, ["Murloc Oracle"] = true,
+    [732] = true, ["Murloc Lurker"] = true,
+    [515] = true, ["Murloc Raider"] = true,
+    [735] = true, ["Murloc Streamrunner"] = true,
+    [127] = true, ["Murloc Tidehunter"] = true,
+    [171] = true, ["Murloc Warrior"] = true,
+
+    [1909] = true, ["Vile Fin Lakestalker"] = true,
+    [1544] = true, ["Vile Fin Minor Oracle"] = true,
+    [1545] = true, ["Vile Fin Muckdweller"] = true,
+    [1908] = true, ["Vile Fin Oracle"] = true,
+    [1543] = true, ["Vile Fin Puddlejumper"] = true,
+    [1957] = true, ["Vile Fin Shorecreeper"] = true,
+    [1767] = true, ["Vile Fin Shredder"] = true,
+    [1958] = true, ["Vile Fin Tidecaller"] = true,
+    [1768] = true, ["Vile Fin Tidehunter"] = true,
+
+    [2202]  = true, ["Greymist Coastrunner"] = true,
+    [2206]  = true, ["Greymist Hunter"] = true,
+    [2204]  = true, ["Greymist Netter"] = true,
+    [2207]  = true, ["Greymist Oracle"] = true,
+    [2201]  = true, ["Greymist Raider"] = true,
+    [2203]  = true, ["Greymist Seer"] = true,
+    [2208]  = true, ["Greymist Tidehunter"] = true,
+    [2205]  = true, ["Greymist Warrior"] = true,
+
+    [422]   = true, ["Murloc Flesheater"] = true,
+    [548]   = true, ["Murloc Minor Tidecaller"] = true,
+    [544]   = true, ["Murloc Nightcrawler"] = true,
+    [578]   = true, ["Murloc Scout"] = true,
+    [1083]  = true, ["Murloc Shorestriker"] = true,
+    [545]   = true, ["Murloc Tidecaller"] = true,
+
+    [3740] =  true, ["Saltspittle Muckdweller"] = true,
+    [3742] =  true, ["Saltspittle Oracle"] = true,
+    [3737] =  true, ["Saltspittle Puddlejumper"] = true,
+    [3739] =  true, ["Saltspittle Warrior"] = true,
+
+    [1026] = true, ["Bluegill Forager"] = true,
+    [1028] = true, ["Bluegill Muckdweller"] = true,
+    [1024] = true, ["Bluegill Murloc"] = true,
+    [1029] = true, ["Bluegill Oracle"] = true,
+    [1025] = true, ["Bluegill Puddlejumper"] = true,
+    [1418] = true, ["Bluegill Raider"] = true,
+    [1027] = true, ["Bluegill Warrior"] = true,
+
+    [2375] =  true, ["Torn Fin Coastrunner"] = true,
+    [2374] =  true, ["Torn Fin Muckdweller"] = true,
+    [2376] =  true, ["Torn Fin Oracle"] = true,
+    [2377] =  true, ["Torn Fin Tidehunter"] = true,
+
+    [4457] = true, ["Murkgill Forager"] = true,
+    [4458] = true, ["Murkgill Hunter"] = true,
+    [4460] = true, ["Murkgill Lord"] = true,
+    [4459] = true, ["Murkgill Oracle"] = true,
+    [4461] = true, ["Murkgill Warrior"] = true,
+
+    [4362] = true, ["Mirefin Coastrunner"] = true,
+    [4361] = true, ["Mirefin Muckdweller"] = true,
+    [4359] = true, ["Mirefin Murloc"] = true,
+    [4363] = true, ["Mirefin Oracle"] = true,
+    [4358] = true, ["Mirefin Puddlejumper"] = true,
+    [4360] = true, ["Mirefin Warrior"] = true,
+
+    [877] = true, ["Saltscale Forager"] = true,
+    [879] = true, ["Saltscale Hunter"] = true,
+    [873] = true, ["Saltscale Oracle"] = true,
+    [875] = true, ["Saltscale Tide Lord"] = true,
+    [871] = true, ["Saltscale Warrior"] = true,
+
+    [751] = true, ["Marsh Flesheater"] = true,
+    [750] = true, ["Marsh Inkspewer"] = true,
+    [747] = true, ["Marsh Murloc"] = true,
+    [752] = true, ["Marsh Oracle"] = true,
+
+    [6351] = true, ["Storm Bay Oracle"] = true,
+    [6371] = true, ["Storm Bay Warrior"] = true,
+
+    [6136] = true, ["Arkkoran Muckdweller"] = true,
+    [6138] = true, ["Arkkoran Oracle"] = true,
+
+    -- Blackfathom Deeps
+    [4818] = true, ["Blindlight Murloc"] = true,
+    [4819] = true, ["Blindlight Muckdweller"] = true,
+    [4820] = true, ["Blindlight Oracle"] = true,
+    [6243] = true, ["Gelihast"] = true, -- Boss
+
+    -- Rare and special mobs
+    [520]   = true, ["Brack"] = true,
+    [14230] = true, ["Burgle Eye"] = true,
+    [645]   = true, ["Cookie"] = true, -- Deadmines boss
+    [7015]  = true, ["Flagglemurk the Cruel"] = true,
+    [14487] = true, ["Gluggle"] = true,
+    [1259]  = true, ["Gobbler"] = true,
+    [10643] = true, ["Mugglefin"] = true,
+    [10323] = true, ["Murkdeep"] = true,
+    [3654]  = true, ["Mutanus the Devourer"] = true, -- Wailing Caverns boss
+    [391]   = true, ["Old Murk-Eye"] = true,
+    [519]   = true, ["Slark"] = true,
+    [14270] = true, ["Squiddic"] = true,
+    [14276] = true, ["Scargil"] = true,
+    [950]   = true, ["Swamp Talker"] = true,
+}
+
 local function getNpcID(unit)
     if UnitGUID then
         local guid = UnitGUID(unit) -- Only possible on 1.14
@@ -1161,25 +1272,28 @@ end
 onlyKillFrame:SetScript("OnEvent", function()
     onlyKillFrame:Hide()
 
-    local creatureType = UnitCreatureType("target")
     if not UnitExists("target") or
             not UnitCanAttack("player", "target") or
             UnitIsTrivial("target") or
-            ignoreCreatureType[creatureType] or
             UnitIsPlayer("target") or
             UnitIsDead("target") then
         return
     end
 
+    local creatureType = UnitCreatureType("target")
     local npcID = getNpcID("target")
     local unitName = UnitName("target")
+    if ignoreCreatureType[creatureType] or
+        ignoreNpcs[npcID] or
+        ignoreNpcs[unitName] then
+        return
+    end
 
     if WhcAchievementSettings.onlyKillDemons == 1 and not demonType[creatureType] then
         return updateOnlyKillFrame(demonSlayer, unitName)
     end
 
-    local ignoreNonUndead = undeadIgnoreNpcs[npcID] or undeadIgnoreNpcs[unitName]
-    if WhcAchievementSettings.onlyKillUndead == 1 and not undeadType[creatureType] and not ignoreNonUndead then
+    if WhcAchievementSettings.onlyKillUndead == 1 and not undeadType[creatureType] then
         return updateOnlyKillFrame(lightbringer, unitName)
     end
 
@@ -1190,13 +1304,21 @@ onlyKillFrame:SetScript("OnEvent", function()
     if WhcAchievementSettings.onlyKillBoars == 1 and not isBoarOrQuilboar then
         return updateOnlyKillFrame(thatWhichHasNoLife, unitName)
     end
+
+    local isMurloc = murlocNpcs[npcID] or murlocNpcs[unitName]
+    if WhcAchievementSettings.onlyKillMurlocs == 1 and not isMurloc then
+        return updateOnlyKillFrame(tidehunter, unitName)
+    end
 end)
 
 function WHC.SetWarningOnlyKill()
     onlyKillFrame:Hide()
     onlyKillFrame:UnregisterEvent("PLAYER_TARGET_CHANGED")
 
-    if WhcAchievementSettings.onlyKillDemons == 1 or WhcAchievementSettings.onlyKillUndead == 1 or WhcAchievementSettings.onlyKillBoars == 1 then
+    if WhcAchievementSettings.onlyKillDemons == 1 or
+            WhcAchievementSettings.onlyKillUndead == 1 or
+            WhcAchievementSettings.onlyKillBoars == 1 or
+            WhcAchievementSettings.onlyKillMurlocs == 1 then
         onlyKillFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     end
 end
