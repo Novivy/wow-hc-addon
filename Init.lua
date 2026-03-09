@@ -17,6 +17,7 @@ WHC.Frames = {
     UItab = nil,
     MapIcon = nil,
     DeathLogFrame = nil,
+    SpeedRunTimer = nil,
     Achievements = nil,
     AchievementButtonCharacter = nil,
     AchievementButtonInspect = nil,
@@ -136,6 +137,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
     WHC.InitializeDeathLogFrame()
+    WHC.InitializeSpeedRunTimer()
     WHC.InitializeAchievementButtons()
     WHC.InitializeSupport()
     WHC.InitializeDynamicMounts()
