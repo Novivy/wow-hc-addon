@@ -133,6 +133,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAchievementSettings.onlyKillDemons = WhcAchievementSettings.onlyKillDemons or 0
     WhcAchievementSettings.onlyKillUndead = WhcAchievementSettings.onlyKillUndead or 0
     WhcAchievementSettings.onlyKillBoars = WhcAchievementSettings.onlyKillBoars or 0
+    WhcAchievementSettings.onlyKillMurlocs = WhcAchievementSettings.onlyKillMurlocs or 0
 
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()

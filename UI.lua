@@ -71,6 +71,7 @@ function WHC.UIShowTabContent(tabIndex)
         WHC_SETTINGS.onlyKillDemonsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillDemons))
         WHC_SETTINGS.onlyKillUndeadCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillUndead))
         WHC_SETTINGS.onlyKillBoarsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillBoars))
+        WHC_SETTINGS.onlyKillMurlocsCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.onlyKillMurlocs))
     end
 
     -- Hide all tab contents first
