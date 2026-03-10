@@ -54,6 +54,9 @@ local function createRow(parent, labelText, valueText)
     return row
 end
 
+local STATUS_VALID = 1
+local STATUS_INVALID_LEVEL = 2
+local STATUS_INVALID_WORLD_BUFF = 3
 function WHC.InitializeSpeedRunTimer()
     local speedRunTimer = CreateFrame("Frame", "SpeedRunTimer", UIParent, RETAIL_BACKDROP)
     speedRunTimer:Show()
@@ -104,7 +107,7 @@ function WHC.InitializeSpeedRunTimer()
     end
 
     function speedRunTimer:StartTimer(status, seconds)
-        if status > 1 then
+        if status ~= STATUS_VALID then
             return self:StopTimer(status, seconds)
         end
 
@@ -134,20 +137,29 @@ function WHC.InitializeSpeedRunTimer()
         self:SetCurrentTime(seconds)
         self:SetStatus(status)
 
-        if status == 1 then
-            WhcAddonSettings.speedRunTimer[GetRealZoneText()] = seconds
+        if status == STATUS_VALID then
+            local dungeonName = GetRealZoneText()
+            local personalRecord = WhcAddonSettings.speedRunTimer[dungeonName]
+            if not personalRecord or seconds < personalRecord then
+                WhcAddonSettings.speedRunTimer[dungeonName] = seconds
+                -- flash animation
+            end
+
+            if self.serverRecord.seconds == 0 or seconds < self.serverRecord.seconds then
+                -- flash animation
+            end
         end
     end
 
     function speedRunTimer:SetStatus(status)
         local color = GREEN_FONT_COLOR
-        if status == 1 then
+        if status == STATUS_VALID then
             self.status.value:SetText("Valid")
             color = GREEN_FONT_COLOR
-        elseif status == 2 then
+        elseif status == STATUS_INVALID_LEVEL then
             self.status.value:SetText("Too high level")
             color = RED_FONT_COLOR
-        elseif status == 3 then
+        elseif status == STATUS_INVALID_WORLD_BUFF then
             self.status.value:SetText("World buff detected")
             color = RED_FONT_COLOR
         end
@@ -165,6 +177,7 @@ function WHC.InitializeSpeedRunTimer()
     end
 
     function speedRunTimer:SetServerRecord(seconds)
+        self.serverRecord.seconds = seconds
         self.serverRecord.value:SetText(WHC.SecondsToClock(seconds))
     end
 
