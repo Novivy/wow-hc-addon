@@ -110,6 +110,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.auction_long = WhcAddonSettings.auction_long or 0
     WhcAddonSettings.auction_deposit = WhcAddonSettings.auction_deposit or 0
     WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
+    WhcAddonSettings.speedRunTimer = WhcAddonSettings.speedRunTimer or {}
 
     WhcAchievementSettings = WhcAchievementSettings or {}
     WhcAchievementSettings.blockInvites = WhcAchievementSettings.blockInvites or 0

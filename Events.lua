@@ -396,6 +396,26 @@ local function handleChatEvent(arg1)
         return 0
     end
 
+    if string.find(lowerArg, "^::whc::speedrun:") then
+        local _, _, status, seconds = string.find(lowerArg, "^::whc::speedrun:timer:(%d):(%d+)")
+        if status and seconds then
+            WHC.Frames.SpeedRunTimer:StartTimer(tonumber(status), tonumber(seconds))
+            return 0
+        end
+
+        _, _, status, seconds = string.find(lowerArg, "^::whc::speedrun:end:(%d):(%d+)")
+        if status and seconds then
+            WHC.Frames.SpeedRunTimer:StopTimer(tonumber(status), tonumber(seconds))
+            return 0
+        end
+
+        local _, _, record = string.find(lowerArg, "^::whc::speedrun:record:(%d+)")
+        if record then
+            WHC.Frames.SpeedRunTimer:SetServerRecord(tonumber(record))
+            return 0
+        end
+    end
+
     return 1
 end
 

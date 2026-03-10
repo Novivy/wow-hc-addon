@@ -31,6 +31,17 @@ function WHC.GetItemIDFromLink(itemLink)
     return tonumber(itemID)
 end
 
+function WHC.SecondsToClock(seconds)
+    if seconds < 0 then
+        seconds = 0
+    end
+
+    local hours = string.format("%01d", math.floor(seconds/3600));
+    local mins = string.format("%02d", math.floor(seconds % 3600 / 60));
+    local secs = string.format("%02d", math.floor(seconds % 3600 % 60));
+    return hours..":"..mins..":"..secs
+end
+
 -- Function to print debug messages
 function WHC.DebugPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage(tostring(message))
