@@ -180,13 +180,14 @@ function WHC.InitializeSpeedRunTimer()
     end
 
     function speedRunTimer:StopTimer(status, seconds)
+        local wasTimerRunning = self:GetScript()
         self:SetScript("OnUpdate", nil)
         self:SetCurrentTime(seconds)
         self:SetStatus(status)
 
-        -- Only update records on valid runs where the timer is running
-        -- This prevents people from getting a personal record from an already cleared dungeon
-        if status == STATUS_VALID and self:IsTimerRunning() then
+        -- Only update records on valid runs where the timer was running
+        -- This prevents people from getting a personal record from entering an already cleared dungeon
+        if status == STATUS_VALID and wasTimerRunning then
             local dungeonName = GetRealZoneText()
             local personalRecord = WhcAddonSettings.speedRunTimer.personalRecords[dungeonName] or 0
             if personalRecord == 0 or seconds < personalRecord then
@@ -204,10 +205,6 @@ function WHC.InitializeSpeedRunTimer()
         if WhcAddonSettings.speedRunTimer.showTimer == 1 then
             self:Show()
         end
-    end
-
-    function speedRunTimer:IsTimerRunning()
-        return self:GetScript("OnUpdate")
     end
 
     function speedRunTimer:SetStatus(status)
