@@ -30,7 +30,7 @@ local function createRow(parent, labelText, valueText)
     label:SetPoint("TOPLEFT", row, "TOPLEFT")
     label:SetText(labelText)
 
-    local value = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local value = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     value:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
     value:SetFontObject(GameFontWhite)
     value:SetPoint("TOPRIGHT", row, "TOPRIGHT")
@@ -59,7 +59,7 @@ local STATUS_INVALID_LEVEL = 2
 local STATUS_INVALID_WORLD_BUFF = 3
 function WHC.InitializeSpeedRunTimer()
     local speedRunTimer = CreateFrame("Frame", "SpeedRunTimer", UIParent, RETAIL_BACKDROP)
-    speedRunTimer:Show()
+    speedRunTimer:Hide()
     speedRunTimer:SetWidth(200)
     speedRunTimer:SetHeight(70)
     speedRunTimer:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
@@ -91,10 +91,22 @@ function WHC.InitializeSpeedRunTimer()
     speedRunTimer.personalRecord = createRow(speedRunTimer, "Personal record:", "0:00:00")
     speedRunTimer.serverRecord = createRow(speedRunTimer, "Server record:", "0:00:00")
 
+    speedRunTimer.currentTime.seconds = 0
+    speedRunTimer.personalRecord.seconds = 0
+    speedRunTimer.serverRecord.seconds = 0
+
     local firedCommand = false
 
-    function speedRunTimer:hide()
+    function speedRunTimer:ShowInDungeon()
+        local _, instanceType = IsInInstance()
+        if instanceType == "party" then
+            return self:Show()
+        end
+    end
+
+    function speedRunTimer:HideAndClear()
         self:Hide()
+        self:SetScript("OnUpdate", nil)
 
         self.dungeon.label:SetText("")
         self.dungeon.value:SetText("")
@@ -102,6 +114,10 @@ function WHC.InitializeSpeedRunTimer()
         self.currentTime.value:SetText("")
         self.personalRecord.value:SetText("")
         self.serverRecord.value:SetText("")
+
+        self.currentTime.seconds = 0
+        self.personalRecord.seconds = 0
+        self.serverRecord.seconds = 0
 
         firedCommand = false
     end
@@ -113,14 +129,14 @@ function WHC.InitializeSpeedRunTimer()
 
         self:SetStatus(status)
         local firstTimestamp = GetTime()
-        local i = 1
+        local i = 0
 
         self:SetScript("OnUpdate", function()
             local elapsed = GetTime() - firstTimestamp
 
             if elapsed > i then
                 i = i + 1
-                if i % 120 == 0 then -- sync with server every 2 minutes
+                if WHC.Modulus(i, 120) == 0 then -- sync with server every 2 minutes
                     SendChatMessage(".whc speedrun timer", "WHISPER", GetDefaultLanguage(), UnitName("player"))
                 else
                     seconds = seconds + 1
@@ -129,7 +145,9 @@ function WHC.InitializeSpeedRunTimer()
             end
         end)
 
-        self:Show()
+        if WhcAddonSettings.speedRunTimer.showTimer == 1 then
+            self:Show()
+        end
     end
 
     function speedRunTimer:StopTimer(status, seconds)
@@ -137,18 +155,30 @@ function WHC.InitializeSpeedRunTimer()
         self:SetCurrentTime(seconds)
         self:SetStatus(status)
 
-        if status == STATUS_VALID then
+        -- Only update records on valid runs where the timer is running
+        -- This prevents people from getting a personal record from an already cleared dungeon
+        if status == STATUS_VALID and self:IsTimerRunning() then
             local dungeonName = GetRealZoneText()
-            local personalRecord = WhcAddonSettings.speedRunTimer[dungeonName]
-            if not personalRecord or seconds < personalRecord then
-                WhcAddonSettings.speedRunTimer[dungeonName] = seconds
-                -- flash animation
+            local personalRecord = WhcAddonSettings.speedRunTimer.personalRecords[dungeonName] or 0
+            if personalRecord == 0 or seconds < personalRecord then
+                WhcAddonSettings.speedRunTimer.personalRecords[dungeonName] = seconds
+                self:SetPersonalRecord(seconds)
+                self:FlashAnimation(self.personalRecord)
             end
 
             if self.serverRecord.seconds == 0 or seconds < self.serverRecord.seconds then
-                -- flash animation
+                self:SetServerRecord(seconds)
+                self:FlashAnimation(self.serverRecord)
             end
         end
+
+        if WhcAddonSettings.speedRunTimer.showTimer == 1 then
+            self:Show()
+        end
+    end
+
+    function speedRunTimer:IsTimerRunning()
+        return self:GetScript("OnUpdate")
     end
 
     function speedRunTimer:SetStatus(status)
@@ -164,21 +194,40 @@ function WHC.InitializeSpeedRunTimer()
             color = RED_FONT_COLOR
         end
         self.status.value:SetTextColor(color.r, color.g, color.b, 1)
+    end
 
-        self:Show()
+    function speedRunTimer:setTime(frame, seconds)
+        frame.seconds = seconds
+        frame.value:SetText(WHC.SecondsToClock(seconds))
     end
 
     function speedRunTimer:SetCurrentTime(seconds)
-        self.currentTime.value:SetText(WHC.SecondsToClock(seconds))
+        self:setTime(self.currentTime, seconds)
     end
 
     function speedRunTimer:SetPersonalRecord(seconds)
-        self.personalRecord.value:SetText(WHC.SecondsToClock(seconds))
+        self:setTime(self.personalRecord, seconds)
     end
 
     function speedRunTimer:SetServerRecord(seconds)
-        self.serverRecord.seconds = seconds
-        self.serverRecord.value:SetText(WHC.SecondsToClock(seconds))
+        self:setTime(self.serverRecord, seconds)
+    end
+
+    function speedRunTimer:FlashAnimation(frame)
+        local animationTimeSeconds = 5
+
+        local firstTimestamp = GetTime()
+        frame:SetScript("OnUpdate", function()
+            local elapsed = GetTime() - firstTimestamp
+
+            local alpha = WHC.Modulus(math.floor(elapsed * 2), 2)
+            frame:SetAlpha(alpha)
+
+            -- Ensures the frame is visible when the animation stops
+            if elapsed > animationTimeSeconds and alpha == 1 then
+                frame:SetScript("OnUpdate", nil)
+            end
+        end)
     end
 
     speedRunTimer:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -187,7 +236,7 @@ function WHC.InitializeSpeedRunTimer()
         self = self or this
         local _, instanceType = IsInInstance()
         if instanceType ~= "party" then
-            return self:hide()
+            return self:HideAndClear()
         end
 
         local dungeonName = GetRealZoneText()
@@ -202,9 +251,7 @@ function WHC.InitializeSpeedRunTimer()
             SendChatMessage(".whc speedrun record", "WHISPER", GetDefaultLanguage(), UnitName("player"))
         end
 
-        if WhcAddonSettings.speedRunTimer[dungeonName] then
-            self:SetPersonalRecord(WhcAddonSettings.speedRunTimer[dungeonName])
-        end
+        self:SetPersonalRecord(WhcAddonSettings.speedRunTimer.personalRecords[dungeonName] or 0)
     end)
 
     WHC.Frames.SpeedRunTimer = speedRunTimer

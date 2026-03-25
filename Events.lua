@@ -416,6 +416,11 @@ local function handleChatEvent(arg1)
         end
     end
 
+    -- Catch all event. Place all custom event logic above this point
+    if string.find(lowerArg, "^::whc::") then
+        return 0
+    end
+
     return 1
 end
 
