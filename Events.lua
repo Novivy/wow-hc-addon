@@ -409,9 +409,9 @@ local function handleChatEvent(arg1)
             return 0
         end
 
-        local _, _, record = string.find(lowerArg, "^::whc::speedrun:record:(%d+)")
-        if record then
-            WHC.Frames.SpeedRunTimer:SetServerRecord(tonumber(record))
+        _, _, seconds = string.find(lowerArg, "^::whc::speedrun:record:(%d+)")
+        if seconds then
+            WHC.Frames.SpeedRunTimer:SetServerRecord(tonumber(seconds))
             return 0
         end
     end
