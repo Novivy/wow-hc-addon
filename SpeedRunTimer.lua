@@ -20,19 +20,39 @@ local instanceLevelRange = {
     ["Scholomance"]               = "(58-60)",
 }
 
+local STATUS_VALID = 1
+local STATUS_INVALID_LEVEL = 2
+local STATUS_INVALID_WORLD_BUFF = 3
+
 local previousRow = nil
-local function createRow(parent, labelText, valueText)
+local function createTitleRow(parent, labelText)
     local row = CreateFrame("Frame", nil, parent)
 
     local label = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    label:SetText(labelText)
+    label:SetPoint("TOP", row, "TOP")
+
+    row.label = label
+    row:SetHeight(label:GetHeight() + 5)
+    row:SetWidth(parent:GetWidth() - 8)
+    row:Show()
+
+    row:SetPoint("TOP", parent, "TOP", 0, -10)
+
+    previousRow = row
+
+    return row
+end
+local function createRow(parent, labelText, valueText)
+    local row = CreateFrame("Frame", nil, parent)
+
+    local label = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     label:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
-    label:SetFontObject(GameFontWhite)
     label:SetPoint("TOPLEFT", row, "TOPLEFT")
     label:SetText(labelText)
 
-    local value = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local value = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     value:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
-    value:SetFontObject(GameFontWhite)
     value:SetPoint("TOPRIGHT", row, "TOPRIGHT")
     value:SetText(valueText)
     value:SetJustifyH("RIGHT")
@@ -40,53 +60,62 @@ local function createRow(parent, labelText, valueText)
     row.label = label
     row.value = value
     row:SetHeight(label:GetHeight())
-    row:SetWidth(parent:GetWidth() - 6)
+    row:SetWidth(parent:GetWidth() - 8)
     row:Show()
 
-    if previousRow then
-        row:SetPoint("TOPLEFT", previousRow, "BOTTOMLEFT")
-    else
-        row:SetPoint("TOPLEFT", parent, "TOPLEFT", 3, -3)
-    end
+    row:SetPoint("TOPLEFT", previousRow, "BOTTOMLEFT", 0, -2)
 
     previousRow = row
 
     return row
 end
 
-local STATUS_VALID = 1
-local STATUS_INVALID_LEVEL = 2
-local STATUS_INVALID_WORLD_BUFF = 3
 function WHC.InitializeSpeedRunTimer()
     local speedRunTimer = CreateFrame("Frame", "SpeedRunTimer", UIParent, RETAIL_BACKDROP)
     speedRunTimer:Hide()
     speedRunTimer:SetWidth(200)
-    speedRunTimer:SetHeight(70)
+    speedRunTimer:SetHeight(105)
+    if WHC.client.is1_14 then
+        speedRunTimer:SetHeight(100)
+    end
     speedRunTimer:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     speedRunTimer:SetBackdrop({
         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
         edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
         tile = true,
-        tileSize = 8,
+        tileSize = 16,
         edgeSize = 16,
-        insets = { left = 3, right = 3, top = 3, bottom = 3 }
+        insets = { left = 4, right = 4, top = 4, bottom = 4 }
     })
+    speedRunTimer:SetBackdropColor(0, 0, 0, 0.8)
+    speedRunTimer:SetBackdropBorderColor(.5, .5, .5, 1)
 
     speedRunTimer:EnableMouse(true)
     speedRunTimer:SetMovable(true)
     speedRunTimer:RegisterForDrag("LeftButton")
-    speedRunTimer:SetScript("OnDragStart", function(self)
-        self = self or this
-        self:StartMoving()
+    speedRunTimer:SetScript("OnDragStart", function()
+        speedRunTimer:StartMoving()
     end)
 
-    speedRunTimer:SetScript("OnDragStop", function(self)
-        self = self or this
-        self:StopMovingOrSizing()
+    speedRunTimer:SetScript("OnDragStop", function()
+        speedRunTimer:StopMovingOrSizing()
     end)
 
+    local closeButton = CreateFrame("Button", nil, speedRunTimer, "UIPanelCloseButton")
+    closeButton:SetPoint("TOPRIGHT", speedRunTimer, "TOPRIGHT", 2, 1)
+    closeButton:SetWidth(36)
+    closeButton:SetHeight(36)
+    closeButton:SetText("Close")
+    closeButton:SetScript("OnClick", function()
+        PlaySound(WHC.sounds.checkBoxOff)
+        WhcAddonSettings.speedRunTimer.showTimer = 0
+        WHC_SETTINGS.speedRunTimerBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.speedRunTimer.showTimer))
+        speedRunTimer:Hide()
+    end)
+
+    createTitleRow(speedRunTimer, "Speed run timer")
     speedRunTimer.dungeon = createRow(speedRunTimer, "DungeonName", "(10-20)")
-    speedRunTimer.status = createRow(speedRunTimer, "Status", "Valid")
+    speedRunTimer.status = createRow(speedRunTimer, "Status:", "Valid")
     speedRunTimer.currentTime = createRow(speedRunTimer, "Current time:", "0:00:00")
     speedRunTimer.personalRecord = createRow(speedRunTimer, "Personal record:", "0:00:00")
     speedRunTimer.serverRecord = createRow(speedRunTimer, "Server record:", "0:00:00")
