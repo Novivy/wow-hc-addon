@@ -31,6 +31,25 @@ function WHC.GetItemIDFromLink(itemLink)
     return tonumber(itemID)
 end
 
+function WHC.Modulus(x, y)
+    if WHC.client.is1_12 then
+        return math.mod(x, y)
+    end
+
+    return math.fmod(x, y)
+end
+
+function WHC.SecondsToClock(seconds)
+    if seconds < 0 then
+        seconds = 0
+    end
+
+    local hours = string.format("%01d", math.floor(seconds/3600))
+    local mins = string.format("%02d", math.floor(WHC.Modulus(seconds, 3600) / 60))
+    local secs = string.format("%02d", math.floor(WHC.Modulus(WHC.Modulus(seconds, 3600), 60)))
+    return hours..":"..mins..":"..secs
+end
+
 -- Function to print debug messages
 function WHC.DebugPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage(tostring(message))

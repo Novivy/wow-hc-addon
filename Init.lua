@@ -17,6 +17,7 @@ WHC.Frames = {
     UItab = nil,
     MapIcon = nil,
     DeathLogFrame = nil,
+    SpeedRunTimer = nil,
     Achievements = nil,
     AchievementButtonCharacter = nil,
     AchievementButtonInspect = nil,
@@ -101,6 +102,11 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     -- Ensure the specific setting exists and has a default value
     WhcAddonSettings.minimapicon = WhcAddonSettings.minimapicon or 1
     WhcAddonSettings.achievementbtn = WhcAddonSettings.achievementbtn or 1
+    WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
+    WhcAddonSettings.speedRunTimer = WhcAddonSettings.speedRunTimer or {}
+    WhcAddonSettings.speedRunTimer.showTimer = WhcAddonSettings.speedRunTimer.showTimer or 1
+    WhcAddonSettings.speedRunTimer.personalRecords = WhcAddonSettings.speedRunTimer.personalRecords or {}
+
     WhcAddonSettings.splash = WhcAddonSettings.splash or 0
     WhcAddonSettings.minimapX = WhcAddonSettings.minimapX or 0
     WhcAddonSettings.minimapY = WhcAddonSettings.minimapY or 0
@@ -108,7 +114,6 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.auction_medium = WhcAddonSettings.auction_medium or 0
     WhcAddonSettings.auction_long = WhcAddonSettings.auction_long or 0
     WhcAddonSettings.auction_deposit = WhcAddonSettings.auction_deposit or 0
-    WhcAddonSettings.recentDeaths = WhcAddonSettings.recentDeaths or 1
 
     WhcAchievementSettings = WhcAchievementSettings or {}
     WhcAchievementSettings.blockInvites = WhcAchievementSettings.blockInvites or 0
@@ -137,6 +142,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
     WHC.InitializeDeathLogFrame()
+    WHC.InitializeSpeedRunTimer()
     WHC.InitializeAchievementButtons()
     WHC.InitializeSupport()
     WHC.InitializeDynamicMounts()

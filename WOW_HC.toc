@@ -17,6 +17,7 @@ Tabs\Support.lua
 UI.lua
 Death.lua
 RecentDeaths.lua
+SpeedRunTimer.lua
 Support.lua
 Events.lua
 MinimapButton.lua
