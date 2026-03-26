@@ -180,7 +180,7 @@ function WHC.InitializeSpeedRunTimer()
     end
 
     function speedRunTimer:StopTimer(status, seconds)
-        local wasTimerRunning = self:GetScript()
+        local wasTimerRunning = self:GetScript("OnUpdate")
         self:SetScript("OnUpdate", nil)
         self:SetCurrentTime(seconds)
         self:SetStatus(status)
