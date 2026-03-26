@@ -30,14 +30,14 @@ local function createTitleRow(parent, labelText)
 
     local label = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     label:SetText(labelText)
-    label:SetPoint("TOP", row, "TOP")
+    label:SetPoint("TOP", row, "TOP", 0, -10)
 
     row.label = label
-    row:SetHeight(label:GetHeight() + 5)
-    row:SetWidth(parent:GetWidth() - 8)
+    row:SetHeight(label:GetHeight() + 20)
+    row:SetWidth(parent:GetWidth())
     row:Show()
 
-    row:SetPoint("TOP", parent, "TOP", 0, -10)
+    row:SetPoint("TOP", parent, "TOP")
 
     previousRow = row
 
@@ -48,22 +48,22 @@ local function createRow(parent, labelText, valueText)
 
     local label = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     label:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
-    label:SetPoint("TOPLEFT", row, "TOPLEFT")
+    label:SetPoint("LEFT", row, "LEFT")
     label:SetText(labelText)
 
     local value = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     value:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
-    value:SetPoint("TOPRIGHT", row, "TOPRIGHT")
+    value:SetPoint("RIGHT", row, "RIGHT")
     value:SetText(valueText)
     value:SetJustifyH("RIGHT")
 
     row.label = label
     row.value = value
-    row:SetHeight(label:GetHeight())
-    row:SetWidth(parent:GetWidth() - 8)
+    row:SetHeight(label:GetHeight() + 2)
+    row:SetWidth(parent:GetWidth() - 15)
     row:Show()
 
-    row:SetPoint("TOPLEFT", previousRow, "BOTTOMLEFT", 0, -2)
+    row:SetPoint("TOP", previousRow, "BOTTOM")
 
     previousRow = row
 
@@ -73,11 +73,8 @@ end
 function WHC.InitializeSpeedRunTimer()
     local speedRunTimer = CreateFrame("Frame", "SpeedRunTimer", UIParent, RETAIL_BACKDROP)
     speedRunTimer:Hide()
-    speedRunTimer:SetWidth(200)
-    speedRunTimer:SetHeight(105)
-    if WHC.client.is1_14 then
-        speedRunTimer:SetHeight(100)
-    end
+    speedRunTimer:SetWidth(210)
+    speedRunTimer:SetHeight(110)
     speedRunTimer:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     speedRunTimer:SetBackdrop({
         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -102,7 +99,7 @@ function WHC.InitializeSpeedRunTimer()
     end)
 
     local closeButton = CreateFrame("Button", nil, speedRunTimer, "UIPanelCloseButton")
-    closeButton:SetPoint("TOPRIGHT", speedRunTimer, "TOPRIGHT", 2, 1)
+    closeButton:SetPoint("TOPRIGHT", speedRunTimer, "TOPRIGHT", 0, 1)
     closeButton:SetWidth(36)
     closeButton:SetHeight(36)
     closeButton:SetText("Close")
