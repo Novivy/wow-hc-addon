@@ -11,8 +11,8 @@
 - Changed the description for the slayer achievements
 - Added hidden achievement checkboxes to all clients. Disabled them and added hover text telling why the setting cannot be activated in the client
 - Added achievement setting for Tidehunter slayer achievement
-- Added speed run timer for dungeons
-- Added setting to display speed run timer in dungeons
+- Added speedrun timer for dungeons
+- Added setting to display speedrun timer in dungeons
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
