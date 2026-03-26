@@ -174,7 +174,7 @@ function WHC.Tab_Settings(content)
         end
     end)
 
-    WHC_SETTINGS.speedRunTimerBtn = createSettingsCheckBox(scrollContent, "Display dungeon speed run timer")
+    WHC_SETTINGS.speedRunTimerBtn = createSettingsCheckBox(scrollContent, "Display dungeon speedrun timer")
     WHC_SETTINGS.speedRunTimerBtn:SetScript("OnClick", function()
         WhcAddonSettings.speedRunTimer.showTimer = getCheckedValueAndPlaySound(WHC_SETTINGS.speedRunTimerBtn)
 

@@ -110,7 +110,7 @@ function WHC.InitializeSpeedRunTimer()
         speedRunTimer:Hide()
     end)
 
-    createTitleRow(speedRunTimer, "Speed run timer")
+    createTitleRow(speedRunTimer, "Speedrun timer")
     speedRunTimer.dungeon = createRow(speedRunTimer, "DungeonName", "(10-20)")
     speedRunTimer.status = createRow(speedRunTimer, "Status:", "Valid")
     speedRunTimer.currentTime = createRow(speedRunTimer, "Current time:", "0:00:00")
