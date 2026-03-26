@@ -3,16 +3,6 @@
 
 
 ## Changelog for next update
-- Fixed Help Yourself achievement to no longer abandons profession quests on login.
-- Fixed 1.14 shift-clicking player names in the chat causing an error.
-- Fixed 1.14 right-click menu stop working / showing support menu after reporting a player
-- Fixed error when mousing over another player's dynamic mount buff
-- Fixed green items of the Bear/Eagle/Tiger links not showing any stats across clients
-- Changed the description for the slayer achievements
-- Added hidden achievement checkboxes to all clients. Disabled them and added hover text telling why the setting cannot be activated in the client
-- Added achievement setting for Tidehunter slayer achievement
-- Added speedrun timer for dungeons
-- Added setting to display speedrun timer in dungeons
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
@@ -28,6 +18,18 @@
 
 ## Past versions
 
+
+### 1.2
+- Fixed Help Yourself achievement to no longer abandons profession quests on login.
+- Fixed 1.14 shift-clicking player names in the chat causing an error.
+- Fixed 1.14 right-click menu stop working / showing support menu after reporting a player
+- Fixed error when mousing over another player's dynamic mount buff
+- Fixed green items of the Bear/Eagle/Tiger links not showing any stats across clients
+- Changed the description for the slayer achievements
+- Added hidden achievement checkboxes to all clients. Disabled them and added hover text telling why the setting cannot be activated in the client
+- Added achievement setting for Tidehunter slayer achievement
+- Added speedrun timer for dungeons
+- Added setting to display speedrun timer in dungeons
 
 ### 1.1
 - Settings checkbox for Marathon Runner achievement, blocking learning riding skill
