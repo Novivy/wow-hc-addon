@@ -3,6 +3,7 @@
 
 
 ## Changelog for next update
+- Added 4 rare / quest murlocs to the list of murlocs for the Tidehunter achievement
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
