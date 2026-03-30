@@ -1106,6 +1106,7 @@ local boarNpcs = {
     [5993] = true, ["Helboar"] = true, -- Demon
 }
 
+-- Source: https://wowwiki-archive.fandom.com/wiki/Known_murloc_territories_and_villages
 local murlocNpcs = {
     [285] = true, ["Murloc"] = true,
     [126] = true, ["Murloc Coastrunner"] = true,
@@ -1200,13 +1201,17 @@ local murlocNpcs = {
     [4820] = true, ["Blindlight Oracle"] = true,
     [6243] = true, ["Gelihast"] = true, -- Boss
 
-    -- Rare and special mobs
+    -- Rare, special and quest mobs
     [520]   = true, ["Brack"] = true,
     [14230] = true, ["Burgle Eye"] = true,
     [645]   = true, ["Cookie"] = true, -- Deadmines boss
+    [1911]  = true, ["Deeb"] = true,
+    [14446] = true, ["Fingat"] = true,
     [7015]  = true, ["Flagglemurk the Cruel"] = true,
     [14487] = true, ["Gluggle"] = true,
     [1259]  = true, ["Gobbler"] = true,
+    [9916]  = true, ["Jarquia"] = true,
+    [1910]  = true, ["Muad"] = true,
     [10643] = true, ["Mugglefin"] = true,
     [10323] = true, ["Murkdeep"] = true,
     [3654]  = true, ["Mutanus the Devourer"] = true, -- Wailing Caverns boss
