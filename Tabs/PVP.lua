@@ -57,6 +57,7 @@ local function bgSlot(content, index, icon, label, desc)
         iconAllianceFrame:SetHeight(24)
         iconAllianceFrame:SetPoint("TOPLEFT", MerchantItemTemplate, "TOPLEFT", 367, -31)
         iconAllianceFrame:SetDrawLayer("OVERLAY")
+        MerchantItemTemplate.iconAlliance = iconAllianceFrame
 
         local labelAlliance = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
         labelAlliance:SetText("-")
@@ -74,6 +75,7 @@ local function bgSlot(content, index, icon, label, desc)
         iconHordeFrame:SetHeight(24)
         iconHordeFrame:SetPoint("TOPLEFT", MerchantItemTemplate, "TOPLEFT", 302, -31)
         iconHordeFrame:SetDrawLayer("OVERLAY")
+        MerchantItemTemplate.iconHorde = iconHordeFrame
 
         local labelHorde = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
         labelHorde:SetText("-")
@@ -83,6 +85,16 @@ local function bgSlot(content, index, icon, label, desc)
         labelHorde:SetPoint("TOPLEFT", iconHordeFrame, "TOPLEFT", -10, 5)
         labelHorde:SetFont("Fonts\\FRIZQT__.TTF", 12)
         MerchantItemTemplate.horde = labelHorde
+
+        local labelCross = MerchantItemTemplate:CreateFontString("$parentName", "BACKGROUND", "GameFontNormalSmall")
+        labelCross:SetText("-")
+        labelCross:SetJustifyH("CENTER")
+        labelCross:SetWidth(50)
+        labelCross:SetHeight(30)
+        labelCross:SetPoint("TOPLEFT", MerchantItemTemplate, "TOPLEFT", 325, -25)
+        labelCross:SetFont("Fonts\\FRIZQT__.TTF", 12)
+        labelCross:Hide()
+        MerchantItemTemplate.cross = labelCross
 
         if (index == 0) then
             WHC.Frames.UIBattleGrounds.ws = MerchantItemTemplate
@@ -112,6 +124,7 @@ local function bgSlot(content, index, icon, label, desc)
         labelSlash:SetPoint("TOPLEFT", MerchantItemTemplate, "TOPLEFT", 344, -25)
         labelSlash:SetFont("Fonts\\FRIZQT__.TTF", 12)
         labelSlash:SetTextColor(1, 1, 1)
+        MerchantItemTemplate.labelSlash = labelSlash
     end
 
     -- Create Create button

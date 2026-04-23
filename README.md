@@ -3,7 +3,6 @@
 
 
 ## Changelog for next update
-- Added 4 rare / quest murlocs to the list of murlocs for the Tidehunter achievement
 
 ## Future versions:
 - Prevent/disable auto-run when you are on a flypath
@@ -19,6 +18,9 @@
 
 ## Past versions
 
+### 1.3
+- Added 4 rare / quest murlocs to the list of murlocs for the Tidehunter achievement
+- Crossfaction handling for BG queue status
 
 ### 1.2
 - Fixed Help Yourself achievement to no longer abandons profession quests on login.

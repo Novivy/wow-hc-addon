@@ -348,6 +348,24 @@ local function handleChatEvent(arg1)
         return 0
     end
 
+    if string.find(lowerArg, "^::whc::bgcross:") then
+        local _, _, bg, result, minPlayers = string.find(lowerArg, "^::whc::bgcross:(%l+):(%d+):(%d+)")
+        local frame = WHC.Frames.UIBattleGrounds[bg]
+        if frame then
+            if frame.iconHorde then frame.iconHorde:Hide() end
+            if frame.iconAlliance then frame.iconAlliance:Hide() end
+            if frame.horde then frame.horde:Hide() end
+            if frame.alliance then frame.alliance:Hide() end
+            if frame.labelSlash then frame.labelSlash:Hide() end
+            if frame.cross then
+                frame.cross:SetText(result .. "/" .. minPlayers)
+                frame.cross:Show()
+            end
+        end
+
+        return 0
+    end
+
     if string.find(lowerArg, "^::whc::debug:") then
         local result = string.gsub(arg1, "^::whc::debug:", "")
         SendChatMessage(result, "WHISPER", GetDefaultLanguage(), UnitName("player"));
