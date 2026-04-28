@@ -3,6 +3,7 @@
 
 
 ## Changelog for next update
+- Added boss progress for dungeo ntimer
 
 ## Future versions:
 

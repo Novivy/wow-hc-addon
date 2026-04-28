@@ -427,6 +427,12 @@ local function handleChatEvent(arg1)
             return 0
         end
 
+        local _, _, killed, total = string.find(lowerArg, "^::whc::speedrun:boss:(%d+):(%d+)")
+        if killed and total then
+            WHC.Frames.SpeedRunTimer:SetProgress(tonumber(killed), tonumber(total))
+            return 0
+        end
+
         _, _, seconds = string.find(lowerArg, "^::whc::speedrun:record:(%d+)")
         if seconds then
             WHC.Frames.SpeedRunTimer:SetServerRecord(tonumber(seconds))
