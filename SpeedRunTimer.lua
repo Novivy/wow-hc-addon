@@ -113,7 +113,7 @@ function WHC.InitializeSpeedRunTimer()
     createTitleRow(speedRunTimer, "Dungeon timer")
     speedRunTimer.dungeon = createRow(speedRunTimer, "DungeonName", "(10-20)")
     speedRunTimer.status = createRow(speedRunTimer, "Status:", "Valid")
-    speedRunTimer.progress = createRow(speedRunTimer, "Progress:", "0/0")
+    speedRunTimer.bossesKilled = createRow(speedRunTimer, "Bosses killed:", "0/0")
     speedRunTimer.currentTime = createRow(speedRunTimer, "Current time:", "0:00:00")
     speedRunTimer.personalRecord = createRow(speedRunTimer, "Personal record:", "0:00:00")
     speedRunTimer.serverRecord = createRow(speedRunTimer, "Server record:", "0:00:00")
@@ -220,8 +220,8 @@ function WHC.InitializeSpeedRunTimer()
         self.status.value:SetTextColor(color.r, color.g, color.b, 1)
     end
 
-    function speedRunTimer:SetProgress(killed, total)
-        self.progress.value:SetText(string.format("%d / %d", killed, total))
+    function speedRunTimer:SetBossesKilled(killed, total)
+        self.bossesKilled.value:SetText(string.format("%d / %d", killed, total))
     end
 
     function speedRunTimer:setTime(frame, seconds)

@@ -429,7 +429,7 @@ local function handleChatEvent(arg1)
 
         local _, _, killed, total = string.find(lowerArg, "^::whc::speedrun:boss:(%d+):(%d+)")
         if killed and total then
-            WHC.Frames.SpeedRunTimer:SetProgress(tonumber(killed), tonumber(total))
+            WHC.Frames.SpeedRunTimer:SetBossesKilled(tonumber(killed), tonumber(total))
             return 0
         end
 
