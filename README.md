@@ -3,12 +3,12 @@
 
 
 ## Changelog for next update
+- Implemented Blue shaman, using the late WotLK color https://wowpedia.fandom.com/wiki/Class_colors
 
 ## Future versions:
 
 - When in queue for BG, make the left click on the minimap icon open the addon on the PVP tab
 - When closing and opening the addon again, switch to the last tab opened
-- Implement Blue shaman (working 1.14 addon: https://www.curseforge.com/wow/addons/whoa-blueshamans)
 - Fix BG crossfaction leaderboard display
 
 

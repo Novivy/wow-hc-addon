@@ -106,6 +106,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.speedRunTimer = WhcAddonSettings.speedRunTimer or {}
     WhcAddonSettings.speedRunTimer.showTimer = WhcAddonSettings.speedRunTimer.showTimer or 1
     WhcAddonSettings.speedRunTimer.personalRecords = WhcAddonSettings.speedRunTimer.personalRecords or {}
+    WhcAddonSettings.blueShaman = WhcAddonSettings.blueShaman or 1
 
     WhcAddonSettings.splash = WhcAddonSettings.splash or 0
     WhcAddonSettings.minimapX = WhcAddonSettings.minimapX or 0
@@ -143,6 +144,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeMinimapIcon()
     WHC.InitializeDeathLogFrame()
     WHC.InitializeSpeedRunTimer()
+    WHC.InitializeBlueShaman()
     WHC.InitializeAchievementButtons()
     WHC.InitializeSupport()
     WHC.InitializeDynamicMounts()

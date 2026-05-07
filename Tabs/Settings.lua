@@ -118,6 +118,45 @@ local function getCheckedValueAndPlaySound(checkBox)
     return checked
 end
 
+local function toggleBlueShaman(isClick)
+    if WhcAddonSettings.blueShaman == 0 then
+        RAID_CLASS_COLORS["SHAMAN"] = RAID_CLASS_COLORS["PALADIN"]
+    else
+        -- WotLK blue is a little easier to read on 1.12 and quite a bit easier on 1.14. It also matches the other class colors
+        local blueShaman = { r = 0.00, g = 0.44, b = 0.87 } -- WotLK blue shaman: https://wowpedia.fandom.com/wiki/Class_colors: Patch 3.2.2 (2009-09-22): RAID_CLASS_COLORS added in FrameXML/Constants.lua, and Shaman changed from 2459FF to 0070DE.[7]
+        --local blueShaman = { r = 0.14, g = 0.35, b = 1.00 } -- TBC blue shaman
+        if WHC.client.is1_14 then
+            blueShaman = CreateColor(blueShaman.r, blueShaman.g, blueShaman.b)
+            blueShaman.colorStr = RAID_CLASS_COLORS["SHAMAN"]:GenerateHexColor()
+        end
+
+        RAID_CLASS_COLORS["SHAMAN"] = blueShaman
+    end
+
+    -- Update Raid pane under the Social tab
+    RaidFrame_Update()
+
+    -- Update pull out groups
+    for i=1, NUM_RAID_GROUPS do
+        local raidPulloutFrame = getglobal("RaidPullout"..i)
+        if raidPulloutFrame then
+            RaidPullout_Update(raidPulloutFrame)
+        end
+    end
+
+    -- Update 1.14 raid UI
+    -- Adding is click because the WOW_HC addon would fail during initialization because the CompactUnitFrameProfiles were not ready.
+    if WHC.client.is1_14 and DefaultCompactUnitFrameOptions["useClassColors"] and isClick then
+        CompactUnitFrameProfiles_ApplyCurrentSettings()
+    end
+
+    -- All other addons like Luna Unit Frames etc. needs to do a /reload to update
+end
+
+function WHC.InitializeBlueShaman()
+    toggleBlueShaman(false)
+end
+
 function WHC.Tab_Settings(content)
     local title = createTitle(content, "Settings", 18)
 
@@ -182,6 +221,13 @@ function WHC.Tab_Settings(content)
         if (WhcAddonSettings.speedRunTimer.showTimer == 1) then
             WHC.Frames.SpeedRunTimer:ShowInDungeon()
         end
+    end)
+
+    WHC_SETTINGS.blueShamanBtn = createSettingsCheckBox(scrollContent, "Display shamans in blue as in TBC")
+    WHC_SETTINGS.blueShamanBtn:SetScript("OnClick", function()
+        WhcAddonSettings.blueShaman = getCheckedValueAndPlaySound(WHC_SETTINGS.blueShamanBtn)
+
+        toggleBlueShaman(true)
     end)
 
     getNextOffsetY()
@@ -340,9 +386,9 @@ function WHC.Tab_Settings(content)
     end)
 
     if WHC.client.is1_14 then
-        WHC_SETTINGS.blockMagicItemsCheckbox:setEnabled(0, "Disable for 1.14 because the UseContainerItem function (right-click in backpack) is protected and cannot be overwritten.")
-        WHC_SETTINGS.blockArmorItemsCheckbox:setEnabled(0, "Disable for 1.14 because the UseContainerItem function (right-click in backpack) is protected and cannot be overwritten.")
-        WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:setEnabled(0, "Disable for 1.14 because the UseContainerItem function (right-click in backpack) is protected and cannot be overwritten.")
+        WHC_SETTINGS.blockMagicItemsCheckbox:setEnabled(0, "Disabled for 1.14 because the UseContainerItem function (right-click in backpack) is protected and cannot be overwritten.")
+        WHC_SETTINGS.blockArmorItemsCheckbox:setEnabled(0, "Disabled for 1.14 because the UseContainerItem function (right-click in backpack) is protected and cannot be overwritten.")
+        WHC_SETTINGS.blockNonSelfMadeItemsCheckbox:setEnabled(0, "Disabled for 1.14 because the UseContainerItem function (right-click in backpack) is protected and cannot be overwritten.")
     end
 
     if WHC.client.is1_12 and not WHC.client.isSuperWow and not WHC.client.isEnglish then
