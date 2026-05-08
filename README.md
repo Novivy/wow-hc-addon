@@ -3,7 +3,10 @@
 
 
 ## Changelog for next update
+
 - Implemented Blue shaman, using the late WotLK color https://wowpedia.fandom.com/wiki/Class_colors
+- Added boss progress for dungeo ntimer
+
 
 ## Future versions:
 
