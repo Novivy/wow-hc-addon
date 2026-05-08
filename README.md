@@ -3,8 +3,7 @@
 
 
 ## Changelog for next update
-
-
+- Fixed Promote / demote not working on 1.14
 
 ## Future versions:
 
