@@ -50,6 +50,7 @@ function WHC.UIShowTabContent(tabIndex)
         WHC_SETTINGS.achievementbtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementbtn))
         WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
         WHC_SETTINGS.speedRunTimerBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.speedRunTimer.showTimer))
+        WHC_SETTINGS.blueShamanBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.blueShaman))
 
         WHC_SETTINGS.blockInvitesCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockInvites))
         WHC_SETTINGS.blockTradesCheckbox:SetChecked(WHC.CheckedValue(WhcAchievementSettings.blockTrades))
