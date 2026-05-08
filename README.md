@@ -4,8 +4,6 @@
 
 ## Changelog for next update
 
-- Implemented Blue shaman, using the late WotLK color https://wowpedia.fandom.com/wiki/Class_colors
-- Added boss progress for dungeo ntimer
 
 
 ## Future versions:
@@ -27,6 +25,11 @@
 
 
 ## Past versions
+
+### 1.4
+- Implemented Blue shaman, using the late WotLK color https://wowpedia.fandom.com/wiki/Class_colors
+- Added boss progress for dungeon timer
+
 
 ### 1.3
 - Added 4 rare / quest murlocs to the list of murlocs for the Tidehunter achievement
