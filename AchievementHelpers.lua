@@ -49,7 +49,7 @@ if GuildMemberGroupInviteButton and RETAIL == 0 then
     -- The GuildMemberGroupInviteButton:Enable() is a protected function on 1.14
     -- Hooking it blocks players from promoting/demoting guild members on 1.14
     -- The button seems to do nothing on the 1.14 client
-    -- Even if the button works on 1.14, the underlying invite call will be blocked below
+    -- Even if the button works on 1.14, the underlying invite call will be blocked by code below
     WHC.HookSecureFunc(GuildMemberGroupInviteButton, "Enable", function()
         if WhcAchievementSettings.blockInvites == 1 then
             GuildMemberGroupInviteButton:Disable()
