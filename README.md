@@ -4,6 +4,7 @@
 
 ## Changelog for next update
 - Fixed Promote / demote not working on 1.14
+- Fix dot-commands in channels executing as chat on 1.12 client
 
 ## Future versions:
 

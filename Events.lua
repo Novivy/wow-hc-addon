@@ -485,3 +485,17 @@ else
         xx_ChatFrame_OnEvent(event)
     end
 end
+
+-- On 1.12, the server only executes dot-commands sent as SAY. Redirect channel messages
+-- starting with '.' to SAY so the server runs the command instead of broadcasting it.
+function WHC.InitializeDotCommandFix()
+    if not WHC.client.is1_12 then return end
+
+    local orig = SendChatMessage
+    SendChatMessage = function(msg, chatType, language, channel)
+        if chatType == "CHANNEL" and msg and string.sub(msg, 1, 1) == "." then
+            return orig(msg, "SAY", language)
+        end
+        return orig(msg, chatType, language, channel)
+    end
+end

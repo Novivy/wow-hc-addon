@@ -150,6 +150,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeDynamicMounts()
     WHC.InitializeTradableRaidLoot()
     WHC.InitializeItemSuffixLinksFix()
+    WHC.InitializeDotCommandFix()
 
     if WHC.server.isHardcore then
         WHC.InitializeDeathPopupAppeal()
