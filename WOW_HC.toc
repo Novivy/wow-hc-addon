@@ -2,7 +2,7 @@
 ## Title: |cffff8000WOW-HC.com|r
 ## Notes: Official WOW-HC addon
 ## Author: Nyu, DBFBlackbull(Windcaller)
-## Version: 1.4
+## Version: 1.5
 ## SavedVariables: WhcAddonSettings
 ## SavedVariablesPerCharacter: WhcAchievementSettings
 

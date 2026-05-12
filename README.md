@@ -6,13 +6,10 @@
 - Fixed Promote / demote not working on 1.14
 - Fix dot-commands in channels executing as chat on 1.12 client
 - When in queue for BG, make the left click on the minimap icon open the addon on the PVP tab
-- 
+- When closing and opening the addon again, switch to the last tab opened
 ## Future versions:
 
-- When closing and opening the addon again, switch to the last tab opened
 - Fix BG crossfaction leaderboard display
-
-
 - Prevent/disable auto-run when you are on a flypath
 - /world join after a few seconds to prevent replacing general
 - settings checkbox to allow /creature say to only display death announcements
