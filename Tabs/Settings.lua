@@ -127,7 +127,7 @@ local function toggleBlueShaman(isClick)
         --local blueShaman = { r = 0.14, g = 0.35, b = 1.00 } -- TBC blue shaman
         if WHC.client.is1_14 then
             blueShaman = CreateColor(blueShaman.r, blueShaman.g, blueShaman.b)
-            blueShaman.colorStr = RAID_CLASS_COLORS["SHAMAN"]:GenerateHexColor()
+            blueShaman.colorStr = blueShaman:GenerateHexColor()
         end
 
         RAID_CLASS_COLORS["SHAMAN"] = blueShaman

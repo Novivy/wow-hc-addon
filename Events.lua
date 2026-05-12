@@ -265,12 +265,7 @@ local function getTargetAchievementsDescription()
     local name = UnitName("target")
     local _, englishClass = UnitClass("target")
 
-    local color = RAID_CLASS_COLORS[englishClass]
-    if englishClass == "SHAMAN" then
-        color = {r = 0.14, g = 0.35, b = 1, colorStr = "ff2459ff"} -- TBC Shaman color
-    end
-
-    local classColorCode = getColorCode(color)
+    local classColorCode = getColorCode(RAID_CLASS_COLORS[englishClass])
     local player = classColorCode .. name .. FONT_COLOR_CODE_CLOSE
     return "\nListing " .. player .. "'s achievements"
 end
