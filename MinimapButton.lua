@@ -55,4 +55,15 @@ function WHC.InitializeMinimapIcon()
     if (WhcAddonSettings.minimapicon == 1) then
         WHC.Frames.MapIcon:Show()
     end
+
+    if MiniMapBattlefieldFrame then
+        local origBGClick = MiniMapBattlefieldFrame:GetScript("OnClick")
+        MiniMapBattlefieldFrame:SetScript("OnClick", function(self, button)
+            if origBGClick then origBGClick(self, button) end
+            local clickedButton = button or arg1
+            if clickedButton == "LeftButton" then
+                WHC.UIShowTabContent("PVP")
+            end
+        end)
+    end
 end
