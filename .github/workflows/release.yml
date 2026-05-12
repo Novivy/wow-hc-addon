@@ -19,12 +19,25 @@ jobs:
         id: tag
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+      - name: Generate changelog
+        id: changelog
+        run: |
+          PREV_TAG=$(git tag --sort=-creatordate | grep -v "^${{ steps.tag.outputs.tag }}$" | head -n 1)
+          if [ -n "$PREV_TAG" ]; then
+            NOTES=$(git log "${PREV_TAG}".."${{ steps.tag.outputs.tag }}" --pretty=format:"- %s" --no-merges)
+          else
+            NOTES=$(git log "${{ steps.tag.outputs.tag }}" --pretty=format:"- %s" --no-merges)
+          fi
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create zip
         run: |
           mkdir -p staging/WOW_HC
           rsync -av --exclude='.git' --exclude='.github' --exclude='.idea' --exclude='.gitignore' . staging/WOW_HC/
           cd staging
-          zip -r "../WOW_HC-${{ steps.tag.outputs.tag }}.zip" WOW_HC/
+          zip -r "../WOW_HC.zip" WOW_HC/
 
       - name: Create GitHub release
         env:
@@ -32,5 +45,6 @@ jobs:
         run: |
           gh release create "${{ steps.tag.outputs.tag }}" \
             --title "${{ steps.tag.outputs.tag }}" \
+            --notes "${{ steps.changelog.outputs.notes }}" \
             --latest \
-            "WOW_HC-${{ steps.tag.outputs.tag }}.zip"
+            "WOW_HC.zip"
