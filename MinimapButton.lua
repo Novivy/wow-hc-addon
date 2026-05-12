@@ -18,7 +18,7 @@ function WHC.InitializeMinimapIcon()
         if (WHC:IsVisible()) then
             WHC.UIShowTabContent(0)
         else
-            WHC.UIShowTabContent("General")
+            WHC.UIShowTabContent(WHC.lastTab)
         end
     end)
 
@@ -57,13 +57,28 @@ function WHC.InitializeMinimapIcon()
     end
 
     if MiniMapBattlefieldFrame then
-        local origBGClick = MiniMapBattlefieldFrame:GetScript("OnClick")
-        MiniMapBattlefieldFrame:SetScript("OnClick", function(self, button)
-            if origBGClick then origBGClick(self, button) end
-            local clickedButton = button or arg1
-            if clickedButton == "LeftButton" then
-                WHC.UIShowTabContent("PVP")
-            end
-        end)
+        if RETAIL == 1 then
+            MiniMapBattlefieldFrame:HookScript("OnClick", function(self, button)
+                if button == "LeftButton" then
+                    if WHC:IsVisible() then
+                        WHC.UIShowTabContent(0)
+                    else
+                        WHC.UIShowTabContent("PVP")
+                    end
+                end
+            end)
+        else
+            local origBGClick = MiniMapBattlefieldFrame:GetScript("OnClick")
+            MiniMapBattlefieldFrame:SetScript("OnClick", function()
+                if origBGClick then origBGClick() end
+                if arg1 == "LeftButton" then
+                    if WHC:IsVisible() then
+                        WHC.UIShowTabContent(0)
+                    else
+                        WHC.UIShowTabContent("PVP")
+                    end
+                end
+            end)
+        end
     end
 end

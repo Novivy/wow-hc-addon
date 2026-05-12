@@ -12,6 +12,8 @@ function WHC.CheckedValue(value)
     return false
 end
 
+WHC.lastTab = "General"
+
 -- Function to show the selected tab's content
 function WHC.UIShowTabContent(tabIndex)
     if tabIndex == 0 then
@@ -19,6 +21,7 @@ function WHC.UIShowTabContent(tabIndex)
         return
     end
 
+    WHC.lastTab = tabIndex
     WHC:Show()
     if (tabIndex == "General") then
         --
@@ -237,6 +240,6 @@ function WHC.InitializeUI()
             return
         end
 
-        WHC.UIShowTabContent("General") -- Initialize with the first tab visible
+        WHC.UIShowTabContent(WHC.lastTab)
     end
 end
