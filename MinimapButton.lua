@@ -56,16 +56,16 @@ function WHC.InitializeMinimapIcon()
 
     minimapIcon:SetFrameLevel(9)
     minimapIcon:SetFrameStrata('HIGH')
-    minimapIcon:SetWidth(30)
-    minimapIcon:SetHeight(30)
+    minimapIcon:SetWidth(25)
+    minimapIcon:SetHeight(25)
     minimapIcon:SetNormalTexture("Interface\\AddOns\\WOW_HC\\Images\\wow-hardcore-logo-round")
     minimapIcon:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
 
     local border = minimapIcon:CreateTexture(nil, "OVERLAY")
     border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-    border:SetPoint("CENTER", minimapIcon, "CENTER", 14, -15)
-    border:SetWidth(66)
-    border:SetHeight(66)
+    border:SetPoint("CENTER", minimapIcon, "CENTER", 12, -13)
+    border:SetWidth(56)
+    border:SetHeight(56)
 
     WHC.Frames.MapIcon = minimapIcon
     WHC.Frames.MapIcon:Hide()
