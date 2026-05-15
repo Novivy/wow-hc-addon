@@ -109,8 +109,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.blueShaman = WhcAddonSettings.blueShaman or 1
 
     WhcAddonSettings.splash = WhcAddonSettings.splash or 0
-    WhcAddonSettings.minimapX = WhcAddonSettings.minimapX or 0
-    WhcAddonSettings.minimapY = WhcAddonSettings.minimapY or 0
+    WhcAddonSettings.minimapAngle = WhcAddonSettings.minimapAngle or 225
     WhcAddonSettings.auction_short = WhcAddonSettings.auction_short or 0
     WhcAddonSettings.auction_medium = WhcAddonSettings.auction_medium or 0
     WhcAddonSettings.auction_long = WhcAddonSettings.auction_long or 0
