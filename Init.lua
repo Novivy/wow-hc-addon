@@ -45,6 +45,23 @@ WHC.ITEM_QUALITY = {
     ARTIFACT = 6,  -- Light Gold
 }
 
+WHC.TAB = {
+    GENERAL = "General",
+    ACHIEVEMENTS = "Achievements",
+    PVP = "PVP",
+    SHOP = "Shop",
+    SUPPORT = "Support",
+    SETTINGS = "Settings"
+}
+WHC.TAB_KEYS = {
+    WHC.TAB.GENERAL,
+    WHC.TAB.ACHIEVEMENTS,
+    WHC.TAB.PVP,
+    WHC.TAB.SHOP,
+    WHC.TAB.SUPPORT,
+    WHC.TAB.SETTINGS,
+}
+
 WHC.ADDON_PREFIX = ITEM_QUALITY_COLORS[WHC.ITEM_QUALITY.LEGENDARY].hex.."[WOW-HC addon]: "..FONT_COLOR_CODE_CLOSE
 
 WHC:RegisterEvent("ADDON_LOADED")
@@ -66,6 +83,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         RETAIL_BACKDROP = "BackdropTemplate"
     end
 
+    WHC.lastTab = WHC.TAB.GENERAL
     WHC.player = {
         name = UnitName("player"),
         class = UnitClass("player"),
@@ -157,7 +175,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     if (WhcAddonSettings.splash == 0) then
         WhcAddonSettings.splash = 1
 
-        WHC.UIShowTabContent("General")
+        WHC.UIShowTabContent(WHC.TAB.GENERAL)
     end
 
     WHC.SetBlockInvites()

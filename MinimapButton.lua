@@ -89,7 +89,7 @@ function WHC.InitializeMinimapIcon()
                     if WHC:IsVisible() then
                         WHC.UIShowTabContent(0)
                     else
-                        WHC.UIShowTabContent("PVP")
+                        WHC.UIShowTabContent(WHC.TAB.PVP)
                     end
                 end
             end)
@@ -101,7 +101,7 @@ function WHC.InitializeMinimapIcon()
                     if WHC:IsVisible() then
                         WHC.UIShowTabContent(0)
                     else
-                        WHC.UIShowTabContent("PVP")
+                        WHC.UIShowTabContent(WHC.TAB.PVP)
                     end
                 end
             end)

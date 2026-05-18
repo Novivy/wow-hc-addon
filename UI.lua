@@ -1,5 +1,3 @@
-local tabKeys = { "General", "Achievements", "PVP", "Shop", "Support", "Settings" }
-
 function WHC.CheckedValue(value)
     if RETAIL == 0 then
         return value
@@ -12,8 +10,6 @@ function WHC.CheckedValue(value)
     return false
 end
 
-WHC.lastTab = "General"
-
 -- Function to show the selected tab's content
 function WHC.UIShowTabContent(tabIndex)
     if tabIndex == 0 then
@@ -23,9 +19,9 @@ function WHC.UIShowTabContent(tabIndex)
 
     WHC.lastTab = tabIndex
     WHC:Show()
-    if (tabIndex == "General") then
+    if (tabIndex == WHC.TAB.GENERAL) then
         --
-    elseif (tabIndex == "Achievements") then
+    elseif (tabIndex == WHC.TAB.ACHIEVEMENTS) then
         -- Set all achievements as failed
         for key, value in pairs(WHC.Frames.Achievements) do
             WHC.ToggleAchievement(value, true)
@@ -34,21 +30,21 @@ function WHC.UIShowTabContent(tabIndex)
         -- Update achievement status from server
         local msg = ".whc achievements"
         SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-    elseif (tabIndex == "PVP") then
+    elseif (tabIndex == WHC.TAB.PVP) then
         if (WHC.Frames.UIspecialEvent ~= nil) then
             WHC.Frames.UIspecialEvent:SetButtonState("DISABLED")
         end
 
         local msg = ".whc event"
         SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-    elseif (tabIndex == "Support") then
+    elseif (tabIndex == WHC.TAB.SUPPORT) then
         WHC.Frames.UItab[tabIndex].editBox:SetText("")
         WHC.Frames.UItab[tabIndex].createButton:SetText("Create ticket")
         WHC.Frames.UItab[tabIndex].closeButton:SetText("Close")
 
         local msg = ".whc ticketget"
         SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-    elseif (tabIndex == "Settings") then
+    elseif (tabIndex == WHC.TAB.SETTINGS) then
         WHC_SETTINGS.minimap:SetChecked(WHC.CheckedValue(WhcAddonSettings.minimapicon))
         WHC_SETTINGS.achievementbtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementbtn))
         WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
@@ -80,12 +76,12 @@ function WHC.UIShowTabContent(tabIndex)
     end
 
     -- Hide all tab contents first
-    for index, value in ipairs(tabKeys) do
-        if WHC.Frames.UItab[value] then
-            WHC.Frames.UItab[value]:Hide()
-            WHC.Frames.UItabHeader[value]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-InActiveTab")
-            WHC.Frames.UItabHeader[value].tabText:SetTextColor(0.933, 0.765, 0)
-            WHC.Frames.UItabHeader[value]:Enable()
+    for _, tabKey in ipairs(WHC.TAB_KEYS) do
+        if WHC.Frames.UItab[tabKey] then
+            WHC.Frames.UItab[tabKey]:Hide()
+            WHC.Frames.UItabHeader[tabKey]:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-InActiveTab")
+            WHC.Frames.UItabHeader[tabKey].tabText:SetTextColor(0.933, 0.765, 0)
+            WHC.Frames.UItabHeader[tabKey]:Enable()
         end
     end
 
@@ -102,7 +98,7 @@ function WHC.InitializeUI()
     -- Close with escape key
     tinsert(UISpecialFrames, WHC:GetName());
 
-    WHC:Hide()
+    WHC.UIShowTabContent(0)
     WHC:SetWidth(500)
     WHC:SetHeight(450)
     WHC:SetPoint("CENTER", UIParent, "CENTER", 0, 100)
@@ -128,7 +124,7 @@ function WHC.InitializeUI()
     closeFrame:SetHeight(30)
     closeFrame:SetPoint("TOPRIGHT", WHC, "TOPRIGHT", 7, 6)
     closeFrame:SetScript("OnClick", function()
-        WHC:Hide()
+        WHC.UIShowTabContent(0)
     end)
 
     local logo = WHC:CreateTexture(nil, "ARTWORK")
@@ -148,27 +144,27 @@ function WHC.InitializeUI()
 
     local i = 1;
     local widthTotal = 0
-    for index, value in ipairs(tabKeys) do
-        local tabHeader = CreateFrame("Button", "TabHeader" .. value, tabContainer)
+    for _, tabKey in ipairs(WHC.TAB_KEYS) do
+        local tabHeader = CreateFrame("Button", "TabHeader" .. tabKey, tabContainer)
         tabHeader:SetHeight(30)
 
         local width = 0
-        if value == "General" then
+        if tabKey == WHC.TAB.GENERAL then
             tabHeader:SetWidth(90)
             width = 91
-        elseif value == "Achievements" then
+        elseif tabKey == WHC.TAB.ACHIEVEMENTS then
             tabHeader:SetWidth(130)
             width = 119
-        elseif value == "PVP" then
+        elseif tabKey == WHC.TAB.PVP then
             tabHeader:SetWidth(70)
             width = 64
-        elseif value == "Shop" then
+        elseif tabKey == WHC.TAB.SHOP then
             tabHeader:SetWidth(70)
             width = 62
-        elseif value == "Support" then
+        elseif tabKey == WHC.TAB.SUPPORT then
             tabHeader:SetWidth(84)
             width = 76
-        elseif value == "Settings" then
+        elseif tabKey == WHC.TAB.SETTINGS then
             tabHeader:SetWidth(86)
             width = 0
         else
@@ -188,44 +184,44 @@ function WHC.InitializeUI()
 
         local tabText = tabHeader:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
         tabText:SetPoint("CENTER", tabHeader, "CENTER", 0, 3)
-        tabText:SetText(value)
+        tabText:SetText(tabKey)
         tabHeader.tabText = tabText
 
-        local index = value
+        local index = tabKey
         tabHeader:SetScript("OnClick", function()
             --WHC.DebugPrint("click " .. index)
             WHC.UIShowTabContent(index)
             PlaySound(WHC.sounds.selectTab)
         end)
 
-        WHC.Frames.UItabHeader[value] = tabHeader
+        WHC.Frames.UItabHeader[tabKey] = tabHeader
 
         -- TABS Content
-        local content = CreateFrame("Frame", "Tab" .. value .. "Content", WHC)
+        local content = CreateFrame("Frame", "Tab" .. tabKey .. "Content", WHC)
         content:SetWidth(500)
         content:SetHeight(440)
         content:SetPoint("TOPLEFT", WHC, "TOPLEFT", 0, -40)
         content:Hide()
 
-        if value == "Achievements" then
+        if tabKey == WHC.TAB.ACHIEVEMENTS then
             content = WHC.Tab_Achievements(content)
-        elseif value == "Support" then
+        elseif tabKey == WHC.TAB.SUPPORT then
             content = WHC.Tab_Support(content)
-        elseif value == "PVP" then
+        elseif tabKey == WHC.TAB.PVP then
             content = WHC.Tab_PVP(content)
-        elseif value == "General" then
+        elseif tabKey == WHC.TAB.GENERAL then
             content = WHC.Tab_General(content)
-        elseif value == "Shop" then
+        elseif tabKey == WHC.TAB.SHOP then
             content = WHC.Tab_Shop(content)
-        elseif value == "Settings" then
+        elseif tabKey == WHC.TAB.SETTINGS then
             content = WHC.Tab_Settings(content)
         else
             local text = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             text:SetPoint("CENTER", content, "CENTER", 0, 0)
-            text:SetText("Content for Tab " .. value)
+            text:SetText("Content for Tab " .. tabKey)
         end
 
-        WHC.Frames.UItab[value] = content
+        WHC.Frames.UItab[tabKey] = content
 
         i = i + 1
         widthTotal = widthTotal + width
@@ -236,8 +232,7 @@ function WHC.InitializeUI()
     SLASH_WOWHC1 = "/wowhc"
     SlashCmdList["WOWHC"] = function(msg)
         if WHC:IsVisible() then
-            WHC:Hide()
-            return
+            return WHC.UIShowTabContent(0)
         end
 
         WHC.UIShowTabContent(WHC.lastTab)

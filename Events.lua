@@ -77,7 +77,7 @@ local function createAchievementButton(frame, name)
     end)
 
     viewAchButton:SetScript("OnClick", function()
-        WHC.UIShowTabContent("Achievements")
+        WHC.UIShowTabContent(WHC.TAB.ACHIEVEMENTS)
     end)
 
     viewAchButton:Hide()
@@ -279,9 +279,9 @@ local function handleChatEvent(arg1)
     if string.find(lowerArg, "^::whc::ticket:") then
         local result = string.gsub(arg1, "^::whc::ticket:", "")
 
-        WHC.Frames.UItab["Support"].editBox:SetText(result)
-        WHC.Frames.UItab["Support"].createButton:SetText("Update ticket")
-        WHC.Frames.UItab["Support"].closeButton:SetText("Cancel ticket")
+        WHC.Frames.UItab[WHC.TAB.SUPPORT].editBox:SetText(result)
+        WHC.Frames.UItab[WHC.TAB.SUPPORT].createButton:SetText("Update ticket")
+        WHC.Frames.UItab[WHC.TAB.SUPPORT].closeButton:SetText("Cancel ticket")
 
         return 0
     end
@@ -293,7 +293,7 @@ local function handleChatEvent(arg1)
             desc = getTargetAchievementsDescription()
         end
 
-        WHC.Frames.UItab["Achievements"].desc1:SetText(desc)
+        WHC.Frames.UItab[WHC.TAB.ACHIEVEMENTS].desc1:SetText(desc)
 
         return 0
     end
