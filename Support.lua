@@ -1,12 +1,10 @@
 function WHC.InitializeSupport()
-    local supportTabIndex = "Support"
-
     --  Both clients: The ? button on the default UI
     HelpMicroButton:SetScript("OnClick", function()
-        if WHC.Frames.UItab[supportTabIndex]:IsVisible() then
+        if WHC.Frames.UItab[WHC.TAB.SUPPORT]:IsVisible() then
             WHC.UIShowTabContent(0)
         else
-            WHC.UIShowTabContent(supportTabIndex)
+            WHC.UIShowTabContent(WHC.TAB.SUPPORT)
         end
     end)
 
@@ -15,7 +13,7 @@ function WHC.InitializeSupport()
         -- todo (low prio since ticket status block not displayed on retail)
     else
         StaticPopupDialogs["HELP_TICKET"].OnAccept = function()
-            WHC.UIShowTabContent(supportTabIndex)
+            WHC.UIShowTabContent(WHC.TAB.SUPPORT)
         end
 
         StaticPopupDialogs["HELP_TICKET"].OnCancel = function()
@@ -36,7 +34,7 @@ function WHC.InitializeSupport()
     if RETAIL == 1 then
         UnitPopup_OnClick = function(self)
             if self and reportOptions[self.value] then
-                return WHC.UIShowTabContent(supportTabIndex)
+                return WHC.UIShowTabContent(WHC.TAB.SUPPORT)
             end
 
             return blizzardFunction_UnitPopup_OnClick(self)
