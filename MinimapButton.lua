@@ -1,20 +1,3 @@
-local BG_ZONES = {
-    ["Warsong Gulch"] = true,
-    ["Arathi Basin"] = true,
-    ["Alterac Valley"] = true,
-}
-
-local function IsInBattleground()
-    if RETAIL == 1 then
-        if IsInInstance then
-            local inInstance, instanceType = IsInInstance()
-            return inInstance and instanceType == "pvp"
-        end
-        return false
-    end
-    return BG_ZONES[GetRealZoneText()] == true
-end
-
 local MINIMAP_RADIUS = 80
 
 local function SetMinimapIconPosition(minimapIcon, angle)
@@ -85,7 +68,7 @@ function WHC.InitializeMinimapIcon()
         if RETAIL == 1 then
             MiniMapBattlefieldFrame:HookScript("OnClick", function(self, button)
                 local clickedButton = button or arg1
-                if clickedButton == "LeftButton" and not IsInBattleground() then
+                if clickedButton == "LeftButton" and not WHC.IsInBattleground() then
                     if WHC:IsVisible() then
                         WHC.UIShowTabContent(0)
                     else
@@ -97,7 +80,7 @@ function WHC.InitializeMinimapIcon()
             local origBGClick = MiniMapBattlefieldFrame:GetScript("OnClick")
             MiniMapBattlefieldFrame:SetScript("OnClick", function()
                 if origBGClick then origBGClick() end
-                if arg1 == "LeftButton" and not IsInBattleground() then
+                if arg1 == "LeftButton" and not WHC.IsInBattleground() then
                     if WHC:IsVisible() then
                         WHC.UIShowTabContent(0)
                     else
