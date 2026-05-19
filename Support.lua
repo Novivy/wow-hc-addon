@@ -1,11 +1,7 @@
 function WHC.InitializeSupport()
     --  Both clients: The ? button on the default UI
     HelpMicroButton:SetScript("OnClick", function()
-        if WHC.Frames.UItab[WHC.TAB.SUPPORT]:IsVisible() then
-            WHC.UIShowTabContent(0)
-        else
-            WHC.UIShowTabContent(WHC.TAB.SUPPORT)
-        end
+        WHC.UIShowTabContent(WHC.TAB.SUPPORT)
     end)
 
     -- 1.12: The active ticket button above buffs

@@ -13,8 +13,11 @@ end
 -- Function to show the selected tab's content
 function WHC.UIShowTabContent(tabIndex)
     if tabIndex == 0 then
-        WHC:Hide()
-        return
+        return WHC:Hide()
+    end
+
+    if tabIndex == WHC.lastTab and WHC:IsVisible() then
+        return WHC:Hide()
     end
 
     WHC.lastTab = tabIndex
@@ -231,10 +234,6 @@ function WHC.InitializeUI()
     -- Slash command to toggle the frame
     SLASH_WOWHC1 = "/wowhc"
     SlashCmdList["WOWHC"] = function(msg)
-        if WHC:IsVisible() then
-            return WHC.UIShowTabContent(0)
-        end
-
         WHC.UIShowTabContent(WHC.lastTab)
     end
 end
