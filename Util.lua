@@ -50,6 +50,16 @@ function WHC.SecondsToClock(seconds)
     return hours..":"..mins..":"..secs
 end
 
+function WHC.IsInDungeon()
+    local _, instanceType = IsInInstance()
+    return instanceType == "party"
+end
+
+function WHC.IsInBattleground()
+    local _, instanceType = IsInInstance()
+    return instanceType == "pvp"
+end
+
 -- Function to print debug messages
 function WHC.DebugPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage(tostring(message))
