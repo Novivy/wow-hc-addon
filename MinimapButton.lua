@@ -1,20 +1,3 @@
-local BG_ZONES = {
-    ["Warsong Gulch"] = true,
-    ["Arathi Basin"] = true,
-    ["Alterac Valley"] = true,
-}
-
-local function IsInBattleground()
-    if RETAIL == 1 then
-        if IsInInstance then
-            local inInstance, instanceType = IsInInstance()
-            return inInstance and instanceType == "pvp"
-        end
-        return false
-    end
-    return BG_ZONES[GetRealZoneText()] == true
-end
-
 local MINIMAP_RADIUS = 80
 
 local function SetMinimapIconPosition(minimapIcon, angle)

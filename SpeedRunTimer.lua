@@ -125,8 +125,7 @@ function WHC.InitializeSpeedRunTimer()
     local firedCommand = false
 
     function speedRunTimer:ShowInDungeon()
-        local _, instanceType = IsInInstance()
-        if instanceType == "party" then
+        if WHC.IsInDungeon() then
             return self:Show()
         end
     end
@@ -262,8 +261,7 @@ function WHC.InitializeSpeedRunTimer()
     speedRunTimer:RegisterEvent("ZONE_CHANGED_NEW_AREA") -- backup event to get the correct name for Blackrock Spire and Stockades
     speedRunTimer:SetScript("OnEvent", function(self, eventName)
         self = self or this
-        local _, instanceType = IsInInstance()
-        if instanceType ~= "party" then
+        if not WHC.IsInDungeon() then
             return self:HideAndClear()
         end
 

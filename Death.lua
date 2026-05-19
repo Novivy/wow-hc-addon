@@ -86,8 +86,7 @@ local function updateDeathPopupText()
     local mapChangeEventHandler = CreateFrame("Frame")
     mapChangeEventHandler:RegisterEvent("PLAYER_ENTERING_WORLD")
     mapChangeEventHandler:SetScript("OnEvent", function(self, event)
-        local _, instanceType = IsInInstance()
-        if (instanceType == "pvp") then
+        if (WHC.IsInBattleground()) then
             DEATH_RELEASE = "Release Spirit";
             StaticPopupDialogs["DEATH"].text = "YOU DIED";
             StaticPopupDialogs["DEATH"].button1 = "Release Spirit";
