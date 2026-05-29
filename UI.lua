@@ -116,10 +116,10 @@ function WHC.InitializeUI()
     WHC:SetBackdropColor(0, 0, 0, 1)
 
     WHC:SetScript("OnShow", function()
-        PlaySound(WHC.sounds.openFrame)
+        PlaySound(WHC.SOUNDS.openFrame)
     end)
     WHC:SetScript("OnHide", function()
-        PlaySound(WHC.sounds.closeFrame)
+        PlaySound(WHC.SOUNDS.closeFrame)
     end)
 
     local closeFrame = CreateFrame("Button", "GMToolGUIClose", WHC, "UIPanelCloseButton")
@@ -194,7 +194,7 @@ function WHC.InitializeUI()
         tabHeader:SetScript("OnClick", function()
             --WHC.DebugPrint("click " .. index)
             WHC.UIShowTabContent(index)
-            PlaySound(WHC.sounds.selectTab)
+            PlaySound(WHC.SOUNDS.selectTab)
         end)
 
         WHC.Frames.UItabHeader[tabKey] = tabHeader

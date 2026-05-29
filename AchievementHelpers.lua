@@ -835,15 +835,6 @@ local function getHelpYourselfAllowedCategories()
     return allowedCategories
 end
 
-local function abandonQuestSound()
-    local sound = "igQuestLogAbandonQuest"
-    if RETAIL == 1 then
-        sound = 846
-    end
-
-    return sound
-end
-
 local checkQuests = false
 local previousNumQuests = 0
 local blockQuestsEventListener = CreateFrame("Frame")
@@ -887,7 +878,7 @@ blockQuestsEventListener:SetScript("OnEvent", function(self, eventName, a1)
                 SelectQuestLogEntry(questLogIndex)
                 SetAbandonQuest()
                 AbandonQuest()
-                PlaySound(abandonQuestSound())
+                PlaySound(WHC.SOUNDS.abandonQuest)
                 printAchievementInfo(helpYourselfLink, string.format("Abandoning [%s] as it is not a class or profession quest.", questTitle))
             end
         end

@@ -62,6 +62,15 @@ WHC.TAB_KEYS = {
     WHC.TAB.SETTINGS,
 }
 
+WHC.SOUNDS = {
+    abandonQuest = RETAIL == 0 and "igQuestLogAbandonQuest" or SOUNDKIT.IG_QUEST_LOG_ABANDON_QUEST,
+    checkBoxOn   = RETAIL == 0 and "igMainMenuOptionCheckBoxOn" or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON,
+    checkBoxOff  = RETAIL == 0 and "igMainMenuOptionCheckBoxOff" or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF,
+    openFrame    = RETAIL == 0 and "igCharacterInfoOpen" or SOUNDKIT.IG_CHARACTER_INFO_OPEN,
+    closeFrame   = RETAIL == 0 and "igCharacterInfoClose" or SOUNDKIT.IG_CHARACTER_INFO_CLOSE,
+    selectTab    = RETAIL == 0 and "igCharacterInfoTab" or SOUNDKIT.IG_CHARACTER_INFO_TAB,
+}
+
 WHC.ADDON_PREFIX = ITEM_QUALITY_COLORS[WHC.ITEM_QUALITY.LEGENDARY].hex.."[WOW-HC addon]: "..FONT_COLOR_CODE_CLOSE
 
 WHC:RegisterEvent("ADDON_LOADED")
@@ -106,14 +115,6 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.server = {
         name = realmName,
         isHardcore = realmName == "Permadeath - EU"
-    }
-
-    WHC.sounds = {
-        checkBoxOn = RETAIL == 0 and "igMainMenuOptionCheckBoxOn" or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON,
-        checkBoxOff = RETAIL == 0 and "igMainMenuOptionCheckBoxOff" or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF,
-        openFrame = RETAIL == 0 and "igCharacterInfoOpen" or SOUNDKIT.IG_CHARACTER_INFO_OPEN,
-        closeFrame = RETAIL == 0 and "igCharacterInfoClose" or SOUNDKIT.IG_CHARACTER_INFO_CLOSE,
-        selectTab = RETAIL == 0 and "igCharacterInfoTab" or SOUNDKIT.IG_CHARACTER_INFO_TAB,
     }
 
     WhcAddonSettings = WhcAddonSettings or {}

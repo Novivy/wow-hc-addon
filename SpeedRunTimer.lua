@@ -104,7 +104,7 @@ function WHC.InitializeSpeedRunTimer()
     closeButton:SetHeight(36)
     closeButton:SetText("Close")
     closeButton:SetScript("OnClick", function()
-        PlaySound(WHC.sounds.checkBoxOff)
+        PlaySound(WHC.SOUNDS.checkBoxOff)
         WhcAddonSettings.speedRunTimer.showTimer = 0
         WHC_SETTINGS.speedRunTimerBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.speedRunTimer.showTimer))
         speedRunTimer:Hide()
