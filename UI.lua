@@ -24,6 +24,9 @@ function WHC.UIShowTabContent(tabIndex)
     WHC:Show()
     if (tabIndex == WHC.TAB.GENERAL) then
         --
+    elseif (tabIndex == WHC.TAB.SHOP) then
+        local msg = ".whc coins"
+        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
     elseif (tabIndex == WHC.TAB.ACHIEVEMENTS) then
         -- Set all achievements as failed
         for key, value in pairs(WHC.Frames.Achievements) do

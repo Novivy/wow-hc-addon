@@ -317,6 +317,15 @@ local function handleChatEvent(arg1)
         return 0
     end
 
+    if string.find(lowerArg, "^::whc::coins:%d") then
+        local result = string.gsub(arg1, "^::whc::coins:", "")
+        result = tonumber(result)
+
+        WHC.OnCoinsReceived(result)
+
+        return 0
+    end
+
     if string.find(lowerArg, "^::whc::auction:") then
         local _, _ , variable, result = string.find(lowerArg, "^::whc::auction:(%l+):([%d\.]+)")
         if WhcAddonSettings["auction_"..variable] then

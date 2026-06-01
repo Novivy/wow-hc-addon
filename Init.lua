@@ -173,11 +173,19 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         WHC.InitializeDeathPopupAppeal()
     end
 
+    local wasReturningPlayer = (WhcAddonSettings.splash == 1)
+
     if (WhcAddonSettings.splash == 0) then
         WhcAddonSettings.splash = 1
 
         WHC.UIShowTabContent(WHC.TAB.GENERAL)
     end
+
+    -- Existing players see the new Shop tab once on the first login after this update
+    if (WhcAddonSettings.shopIntro == nil and wasReturningPlayer) then
+        WHC.UIShowTabContent(WHC.TAB.SHOP)
+    end
+    WhcAddonSettings.shopIntro = 1
 
     WHC.SetBlockInvites()
     WHC.SetBlockTrades()
@@ -298,6 +306,61 @@ function WHC.InitializeShopPets()
     tooltip:SetScript("OnShow", function()
         setShopPetTooltipText(GameTooltip)
     end)
+end
+
+function WHC.ShowUrlPopup(title, url)
+    local urlFrame = CreateFrame("Frame", nil, UIParent, RETAIL_BACKDROP)
+    urlFrame:SetWidth(300)
+    urlFrame:SetHeight(150)
+    urlFrame:SetPoint("TOP", UIParent, "TOP", 0, -128)
+    urlFrame:SetBackdrop({
+        bgFile = "Interface/RaidFrame/UI-RaidFrame-GroupBg",
+        edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+        tile = true,
+        tileSize = 300,
+        edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+
+    urlFrame:SetFrameStrata("HIGH")
+    urlFrame:SetFrameLevel(10)
+
+    local titleText = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    titleText:SetPoint("TOP", urlFrame, "TOP", 0, -20)
+    titleText:SetText(title)
+    titleText:SetWidth(200)
+
+    local urlEditBox = CreateFrame("EditBox", nil, urlFrame)
+    urlEditBox:SetWidth(250)
+    urlEditBox:SetHeight(20)
+    urlEditBox:SetPoint("TOP", titleText, "BOTTOM", 0, -20)
+    urlEditBox:SetFontObject("ChatFontNormal")
+    urlEditBox:SetText(url)
+    urlEditBox:SetJustifyH("CENTER")
+    urlEditBox:SetAutoFocus(false)
+    urlEditBox:HighlightText()
+    urlEditBox:SetFocus()
+    urlEditBox:SetTextColor(1, 0.631, 0.317)
+    urlEditBox:SetScript("OnMouseDown", function(self)
+        urlEditBox:HighlightText()
+        urlEditBox:SetFocus()
+    end)
+
+    local buttonContainer = CreateFrame("Frame", nil, urlFrame)
+    buttonContainer:SetWidth(250)
+    buttonContainer:SetHeight(30)
+    buttonContainer:SetPoint("TOP", urlEditBox, "BOTTOM", 0, -20)
+
+    local cancelButton = CreateFrame("Button", nil, buttonContainer, "UIPanelButtonTemplate")
+    cancelButton:SetWidth(80)
+    cancelButton:SetHeight(30)
+    cancelButton:SetPoint("CENTER", buttonContainer, "CENTER", 5, 0)
+    cancelButton:SetText("Back")
+    cancelButton:SetScript("OnClick", function()
+        urlFrame:Hide()
+    end)
+
+    urlFrame:Show()
 end
 
 function WHC.InitializeTradableRaidLoot()
