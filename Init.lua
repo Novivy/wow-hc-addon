@@ -198,7 +198,15 @@ function WHC.InitializeDynamicMounts()
         [23220] = true, ["Swift Dawnsaber"] = true,
         [16084] = true, ["Mottled Red Raptor"] = true,
         [17450] = true, ["Ivory Raptor"] = true,
-        [10790] = true, ["Tiger"] = true
+        [10790] = true, ["Tiger"] = true,
+        [16055] = true, ["Nightsaber"] = true,
+        [16081] = true, ["Arctic Wolf"] = true,
+        [578]   = true, ["Black Wolf"] = true,
+        [16060] = true, ["Golden Sabercat"] = true,
+        [17455] = true, ["Purple Mechanostrider"] = true,
+        [17458] = true, ["Fluorescent Green Mechanostrider"] = true,
+        [10798] = true, ["Obsidian Raptor"] = true,
+        [16082] = true, ["Palomino Stallion"] = true
     }
 
     local speedPattern = "%d?%d%d%%" -- matches 2-3 numbers and the % sign. Used to match 60% or 100%
