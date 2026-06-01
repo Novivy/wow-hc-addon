@@ -165,6 +165,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeAchievementButtons()
     WHC.InitializeSupport()
     WHC.InitializeDynamicMounts()
+    WHC.InitializeShopPets()
     WHC.InitializeTradableRaidLoot()
     WHC.InitializeDotCommandFix()
 
@@ -255,6 +256,47 @@ function WHC.InitializeDynamicMounts()
     local tooltip = CreateFrame("Frame", nil, GameTooltip)
     tooltip:SetScript("OnShow", function()
         setDynamicMountSpeedText(GameTooltip)
+    end)
+end
+
+function WHC.InitializeShopPets()
+    -- Some shop pets reuse a client spell ID, so the client shows the wrong tooltip
+    local shopPets = {
+        [10687] = "Spectral Wolf", ["Summon White Plymouth Rock"] = "Spectral Wolf"
+    }
+
+    local function setShopPetTooltipText(tooltip)
+        local petName
+        local petSpellID
+        if tooltip.GetSpell then
+            petName, petSpellID = tooltip:GetSpell()
+        end
+        petName = petName or GameTooltipTextLeft1:GetText()
+
+        local correctName = shopPets[petSpellID] or shopPets[petName]
+        if correctName then
+            GameTooltipTextLeft1:SetText(correctName)
+
+            -- Spellbook text
+            if GameTooltipTextLeft3 then
+                GameTooltipTextLeft3:SetText(string.format("Right Click to summon and dismiss your %s.", string.lower(correctName)))
+            end
+
+            tooltip:Show()
+        end
+    end
+
+    if RETAIL == 1 then
+        -- 1.14 spellbook
+        GameTooltip:HookScript("OnTooltipSetSpell", function(tooltip, ...)
+            setShopPetTooltipText(tooltip)
+        end)
+    end
+
+    -- 1.12 spellbook
+    local tooltip = CreateFrame("Frame", nil, GameTooltip)
+    tooltip:SetScript("OnShow", function()
+        setShopPetTooltipText(GameTooltip)
     end)
 end
 
