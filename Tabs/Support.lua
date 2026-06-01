@@ -55,6 +55,22 @@ function WHC.Tab_Support(content)
 
     content.editBox = editBox;
 
+    StaticPopupDialogs["WHC_TICKET_CONFIRM"] = {
+        text = "|cffff0000WARNING: In-game support is reserved for urgent situations only: ongoing raid issues or bot/cheat reports. All other matters must be reported in the Support section on the website. You will be redirected there if your issue is not listed above|r",
+        button1 = "Create ticket",
+        button2 = "Cancel",
+        OnAccept = function()
+            local issue = editBox:GetText()
+            if issue ~= "" then
+                SendChatMessage(".whc ticketcreate " .. issue, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+                WHC.UIShowTabContent(0)
+            end
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
     -- Create Create button
     local createButton = CreateFrame("Button", "CreateButton", content, "UIPanelButtonTemplate")
     createButton:SetWidth(130)
@@ -64,10 +80,7 @@ function WHC.Tab_Support(content)
     createButton:SetScript("OnClick", function()
         local issue = editBox:GetText()
         if issue ~= "" then
-            local msg = ".whc ticketcreate " .. issue
-            SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
-
-            WHC.UIShowTabContent(0)
+            StaticPopup_Show("WHC_TICKET_CONFIRM")
         end
     end)
 
