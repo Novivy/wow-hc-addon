@@ -11,6 +11,9 @@ local function SolidColor(tex, r, g, b, a)
     end
 end
 
+-- Tooltip shown on hover for the Noggenfogger card(s)
+local NOGGEN_TOOLTIP = "Added to your spellbook as a spell. Cast it for a permanent Skeletal Skin transformation. Lasts until you cancel the buff."
+
 -- HC realm catalog, mirrored from services.php (realm 1, status 1).
 -- image = filename in /img/services (added to Images\services as .blp/.tga); price = HC coin price.
 local catalog = {
@@ -36,9 +39,56 @@ local catalog = {
     { key = "account-transfer", name = "Character Account Transfer", category = "Services",   image = "account-transfer",  price = 50 },
     { key = "realm-clone",      name = "Realm Clone",                category = "Services",   image = "realm-clone",       price = "Open" },
     { key = "customization",    name = "Character Customization",    category = "Services",   image = "custom",            price = "Open" },
-    { key = "noggenfogger",     name = "Noggenfogger",               category = "Services",   image = "noggen",            price = 50 },
-    { key = "noggenfogger-mnt", name = "Noggenfogger",               category = "Mounts",     image = "noggen",            price = 50 },
-    { key = "noggenfogger-pet", name = "Noggenfogger",               category = "Companions", image = "noggen",            price = 50 },
+    { key = "noggenfogger",     name = "Noggenfogger",               category = "Services",   image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
+    { key = "noggenfogger-mnt", name = "Noggenfogger",               category = "Mounts",     image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
+    { key = "noggenfogger-pet", name = "Noggenfogger",               category = "Companions", image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
+}
+
+-- Subscription tiers, mirrored from api
+local subscriptions = {
+    {
+        level = "LEVEL 1", price = "5.90", normalPrice = nil,
+        perks = {
+            { icon = "murloc-green", name = "Green Murloc",       desc = "Baby murloc companion that follows you around." },
+            { icon = "portal",       name = "City Teleport",      desc = "Access to your faction city portals (1h30 cooldown)." },
+            { icon = "bag-1",        name = "18 Slot Bag",        desc = "Special 18 slot bag for each character (BoP, Unique)." },
+            { icon = "tier-1-sub",   name = "Animated Avatar",    desc = "Special rank and animated avatar on the forums." },
+        },
+    },
+    {
+        level = "LEVEL 2", price = "12.99", normalPrice = nil,
+        perks = {
+            { icon = "murloc-orange", name = "2 Murlocs",          desc = "Two baby murloc companions that follow you around." },
+            { icon = "portal",        name = "City Teleport",      desc = "Access to your faction city portals (1h cooldown)." },
+            { icon = "dualspec",      name = "Free Dual Spec.",    desc = "Free for each character at any Innkeeper (requires Lvl 40)." },
+            { icon = "trainer",       name = "Profession Trainers", desc = "Access all profession trainers, bank and mailbox on Murloc Island." },
+            { icon = "bank",          name = "3 Free Bank Slots",  desc = "First 3 bank slots unlocked by default on each character." },
+            { icon = "bag-1",         name = "2 x 18 Slot Bag",    desc = "Two 18 slot bags for each character." },
+            { icon = "bag",           name = "20 Slot Bag",        desc = "Special 20 slot bag for each character (BoP, Unique)." },
+            { icon = "tabard-frost",  name = "Tabard of Frost",    desc = "Unique tabard formerly from the WoW Trading Card Game." },
+            { icon = "tier-2-sub",    name = "Animated Avatar",    desc = "Special rank and animated avatar on the forums." },
+            { icon = "discount-5",    name = "+5% HC Coins",       desc = "5% bonus HC coins on every coin purchase." },
+        },
+    },
+    {
+        level = "LEVEL 3", price = "16.42", normalPrice = nil,
+        perks = {
+            { icon = "murloc-blue",  name = "3 Murlocs",          desc = "Three baby murloc companions that follow you around." },
+            { icon = "portal",       name = "City Teleport",      desc = "Access to your faction city portals (30 min cooldown)." },
+            { icon = "summon",       name = "Summon a Friend",    desc = "Summon a supporter (Tier 1 or higher) to your location (30 min cooldown)." },
+            { icon = "recall",       name = "Recall",             desc = "Teleport back to your last location before using City Teleport." },
+            { icon = "dualspec",     name = "Free Dual Spec.",    desc = "Free for each character at any Innkeeper (requires Lvl 40)." },
+            { icon = "trainer",      name = "Profession Trainers", desc = "Access all profession trainers, bank and mailbox on Murloc Island." },
+            { icon = "bank",         name = "5 Free Bank Slots",  desc = "First 5 bank slots unlocked by default on each character." },
+            { icon = "bag",          name = "4 x 20 Slot Bag",    desc = "Four 20 slot bags for each character." },
+            { icon = "ah",           name = "Auction House",      desc = "Access the Auction House from anywhere (read/buy only)." },
+            { icon = "nightsaber",   name = "Nightsaber Mount",   desc = "Speed adapts to your riding skill (60% or 100%)." },
+            { icon = "tabard-frost", name = "Tabard of Frost",    desc = "Unique tabard formerly from the WoW Trading Card Game." },
+            { icon = "tabard-flame", name = "Tabard of Flame",    desc = "Unique tabard formerly from the WoW Trading Card Game." },
+            { icon = "tier-3-sub",   name = "Animated Avatar",    desc = "Special rank and animated avatar on the forums." },
+            { icon = "discount-10",  name = "+10% HC Coins",      desc = "10% bonus HC coins on every coin purchase." },
+        },
+    },
 }
 
 local categoryOrder = { "Subscriptions", "Bags", "Mounts", "Companions", "Services" }
@@ -49,7 +99,7 @@ local categoryDesc = {
     Companions = "A passive companion that follows you around. Delivered to your spellbook (no bag space), works like any other spell.",
     Bags = "Extra bag space for your character, delivered to your mailbox.",
     Services = "Account services: rename, character & account transfer, realm clone and appearance customization.",
-    Subscriptions = "",
+    Subscriptions = "Support the server each month and unlock in-game rewards for every character. Hover a perk for details.",
 }
 
 -- Card grid metrics (3 per row)
@@ -60,6 +110,13 @@ local COL_STEP = 142
 local ROW_STEP = 202
 
 local GOLD = { 0.631, 0.459, 0 }
+
+-- Subscription tier border colours, matching the front
+local TIER_BORDER = {
+    { 0.298, 0.525, 0.000 }, -- #4c8600 green
+    { 0.000, 0.439, 0.698 }, -- #0070b2 blue
+    { 0.494, 0.000, 0.690 }, -- #7e00b0 purple
+}
 
 -- Server reply to ".whc coins" (::whc::coins:<n>) updates the coin box
 function WHC.OnCoinsReceived(coins)
@@ -136,24 +193,141 @@ local function CreateCard(parent, item)
         WHC.ShowUrlPopup("Visit the shop to purchase", "https://wow-hc.com/shop")
     end)
 
+    if item.tooltip then
+        card:EnableMouse(true)
+        card:SetScript("OnEnter", function()
+            GameTooltip:SetOwner(card, "ANCHOR_RIGHT")
+            GameTooltip:SetText(item.name, 1, 0.82, 0)
+            GameTooltip:AddLine(item.tooltip, 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        card:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+    end
+
     card.category = item.category
     return card
 end
 
+-- Subscriptions view: one panel per tier (name, price, Subscribe, perk list)
+local function CreateSubscriptions(parent)
+    local container = CreateFrame("Frame", nil, parent)
+    container:SetWidth(444)
+
+    local maxHeight = 0
+    for t, sub in ipairs(subscriptions) do
+        local col = CreateFrame("Frame", nil, container, RETAIL_BACKDROP)
+        col:SetWidth(134)
+        col:SetPoint("TOPLEFT", container, "TOPLEFT", 14 + (t - 1) * 142, -4)
+        col:SetBackdrop({
+            bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile = true,
+            tileSize = 16,
+            edgeSize = 16,
+            insets = { left = 4, right = 4, top = 4, bottom = 4 }
+        })
+        col:SetBackdropColor(0.129, 0.110, 0.094, 0.95)
+        col:SetBackdropBorderColor(TIER_BORDER[t][1], TIER_BORDER[t][2], TIER_BORDER[t][3])
+
+        local lvl = col:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        lvl:SetPoint("TOP", col, "TOP", 0, -8)
+        lvl:SetText(sub.level)
+        lvl:SetTextColor(0.961, 0.745, 0)
+
+        local price = col:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        price:SetPoint("TOP", lvl, "BOTTOM", 0, -5)
+        if sub.normalPrice then
+            price:SetText("|cff8a8a8a" .. sub.normalPrice .. "|r  " .. sub.price .. " EUR/mo")
+        else
+            price:SetText(sub.price .. " EUR/mo")
+        end
+
+        local subscribe = CreateFrame("Button", nil, col, "UIPanelButtonTemplate")
+        subscribe:SetWidth(120)
+        subscribe:SetHeight(22)
+        subscribe:SetPoint("TOP", price, "BOTTOM", 0, -6)
+        subscribe:SetText("Subscribe")
+        subscribe:SetScript("OnClick", function()
+            WHC.ShowUrlPopup("Visit the shop to subscribe", "https://wow-hc.com/shop")
+        end)
+
+        local y = -76
+        local count = 0
+        for _, perk in ipairs(sub.perks) do
+            local row = CreateFrame("Button", nil, col)
+            row:SetWidth(124)
+            row:SetHeight(19)
+            row:SetPoint("TOPLEFT", col, "TOPLEFT", 5, y)
+
+            local rowBg = row:CreateTexture(nil, "BACKGROUND")
+            rowBg:SetAllPoints(row)
+            if mathMod(count, 2) == 0 then
+                SolidColor(rowBg, 1, 1, 1, 0.05)
+            else
+                SolidColor(rowBg, 0, 0, 0, 0.25)
+            end
+
+            local icon = row:CreateTexture(nil, "ARTWORK")
+            icon:SetWidth(16)
+            icon:SetHeight(16)
+            icon:SetPoint("LEFT", row, "LEFT", 0, 0)
+            icon:SetTexture("Interface\\AddOns\\WOW_HC\\Images\\services\\" .. perk.icon)
+
+            local pname = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            pname:SetPoint("LEFT", icon, "RIGHT", 4, 0)
+            pname:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+            pname:SetJustifyH("LEFT")
+            pname:SetText(perk.name)
+            pname:SetTextColor(0.874, 0.835, 0.776)
+
+            local title = perk.name
+            local body = perk.desc
+            row:SetScript("OnEnter", function()
+                GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
+                GameTooltip:SetText(title, 1, 0.82, 0)
+                GameTooltip:AddLine(body, 1, 1, 1, true)
+                GameTooltip:Show()
+            end)
+            row:SetScript("OnLeave", function()
+                GameTooltip:Hide()
+            end)
+
+            count = count + 1
+            y = y - 19
+        end
+
+        local colHeight = 76 + count * 19 + 8
+        col:SetHeight(colHeight)
+        if colHeight > maxHeight then
+            maxHeight = colHeight
+        end
+    end
+
+    container:SetHeight(maxHeight + 8)
+    return container
+end
+
 function WHC.Tab_Shop(content)
     -- Per-category description (replaces the static title/disclaimer)
-    local catDesc = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    catDesc:SetPoint("TOP", content, "TOP", 0, -3)
-    catDesc:SetWidth(390)
-    catDesc:SetHeight(50)
+    local catTitle = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    catTitle:SetPoint("TOP", content, "TOP", 0, -6)
+    catTitle:SetFont("Fonts\\FRIZQT__.TTF", 16)
+    catTitle:SetTextColor(0.933, 0.765, 0)
+
+    local catDesc = content:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    catDesc:SetPoint("TOP", catTitle, "BOTTOM", 0, -2)
+    catDesc:SetWidth(340)
+    catDesc:SetHeight(38)
     catDesc:SetJustifyH("CENTER")
     catDesc:SetTextColor(0.874, 0.835, 0.776)
 
     -- Card panel background
     local panel = CreateFrame("Frame", nil, content, RETAIL_BACKDROP)
-    panel:SetPoint("TOPLEFT", content, "TOPLEFT", 6, -57)
+    panel:SetPoint("TOPLEFT", content, "TOPLEFT", 6, -62)
     panel:SetWidth(486)
-    panel:SetHeight(344)
+    panel:SetHeight(339)
     panel:SetBackdrop({
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
         edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
@@ -166,7 +340,7 @@ function WHC.Tab_Shop(content)
     -- Scrollable card area
     local scrollFrame = CreateFrame("ScrollFrame", "WhcShopScroll", panel, "UIPanelScrollFrameTemplate")
     scrollFrame:SetWidth(450)
-    scrollFrame:SetHeight(331)
+    scrollFrame:SetHeight(326)
     scrollFrame:SetPoint("TOPLEFT", panel, "TOPLEFT", 10, -9)
 
     local scrollChild = CreateFrame("Frame", "WhcShopScrollChild", scrollFrame)
@@ -192,10 +366,10 @@ function WHC.Tab_Shop(content)
         end
     end)
 
-    local placeholder = content:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
-    placeholder:SetPoint("CENTER", scrollFrame, "CENTER", 0, 0)
-    placeholder:SetText("Coming soon")
-    placeholder:Hide()
+    -- Subscriptions view (3 tiers), shown for the Subscriptions category
+    local subsFrame = CreateSubscriptions(scrollChild)
+    subsFrame:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
+    subsFrame:Hide()
 
     -- Build one card per catalog item (positioned per category below)
     local itemFrames = {}
@@ -208,6 +382,7 @@ function WHC.Tab_Shop(content)
     local menuButtons = {}
 
     local function ShowCategory(cat)
+        catTitle:SetText(cat)
         catDesc:SetText(categoryDesc[cat] or "")
 
         -- Reset the scroll back to the top when switching category
@@ -230,11 +405,11 @@ function WHC.Tab_Shop(content)
         for _, card in ipairs(itemFrames) do
             card:Hide()
         end
-        placeholder:Hide()
+        subsFrame:Hide()
 
         if cat == "Subscriptions" then
-            placeholder:Show()
-            scrollChild:SetHeight(1)
+            subsFrame:Show()
+            scrollChild:SetHeight(subsFrame:GetHeight())
             return
         end
 
@@ -269,8 +444,20 @@ function WHC.Tab_Shop(content)
     })
     menu:SetBackdropColor(0, 0, 0, 1)
 
+    local titleBg = menu:CreateTexture(nil, "ARTWORK")
+    titleBg:SetPoint("TOPLEFT", menu, "TOPLEFT", 9, -9)
+    titleBg:SetPoint("TOPRIGHT", menu, "TOPRIGHT", -10, -9)
+    titleBg:SetHeight(24)
+    SolidColor(titleBg, 0, 0, 0, 0.5)
+
+    local titleLine = menu:CreateTexture(nil, "ARTWORK")
+    titleLine:SetPoint("TOPLEFT", titleBg, "BOTTOMLEFT", 0, 0)
+    titleLine:SetPoint("TOPRIGHT", titleBg, "BOTTOMRIGHT", 0, 0)
+    titleLine:SetHeight(1)
+    SolidColor(titleLine, GOLD[1], GOLD[2], GOLD[3], 0.6)
+
     local menuTitle = menu:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    menuTitle:SetPoint("TOP", menu, "TOP", 0, -14)
+    menuTitle:SetPoint("CENTER", titleBg, "CENTER", 0, 0)
     menuTitle:SetText("Shop")
     menuTitle:SetTextColor(1, 1, 1)
 
