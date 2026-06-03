@@ -91,7 +91,7 @@ local subscriptions = {
     },
 }
 
-local categoryOrder = { "Subscriptions", "Bags", "Mounts", "Companions", "Services" }
+local categoryOrder = { "Subscriptions", "Bags", "Mounts", "Companions", "Services", "Donate" }
 
 -- Per-category blurb
 local categoryDesc = {
@@ -309,6 +309,78 @@ local function CreateSubscriptions(parent)
     return container
 end
 
+-- "Kind Soul" donation modal
+local DONATE_BODY =
+    "Some of you have asked how to give back without wanting anything for it.\n\n" ..
+    "There are no coins, no perks and no rewards tied to it. Just our gratitude, and a world that stays online for everyone.\n\n" ..
+    "If that sounds like you, thank you."
+
+function WHC.ShowDonatePopup()
+
+    if WHC.Frames.DonateModal then
+        WHC.Frames.DonateModal:Show()
+        return
+    end
+
+    local frame = CreateFrame("Frame", "WhcDonateModal", UIParent, RETAIL_BACKDROP)
+    frame:SetWidth(360)
+    frame:SetHeight(220)
+    frame:SetPoint("CENTER", UIParent, "CENTER", 0, 60)
+    frame:SetBackdrop({
+        bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
+        edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+        tile = true,
+        tileSize = 32,
+        edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+    frame:SetBackdropColor(0, 0, 0, 1)
+    frame:SetFrameStrata("DIALOG")
+    frame:SetFrameLevel(20)
+    frame:EnableMouse(true)
+
+    local fill = frame:CreateTexture(nil, "BACKGROUND")
+    fill:SetPoint("TOPLEFT", frame, "TOPLEFT", 11, -12)
+    fill:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -12, 11)
+    SolidColor(fill, 0.04, 0.04, 0.04, 1)
+
+    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    title:SetPoint("TOP", frame, "TOP", 0, -20)
+    title:SetFont("Fonts\\FRIZQT__.TTF", 18)
+    title:SetText("Kind Soul")
+    title:SetTextColor(0.961, 0.745, 0)
+
+    local body = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    body:SetPoint("TOP", title, "BOTTOM", 0, -14)
+    body:SetWidth(308)
+    body:SetJustifyH("LEFT")
+    body:SetJustifyV("TOP")
+    body:SetText(DONATE_BODY)
+    body:SetTextColor(0.874, 0.835, 0.776)
+
+    local donate = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    donate:SetWidth(130)
+    donate:SetHeight(26)
+    donate:SetPoint("BOTTOM", frame, "BOTTOM", 0, 50)
+    donate:SetText("I'm a Kind Soul")
+    donate:SetScript("OnClick", function()
+        frame:Hide()
+        WHC.ShowUrlPopup("Visit the shop to donate", "https://wow-hc.com/shop")
+    end)
+
+    local close = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    close:SetWidth(130)
+    close:SetHeight(26)
+    close:SetPoint("BOTTOM", frame, "BOTTOM", 0, 18)
+    close:SetText("Close")
+    close:SetScript("OnClick", function()
+        frame:Hide()
+    end)
+
+    WHC.Frames.DonateModal = frame
+    frame:Show()
+end
+
 function WHC.Tab_Shop(content)
     -- Per-category description (replaces the static title/disclaimer)
     local catTitle = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -432,7 +504,7 @@ function WHC.Tab_Shop(content)
     -- Category menu, anchored just outside the window on the left
     local menu = CreateFrame("Frame", "WhcShopCategoryMenu", content, RETAIL_BACKDROP)
     menu:SetWidth(116)
-    menu:SetHeight(178)
+    menu:SetHeight(204)
     menu:SetPoint("TOPRIGHT", WHC, "TOPLEFT", 4, -34)
     menu:SetBackdrop({
         bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
@@ -480,8 +552,12 @@ function WHC.Tab_Shop(content)
 
         local category = cat
         btn:SetScript("OnClick", function()
-            ShowCategory(category)
             PlaySound(WHC.sounds.selectTab)
+            if category == "Donate" then
+                WHC.ShowDonatePopup()
+            else
+                ShowCategory(category)
+            end
         end)
 
         menuButtons[cat] = btn
