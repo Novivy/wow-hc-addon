@@ -20,6 +20,29 @@ playerLogin:SetScript("OnEvent", function(self, event)
     WHC.SendGetRestedXpStatusCommand()
 end)
 
+-- Lorh the shopkeeper: opening his gossip pops the WHC shop tab straight away.
+local SHOP_NPC_ENTRY = 30737
+local SHOP_NPC_NAME = "Lorh"
+local shopGossip = CreateFrame("Frame")
+shopGossip:RegisterEvent("GOSSIP_SHOW")
+shopGossip:SetScript("OnEvent", function()
+    local npcId = 0
+    if WHC.GetNpcID then
+        npcId = WHC.GetNpcID("npc")
+        if not npcId or npcId == 0 then
+            npcId = WHC.GetNpcID("target")
+        end
+    end
+    local npcName = UnitName("npc") or UnitName("target")
+
+    if npcId ~= SHOP_NPC_ENTRY and npcName ~= SHOP_NPC_NAME then
+        return
+    end
+
+    -- Open the shop but leave the gossip open so Lorh can tell his story.
+    WHC.OpenShopTab()
+end)
+
 local skillsChanged = CreateFrame("Frame")
 skillsChanged:RegisterEvent("SKILL_LINES_CHANGED")
 skillsChanged:RegisterEvent("CHAT_MSG_SKILL")

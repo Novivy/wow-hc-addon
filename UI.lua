@@ -100,6 +100,13 @@ function WHC.UIShowTabContent(tabIndex)
     end
 end
 
+function WHC.OpenShopTab()
+    if WHC:IsVisible() and WHC.lastTab == WHC.TAB.SHOP then
+        return
+    end
+    WHC.UIShowTabContent(WHC.TAB.SHOP)
+end
+
 function WHC.InitializeUI()
     -- Close with escape key
     tinsert(UISpecialFrames, WHC:GetName());
