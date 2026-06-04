@@ -100,11 +100,23 @@ function WHC.UIShowTabContent(tabIndex)
     end
 end
 
-function WHC.OpenShopTab()
-    if WHC:IsVisible() and WHC.lastTab == WHC.TAB.SHOP then
-        return
+-- Open the shop tab. The category is sticky between openings, so callers that
+-- care which page is shown (Lorh -> Mounts, the sub-gate -> Subscriptions) pass
+-- one explicitly; otherwise the last-shown category is kept.
+function WHC.OpenShopTab(category)
+    -- UIShowTabContent toggles, so only call it when the shop isn't already up.
+    if not (WHC:IsVisible() and WHC.lastTab == WHC.TAB.SHOP) then
+        WHC.UIShowTabContent(WHC.TAB.SHOP)
     end
-    WHC.UIShowTabContent(WHC.TAB.SHOP)
+    if category and WHC.ShopShowCategory then
+        WHC.ShopShowCategory(category)
+    end
+end
+
+-- Open the shop straight on the Subscriptions page (used when a non-subscriber
+-- hits the "reserved for supporters" gossip on a shop NPC).
+function WHC.OpenSubscriptionTab()
+    WHC.OpenShopTab("Subscriptions")
 end
 
 function WHC.InitializeUI()

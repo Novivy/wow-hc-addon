@@ -61,7 +61,7 @@ local subscriptions = {
             { icon = "murloc-orange", name = "2 Murlocs",          desc = "Two baby murloc companions that follow you around." },
             { icon = "portal",        name = "City Teleport",      desc = "Access to your faction city portals (1h cooldown)." },
             { icon = "dualspec",      name = "Free Dual Spec.",    desc = "Free for each character at any Innkeeper (requires Lvl 40)." },
-            { icon = "trainer",       name = "Profession Trainers", desc = "Access all profession trainers, bank and mailbox on Murloc Island." },
+            { icon = "trainers",       name = "Profession Trainers", desc = "Access all profession trainers, bank and mailbox on Murloc Island." },
             { icon = "bank",          name = "3 Free Bank Slots",  desc = "First 3 bank slots unlocked by default on each character." },
             { icon = "bag-1",         name = "2 x 18 Slot Bag",    desc = "Two 18 slot bags for each character." },
             { icon = "bag",           name = "20 Slot Bag",        desc = "Special 20 slot bag for each character (BoP, Unique)." },
@@ -78,7 +78,7 @@ local subscriptions = {
             { icon = "summon",       name = "Summon a Friend",    desc = "Summon a supporter (Tier 1 or higher) to your location (30 min cooldown)." },
             { icon = "recall",       name = "Recall",             desc = "Teleport back to your last location before using City Teleport." },
             { icon = "dualspec",     name = "Free Dual Spec.",    desc = "Free for each character at any Innkeeper (requires Lvl 40)." },
-            { icon = "trainer",      name = "Profession Trainers", desc = "Access all profession trainers, bank and mailbox on Murloc Island." },
+            { icon = "trainers",      name = "Profession Trainers", desc = "Access all profession trainers, bank and mailbox on Murloc Island." },
             { icon = "bank",         name = "5 Free Bank Slots",  desc = "First 5 bank slots unlocked by default on each character." },
             { icon = "bag",          name = "4 x 20 Slot Bag",    desc = "Four 20 slot bags for each character." },
             { icon = "ah",           name = "Auction House",      desc = "Access the Auction House from anywhere (read/buy only)." },
@@ -609,6 +609,8 @@ function WHC.Tab_Shop(content)
     end)
 
     ShowCategory("Mounts")
+
+    WHC.ShopShowCategory = ShowCategory
 
     return content
 end
