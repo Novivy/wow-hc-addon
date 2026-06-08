@@ -82,6 +82,17 @@ local function itemSlot(block, x, y, achievement)
     --       ResetCursor()
     --  end)
 
+    ItemButton:SetScript("OnClick", function()
+        if IsShiftKeyDown() then
+            if WHC.client.is1_12 and ChatFrameEditBox:IsVisible() then
+                ChatFrameEditBox:Insert(achievement.itemLink);
+            end
+            if WHC.client.is1_14 then
+                ChatEdit_InsertLink(achievement.itemLink)
+            end
+        end
+    end)
+
     WHC.Frames.Achievements[achievement.id] = MerchantItemTemplate;
 end
 
