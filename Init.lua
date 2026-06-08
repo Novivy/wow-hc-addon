@@ -166,6 +166,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeAchievementButtons()
     WHC.InitializeSupport()
     WHC.InitializeDynamicMounts()
+    WHC.InitializeShopPets()
     WHC.InitializeTradableRaidLoot()
     WHC.InitializeDotCommandFix()
 
@@ -173,11 +174,19 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         WHC.InitializeDeathPopupAppeal()
     end
 
+    local wasReturningPlayer = (WhcAddonSettings.splash == 1)
+
     if (WhcAddonSettings.splash == 0) then
         WhcAddonSettings.splash = 1
 
         WHC.UIShowTabContent(WHC.TAB.GENERAL)
     end
+
+    -- Existing players see the new Shop tab once on the first login after this update
+    if (WhcAddonSettings.shopIntro == nil and wasReturningPlayer) then
+        WHC.UIShowTabContent(WHC.TAB.SHOP)
+    end
+    WhcAddonSettings.shopIntro = 1
 
     WHC.SetBlockInvites()
     WHC.SetBlockTrades()
@@ -199,7 +208,15 @@ function WHC.InitializeDynamicMounts()
         [23220] = true, ["Swift Dawnsaber"] = true,
         [16084] = true, ["Mottled Red Raptor"] = true,
         [17450] = true, ["Ivory Raptor"] = true,
-        [10790] = true, ["Tiger"] = true
+        [10790] = true, ["Tiger"] = true,
+        [16055] = true, ["Nightsaber"] = true,
+        [16081] = true, ["Arctic Wolf"] = true,
+        [578]   = true, ["Black Wolf"] = true,
+        [16060] = true, ["Golden Sabercat"] = true,
+        [17455] = true, ["Purple Mechanostrider"] = true,
+        [17458] = true, ["Fluorescent Green Mechanostrider"] = true,
+        [10798] = true, ["Obsidian Raptor"] = true,
+        [16082] = true, ["Palomino Stallion"] = true
     }
 
     local speedPattern = "%d?%d%d%%" -- matches 2-3 numbers and the % sign. Used to match 60% or 100%
@@ -249,6 +266,102 @@ function WHC.InitializeDynamicMounts()
     tooltip:SetScript("OnShow", function()
         setDynamicMountSpeedText(GameTooltip)
     end)
+end
+
+function WHC.InitializeShopPets()
+    -- Some shop pets reuse a client spell ID, so the client shows the wrong tooltip
+    local shopPets = {
+        [10687] = "Spectral Wolf", ["Summon White Plymouth Rock"] = "Spectral Wolf"
+    }
+
+    local function setShopPetTooltipText(tooltip)
+        local petName
+        local petSpellID
+        if tooltip.GetSpell then
+            petName, petSpellID = tooltip:GetSpell()
+        end
+        petName = petName or GameTooltipTextLeft1:GetText()
+
+        local correctName = shopPets[petSpellID] or shopPets[petName]
+        if correctName then
+            GameTooltipTextLeft1:SetText(correctName)
+
+            -- Spellbook text
+            if GameTooltipTextLeft3 then
+                GameTooltipTextLeft3:SetText(string.format("Right Click to summon and dismiss your %s.", string.lower(correctName)))
+            end
+
+            tooltip:Show()
+        end
+    end
+
+    if RETAIL == 1 then
+        -- 1.14 spellbook
+        GameTooltip:HookScript("OnTooltipSetSpell", function(tooltip, ...)
+            setShopPetTooltipText(tooltip)
+        end)
+    end
+
+    -- 1.12 spellbook
+    local tooltip = CreateFrame("Frame", nil, GameTooltip)
+    tooltip:SetScript("OnShow", function()
+        setShopPetTooltipText(GameTooltip)
+    end)
+end
+
+function WHC.ShowUrlPopup(title, url)
+    local urlFrame = CreateFrame("Frame", nil, UIParent, RETAIL_BACKDROP)
+    urlFrame:SetWidth(300)
+    urlFrame:SetHeight(150)
+    urlFrame:SetPoint("TOP", UIParent, "TOP", 0, -128)
+    urlFrame:SetBackdrop({
+        bgFile = "Interface/RaidFrame/UI-RaidFrame-GroupBg",
+        edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+        tile = true,
+        tileSize = 300,
+        edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+
+    urlFrame:SetFrameStrata("HIGH")
+    urlFrame:SetFrameLevel(10)
+
+    local titleText = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    titleText:SetPoint("TOP", urlFrame, "TOP", 0, -20)
+    titleText:SetText(title)
+    titleText:SetWidth(200)
+
+    local urlEditBox = CreateFrame("EditBox", nil, urlFrame)
+    urlEditBox:SetWidth(250)
+    urlEditBox:SetHeight(20)
+    urlEditBox:SetPoint("TOP", titleText, "BOTTOM", 0, -20)
+    urlEditBox:SetFontObject("ChatFontNormal")
+    urlEditBox:SetText(url)
+    urlEditBox:SetJustifyH("CENTER")
+    urlEditBox:SetAutoFocus(false)
+    urlEditBox:HighlightText()
+    urlEditBox:SetFocus()
+    urlEditBox:SetTextColor(1, 0.631, 0.317)
+    urlEditBox:SetScript("OnMouseDown", function(self)
+        urlEditBox:HighlightText()
+        urlEditBox:SetFocus()
+    end)
+
+    local buttonContainer = CreateFrame("Frame", nil, urlFrame)
+    buttonContainer:SetWidth(250)
+    buttonContainer:SetHeight(30)
+    buttonContainer:SetPoint("TOP", urlEditBox, "BOTTOM", 0, -20)
+
+    local cancelButton = CreateFrame("Button", nil, buttonContainer, "UIPanelButtonTemplate")
+    cancelButton:SetWidth(80)
+    cancelButton:SetHeight(30)
+    cancelButton:SetPoint("CENTER", buttonContainer, "CENTER", 5, 0)
+    cancelButton:SetText("Back")
+    cancelButton:SetScript("OnClick", function()
+        urlFrame:Hide()
+    end)
+
+    urlFrame:Show()
 end
 
 function WHC.InitializeTradableRaidLoot()

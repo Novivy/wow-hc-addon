@@ -3,10 +3,7 @@
 
 
 ## Changelog for next update
-- Fixed Promote / demote not working on 1.14
-- Fix dot-commands in channels executing as chat on 1.12 client
-- When in queue for BG, make the left click on the minimap icon open the addon on the PVP tab
-- When closing and opening the addon again, switch to the last tab opened
+
 ## Future versions:
 
 - Fix BG crossfaction leaderboard display
@@ -17,11 +14,19 @@
 - account Family name (needs to be specified)
 - proper custom titles (may need client mods, needs more researches)
 - when achievement failed, display custom box similar to wotlk achievements
-- fix 1.14 elevators sync by sending a packet when near (needs more researches)
 - fix 1.14 missing packet on jump while MCing (razor for example, needs more researches)
 
 
 ## Past versions
+
+
+### 1.6-1.7
+
+- Fixed Promote / demote not working on 1.14
+- Fix dot-commands in channels executing as chat on 1.12 client
+- When in queue for BG, make the left click on the minimap icon open the addon on the PVP tab
+- When closing and opening the addon again, switch to the last tab opened
+- Revamped Shop tab
 
 ### 1.4
 - Implemented Blue shaman, using the late WotLK color https://wowpedia.fandom.com/wiki/Class_colors

@@ -24,6 +24,9 @@ function WHC.UIShowTabContent(tabIndex)
     WHC:Show()
     if (tabIndex == WHC.TAB.GENERAL) then
         --
+    elseif (tabIndex == WHC.TAB.SHOP) then
+        local msg = ".whc coins"
+        SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
     elseif (tabIndex == WHC.TAB.ACHIEVEMENTS) then
         -- Set all achievements as failed
         for key, value in pairs(WHC.Frames.Achievements) do
@@ -95,6 +98,25 @@ function WHC.UIShowTabContent(tabIndex)
         WHC.Frames.UItabHeader[tabIndex].tabText:SetTextColor(1, 1, 1)
         WHC.Frames.UItabHeader[tabIndex]:Disable()
     end
+end
+
+-- Open the shop tab. The category is sticky between openings, so callers that
+-- care which page is shown (Lorh -> Mounts, the sub-gate -> Subscriptions) pass
+-- one explicitly; otherwise the last-shown category is kept.
+function WHC.OpenShopTab(category)
+    -- UIShowTabContent toggles, so only call it when the shop isn't already up.
+    if not (WHC:IsVisible() and WHC.lastTab == WHC.TAB.SHOP) then
+        WHC.UIShowTabContent(WHC.TAB.SHOP)
+    end
+    if category and WHC.ShopShowCategory then
+        WHC.ShopShowCategory(category)
+    end
+end
+
+-- Open the shop straight on the Subscriptions page (used when a non-subscriber
+-- hits the "reserved for supporters" gossip on a shop NPC).
+function WHC.OpenSubscriptionTab()
+    WHC.OpenShopTab("Subscriptions")
 end
 
 function WHC.InitializeUI()

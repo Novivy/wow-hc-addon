@@ -223,7 +223,7 @@ function WHC.Tab_Settings(content)
         end
     end)
 
-    WHC_SETTINGS.blueShamanBtn = createSettingsCheckBox(scrollContent, "Display shamans in blue as in TBC")
+    WHC_SETTINGS.blueShamanBtn = createSettingsCheckBox(scrollContent, "Display Shamans in blue instead of pink")
     WHC_SETTINGS.blueShamanBtn:SetScript("OnClick", function()
         WhcAddonSettings.blueShaman = getCheckedValueAndPlaySound(WHC_SETTINGS.blueShamanBtn)
 
