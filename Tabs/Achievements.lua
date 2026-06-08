@@ -83,8 +83,13 @@ local function itemSlot(block, x, y, achievement)
     --  end)
 
     ItemButton:SetScript("OnClick", function()
-        if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
-            ChatFrameEditBox:Insert(achievement.itemLink);
+        if IsShiftKeyDown() then
+            if WHC.client.is1_12 and ChatFrameEditBox:IsVisible() then
+                ChatFrameEditBox:Insert(achievement.itemLink);
+            end
+            if WHC.client.is1_14 then
+                ChatEdit_InsertLink(achievement.itemLink)
+            end
         end
     end)
 
