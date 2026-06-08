@@ -21,8 +21,9 @@ playerLogin:SetScript("OnEvent", function(self, event)
 end)
 
 -- Lorh the shopkeeper: opening his gossip pops the WHC shop tab straight away.
-local SHOP_NPC_ENTRY = 30737
-local SHOP_NPC_NAME = "Lorh"
+local shopNpc = {
+    [30737] = true, ["Lorh"] = true,
+}
 -- Distinctive snippet of the "reserved for subscribers" gossip the server shows
 -- on subscriber-only shop NPCs (npc_text 921061) to anyone below Tier 2. When we
 -- see it, the player can't use the NPC, so we pop the Subscriptions page instead.
@@ -32,18 +33,12 @@ local RESERVED_GOSSIP_MARKERS = {
 local shopGossip = CreateFrame("Frame")
 shopGossip:RegisterEvent("GOSSIP_SHOW")
 shopGossip:SetScript("OnEvent", function()
-    local npcId = 0
-    if WHC.GetNpcID then
-        npcId = WHC.GetNpcID("npc")
-        if not npcId or npcId == 0 then
-            npcId = WHC.GetNpcID("target")
-        end
-    end
+    local npcId = WHC.GetNpcID("npc") or WHC.GetNpcID("target")
     local npcName = UnitName("npc") or UnitName("target")
 
     -- Lorh: open the shop on the Mounts page, leaving the gossip open so he can
     -- tell his story.
-    if npcId == SHOP_NPC_ENTRY or npcName == SHOP_NPC_NAME then
+    if shopNpc[npcId] or shopNpc[npcName] then
         WHC.OpenShopTab("Mounts")
         return
     end
