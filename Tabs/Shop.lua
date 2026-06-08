@@ -552,7 +552,7 @@ function WHC.Tab_Shop(content)
 
         local category = cat
         btn:SetScript("OnClick", function()
-            PlaySound(WHC.sounds.selectTab)
+            PlaySound(WHC.SOUNDS.selectTab)
             if category == "Donate" then
                 WHC.ShowDonatePopup()
             else
