@@ -44,7 +44,7 @@ function WHC.InitializeDeathLogFrame()
     closeButton:SetHeight(36)
     closeButton:SetText("Close")
     closeButton:SetScript("OnClick", function()
-        PlaySound(WHC.sounds.checkBoxOff)
+        PlaySound(WHC.SOUNDS.checkBoxOff)
         WhcAddonSettings.recentDeaths = 0
         WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
         deathLogFrame:Hide()

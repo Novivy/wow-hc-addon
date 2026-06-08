@@ -100,9 +100,9 @@ local function createSettingsSubCheckBox(contentFrame, text)
 end
 
 local function playCheckedSound(checked)
-    local sound = WHC.sounds.checkBoxOff
+    local sound = WHC.SOUNDS.checkBoxOff
     if checked == 1 then
-        sound = WHC.sounds.checkBoxOn
+        sound = WHC.SOUNDS.checkBoxOn
     end
 
     PlaySound(sound)
