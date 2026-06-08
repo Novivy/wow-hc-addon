@@ -1215,27 +1215,6 @@ local murlocNpcs = {
     [950]   = true, ["Swamp Talker"] = true,
 }
 
-local function getNpcID(unit)
-    if UnitGUID then
-        local guid = UnitGUID(unit) -- Only possible on 1.14
-        if not guid then return 0 end
-        local _, _, _, _, _, npcID = strsplit("-", guid)
-        return tonumber(npcID) or 0
-    end
-
-    if WHC.client.isSuperWow then
-        local _, guid = UnitExists(unit) -- Superwow guid
-        if not guid then return 0 end -- unit token may not exist (e.g. "npc" on 1.12)
-        local npcIDHex = string.sub(guid, 9, 12)
-        return tonumber(npcIDHex, 16) or 0
-    end
-
-    return 0
-end
-
--- Exposed for reuse (e.g. Lorh shop gossip in Events.lua)
-WHC.GetNpcID = getNpcID
-
 local onlyKillFrame = CreateFrame("Frame", "OnlyKillFrame", UIParent, RETAIL_BACKDROP)
 onlyKillFrame:SetWidth(500)
 onlyKillFrame:SetHeight(150)
@@ -1284,7 +1263,7 @@ onlyKillFrame:SetScript("OnEvent", function()
     end
 
     local creatureType = UnitCreatureType("target")
-    local npcID = getNpcID("target")
+    local npcID = WHC.GetNpcID("target")
     local unitName = UnitName("target")
     if ignoreCreatureType[creatureType] or
         ignoreNpcs[npcID] or

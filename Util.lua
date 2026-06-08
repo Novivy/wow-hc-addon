@@ -31,6 +31,26 @@ function WHC.GetItemIDFromLink(itemLink)
     return tonumber(itemID)
 end
 
+function WHC.GetNpcID(unit)
+    if UnitGUID then
+        local guid = UnitGUID(unit) -- Only possible on 1.14
+        if not guid then return nil end
+
+        local _, _, _, _, _, npcID = string.split("-", guid)
+        return tonumber(npcID)
+    end
+
+    if WHC.client.isSuperWow then
+        local _, guid = UnitExists(unit) -- Superwow guid
+        if not guid then return nil end
+
+        local npcIDHex = string.sub(guid, 9, 12)
+        return tonumber(npcIDHex, 16)
+    end
+
+    return nil
+end
+
 function WHC.Modulus(x, y)
     if WHC.client.is1_12 then
         return math.mod(x, y)
