@@ -20,6 +20,10 @@
 ## Past versions
 
 
+### 1.8
+
+- Fix error on clicking BG minimap icon outside a battleground
+
 ### 1.6-1.7
 
 - Fixed Promote / demote not working on 1.14
