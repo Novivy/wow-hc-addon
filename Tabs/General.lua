@@ -258,6 +258,37 @@ function WHC.Tab_General(content)
         ResetCursor()
     end)
 
+    -- Group Finder button (parented to the main frame so it shows on every tab)
+    local gfBtn = CreateFrame("Button", "WhcGFOpenBtn", WHC)
+    gfBtn:SetWidth(28)
+    gfBtn:SetHeight(28)
+    gfBtn:SetPoint("TOPLEFT", WHC, "TOPLEFT", -2, -48)
+    gfBtn:SetNormalTexture("Interface\\AddOns\\WOW_HC\\Images\\groupfinder\\eye\\battlenetworking0")
+    local gnt = gfBtn:GetNormalTexture()
+    if gnt then gnt:ClearAllPoints(); gnt:SetPoint("CENTER", gfBtn, "CENTER", 0, -0.5); gnt:SetWidth(42); gnt:SetHeight(42) end
+    gfBtn:EnableMouse(true)
+    gfBtn:SetFrameStrata("HIGH")
+    gfBtn:SetFrameLevel(10)
+
+    local gfBorder = gfBtn:CreateTexture(nil, "OVERLAY")
+    gfBorder:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+    gfBorder:SetPoint("CENTER", gfBtn, "CENTER", 13, -14)
+    gfBorder:SetWidth(64)
+    gfBorder:SetHeight(64)
+
+    gfBtn:SetScript("OnClick", function()
+        if WHC.GF then WHC.GF.Toggle() end
+    end)
+    gfBtn:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(gfBtn, "ANCHOR_CURSOR")
+        GameTooltip:SetText("Group Finder", 1, 1, 1)
+        GameTooltip:AddLine("Click to open the Group Finder", 0.8, 0.8, 0.8)
+        GameTooltip:Show()
+    end)
+    gfBtn:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+
 
 
 

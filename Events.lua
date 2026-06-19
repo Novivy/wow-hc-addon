@@ -311,6 +311,28 @@ local function handleChatEvent(arg1)
         return 1
     end
 
+    -- Group Finder (prefix uses ^ as field separator; keep original case for names/notes)
+    if string.find(lowerArg, "^::whc::gf:") then
+        if string.find(arg1, "^::whc::gf:listing%^") then
+            WHC.GF.OnListingLine(string.gsub(arg1, "^::whc::gf:listing%^", ""))
+        elseif string.find(arg1, "^::whc::gf:listend") then
+            WHC.GF.OnListEnd()
+        elseif string.find(arg1, "^::whc::gf:mylisting%^") then
+            WHC.GF.OnMyListing(string.gsub(arg1, "^::whc::gf:mylisting%^", ""))
+        elseif string.find(arg1, "^::whc::gf:mine%^") then
+            WHC.GF.OnMine(string.gsub(arg1, "^::whc::gf:mine%^", ""))
+        elseif string.find(arg1, "^::whc::gf:rolepick%^") then
+            WHC.GF.OnRolePick(string.gsub(arg1, "^::whc::gf:rolepick%^", ""))
+        elseif string.find(arg1, "^::whc::gf:created%^") then
+            WHC.GF.OnCreated(string.gsub(arg1, "^::whc::gf:created%^", ""))
+        elseif string.find(arg1, "^::whc::gf:deleted") then
+            WHC.GF.OnDeleted()
+        elseif string.find(arg1, "^::whc::gf:error%^") then
+            WHC.GF.OnError(string.gsub(arg1, "^::whc::gf:error%^", ""))
+        end
+        return 0
+    end
+
     if string.find(lowerArg, "^::whc::ticket:") then
         local result = string.gsub(arg1, "^::whc::ticket:", "")
 

@@ -20,5 +20,6 @@ RecentDeaths.lua
 SpeedRunTimer.lua
 Support.lua
 Events.lua
+GroupFinder.lua
 MinimapButton.lua
 AchievementHelpers.lua

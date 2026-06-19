@@ -180,9 +180,25 @@ function WHC.Tab_Settings(content)
     WHC_SETTINGS.minimap:SetScript("OnClick", function()
         WhcAddonSettings.minimapicon = getCheckedValueAndPlaySound(WHC_SETTINGS.minimap)
 
+        -- always snap the icon back to its default spot on toggle
+        if WHC.ResetMinimapIconPosition then WHC.ResetMinimapIconPosition() end
         WHC.Frames.MapIcon:Hide()
         if (WhcAddonSettings.minimapicon == 1) then
             WHC.Frames.MapIcon:Show()
+        end
+    end)
+
+    WHC_SETTINGS.groupFinderIcon = createSettingsCheckBox(scrollContent, "Display Group Finder minimap button")
+    WHC_SETTINGS.groupFinderIcon:SetScript("OnClick", function()
+        WhcAddonSettings.groupFinderIcon = getCheckedValueAndPlaySound(WHC_SETTINGS.groupFinderIcon)
+
+        -- always snap the icon back to its default spot on toggle
+        if WHC.ResetGroupFinderIconPosition then WHC.ResetGroupFinderIconPosition() end
+        if WHC.Frames.GroupFinderIcon then
+            WHC.Frames.GroupFinderIcon:Hide()
+            if (WhcAddonSettings.groupFinderIcon == 1) then
+                WHC.Frames.GroupFinderIcon:Show()
+            end
         end
     end)
 

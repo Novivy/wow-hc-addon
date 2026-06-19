@@ -133,6 +133,8 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.auction_medium = WhcAddonSettings.auction_medium or 0
     WhcAddonSettings.auction_long = WhcAddonSettings.auction_long or 0
     WhcAddonSettings.auction_deposit = WhcAddonSettings.auction_deposit or 0
+    WhcAddonSettings.groupFinderIcon = WhcAddonSettings.groupFinderIcon or 1
+    WhcAddonSettings.groupFinderAngle = WhcAddonSettings.groupFinderAngle or 195
 
     WhcAchievementSettings = WhcAchievementSettings or {}
     WhcAchievementSettings.blockInvites = WhcAchievementSettings.blockInvites or 0
@@ -160,6 +162,9 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
 
     WHC.InitializeUI()
     WHC.InitializeMinimapIcon()
+    WHC.InitializeGroupFinder()
+    WHC.InitializeGroupFinderIcon()
+    WHC.GF.InitLogoutHooks()
     WHC.InitializeDeathLogFrame()
     WHC.InitializeSpeedRunTimer()
     WHC.InitializeBlueShaman()

@@ -22,6 +22,11 @@ function WHC.UIShowTabContent(tabIndex)
 
     WHC.lastTab = tabIndex
     WHC:Show()
+    -- Group Finder button shows on every tab except the Shop
+    local gfOpenBtn = getglobal("WhcGFOpenBtn")
+    if gfOpenBtn then
+        if tabIndex == WHC.TAB.SHOP then gfOpenBtn:Hide() else gfOpenBtn:Show() end
+    end
     if (tabIndex == WHC.TAB.GENERAL) then
         --
     elseif (tabIndex == WHC.TAB.SHOP) then
@@ -52,6 +57,7 @@ function WHC.UIShowTabContent(tabIndex)
         SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
     elseif (tabIndex == WHC.TAB.SETTINGS) then
         WHC_SETTINGS.minimap:SetChecked(WHC.CheckedValue(WhcAddonSettings.minimapicon))
+        WHC_SETTINGS.groupFinderIcon:SetChecked(WHC.CheckedValue(WhcAddonSettings.groupFinderIcon))
         WHC_SETTINGS.achievementbtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementbtn))
         WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
         WHC_SETTINGS.speedRunTimerBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.speedRunTimer.showTimer))
