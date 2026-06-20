@@ -27,7 +27,7 @@ function WHC.Tab_Support(content)
     local label = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     label:SetPoint("TOP", desc2, "TOP", 0, -60) -- Adjust y-offset based on logo size
     label:SetText(
-        "Describe your issue (max 200 characters):")
+        "Describe your issue (20-200 characters):")
     label:SetTextColor(0.933, 0.765, 0)
     label:SetJustifyH("LEFT")
 
@@ -55,13 +55,15 @@ function WHC.Tab_Support(content)
 
     content.editBox = editBox;
 
+    local minLength = 20
+
     StaticPopupDialogs["WHC_TICKET_CONFIRM"] = {
         text = "|cffff0000WARNING: In-game support is reserved for urgent situations only: ongoing raid issues or bot/cheat reports. All other matters must be reported in the Support section on the website. You will be redirected there if your issue is not listed above|r",
         button1 = "Create ticket",
         button2 = "Cancel",
         OnAccept = function()
             local issue = editBox:GetText()
-            if issue ~= "" then
+            if string.len(issue) >= minLength then
                 SendChatMessage(".whc ticketcreate " .. issue, "WHISPER", GetDefaultLanguage(), UnitName("player"));
                 WHC.UIShowTabContent(0)
             end
@@ -79,9 +81,12 @@ function WHC.Tab_Support(content)
     createButton:SetText("Create ticket")
     createButton:SetScript("OnClick", function()
         local issue = editBox:GetText()
-        if issue ~= "" then
-            StaticPopup_Show("WHC_TICKET_CONFIRM")
+        if string.len(issue) < minLength then
+            UIErrorsFrame:AddMessage("Please describe your issue in at least " .. minLength .. " characters. Include player name, message or as much context as possible", 1, 0, 0)
+            return
         end
+
+        StaticPopup_Show("WHC_TICKET_CONFIRM")
     end)
 
 
