@@ -1,3 +1,8 @@
+Official Addon for WOW-HC.com
+
+https://wow-hc.com
+
+
 
 ## TODO
 
