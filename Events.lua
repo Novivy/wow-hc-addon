@@ -305,11 +305,27 @@ local function getTargetAchievementsDescription()
     return "\nListing " .. player .. "'s achievements"
 end
 
+-- A CHAT_MSG_SYSTEM message is delivered once per chat window that displays System, so a
+-- ::whc:: control line is handled back-to-back once per such window (a player with System
+-- enabled in two chat tabs would process every line twice, which e.g. wiped the Group
+-- Finder list via a second "listend"). All duplicate deliveries land in the SAME frame
+-- (one chat event is fully dispatched to every frame before the next) and GetTime() is
+-- constant within a frame, so we skip an exact repeat of the previous ::whc:: line seen
+-- in the same frame. Handlers then run exactly once no matter how many tabs show System;
+-- a real repeat in a later frame has a different GetTime() and is NOT skipped. We still
+-- return 0 for the skipped copy so the line stays hidden from every chat window.
+local lastWhcMsg, lastWhcFrame
 local function handleChatEvent(arg1)
     local lowerArg = string.lower(arg1)
     if not string.find(lowerArg, "^::whc::") then
         return 1
     end
+    local frameTime = GetTime()
+    if arg1 == lastWhcMsg and frameTime == lastWhcFrame then
+        return 0
+    end
+    lastWhcMsg = arg1
+    lastWhcFrame = frameTime
 
     -- Group Finder (prefix uses ^ as field separator; keep original case for names/notes)
     if string.find(lowerArg, "^::whc::gf:") then

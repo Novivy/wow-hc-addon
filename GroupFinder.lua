@@ -268,6 +268,7 @@ function GF.RequestList(force, wipe)
     local now = GetTime()
     if not force and (now - GF.lastListReq) < LIST_CD then return end
     GF.lastListReq = now
+    GF.loadingRetryAt = now   -- separate anchor for the stuck-loading retry (keeps the Refresh countdown stable)
     GF.pending = {}
     GF.loading = true
     if wipe then
@@ -1632,9 +1633,17 @@ function GF.Toggle()
     else
         GF.frame:Show()
         PlaySound(WHC.SOUNDS.openFrame)
-        GF.RequestMine()
-        GF.RequestMyListing()   -- own listing fresh on open (no cooldown)
-        GF.RequestList(true)    -- bulk list: only on open + activity change
+        -- Refresh-on-open, but respect cooldowns so rapid open/close never spams the
+        -- server or restarts the Refresh countdown:
+        --  - bulk list: force=false -> reuses the cached list while the 10s cooldown holds
+        --  - own-listing fetches: cheap but still throttled to one burst every few seconds
+        local now = GetTime()
+        if (now - (GF.lastOpenFetch or -100)) >= 3 then
+            GF.lastOpenFetch = now
+            GF.RequestMine()
+            GF.RequestMyListing()   -- own listing fresh on open
+        end
+        GF.RequestList(false)   -- bulk list: respects the 10s cooldown (reuses cache otherwise)
         GF.SetView("browse")
     end
 end
@@ -1661,8 +1670,8 @@ refresher:SetScript("OnUpdate", function()
     -- until the cooldown lifts and a real reply arrives, instead of giving up and
     -- showing "No listings found." (a throttled request doesn't push the cooldown back).
     if GF.loading and not GF.incoming and GF.frame and GF.frame:IsVisible() and GF.view == "browse" then
-        if (GetTime() - (GF.lastListReq or 0)) >= 2 then
-            GF.lastListReq = GetTime()
+        if (GetTime() - (GF.loadingRetryAt or 0)) >= 2 then
+            GF.loadingRetryAt = GetTime()   -- retry cadence only; do NOT touch lastListReq (the Refresh countdown anchor)
             GF.pending = {}
             Send("list")
         end
