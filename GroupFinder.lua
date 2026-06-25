@@ -309,10 +309,6 @@ end
 function GF.OnListingLine(payload)
     table.insert(GF.pending, parseListing(payload))
 end
-local function listingLeader(l)
-    for _, m in ipairs(l.members) do if m.name == l.leader then return m end end
-    return l.members and l.members[1] or nil
-end
 -- is this the listing the player belongs to (as leader or as a member)?
 local function isMineListing(l)
     local me = UnitName("player")
@@ -320,20 +316,14 @@ local function isMineListing(l)
     for _, m in ipairs(l.members) do if m.name == me then return true end end
     return false
 end
--- own listing pinned first, then online leaders before offline, then level desc
+-- own listing pinned first, then newest first. id is the DB auto-increment, so id DESC
+-- matches the launcher/website ordering (server-stats group_finder is ORDER BY created_time DESC).
 local function sortListings(t)
     table.sort(t, function(a, b)
         local am = isMineListing(a) and 1 or 0
         local bm = isMineListing(b) and 1 or 0
         if am ~= bm then return am > bm end
-        local la, lb = listingLeader(a), listingLeader(b)
-        local oa = (la and la.online == "1") and 1 or 0
-        local ob = (lb and lb.online == "1") and 1 or 0
-        if oa ~= ob then return oa > ob end
-        local va = (la and tonumber(la.level)) or 0
-        local vb = (lb and tonumber(lb.level)) or 0
-        if va ~= vb then return va > vb end
-        return (a.leader or "") < (b.leader or "")
+        return (tonumber(a.id) or 0) > (tonumber(b.id) or 0)
     end)
 end
 
