@@ -262,6 +262,8 @@ function WHC.InitializeUI()
     -- Slash command to toggle the frame
     SLASH_WOWHC1 = "/wowhc"
     SlashCmdList["WOWHC"] = function(msg)
-        WHC.UIShowTabContent(WHC.lastTab)
+        local tab = WHC.TAB[string.upper(msg)] or WHC.TAB.lastTab
+
+        WHC.UIShowTabContent(tab)
     end
 end
