@@ -1273,17 +1273,24 @@ function GB.Install114WithdrawHook()
     GB.withdrawHookInstalled = true
 
     local function onBagClick(self, button)
-        if button == "RightButton" then return end          -- don't fight right-click use
-        if not GB.picked then return end                     -- nothing picked from the bank
-        if not (GB.frame and GB.frame:IsVisible()) then return end
         local slot = self and self.GetID and self:GetID()
         local bag = self and self.GetBagID and self:GetBagID()
         if bag == nil then
             local p = self and self.GetParent and self:GetParent()
             bag = p and p.GetID and p:GetID()
         end
-        if bag == nil or slot == nil then return end
-        GB.TryWithdrawTo(bag, slot)                          -- guards cursor-empty / bag 0-4 itself
+        if bag == nil or slot == nil or bag < 0 or bag > 4 then return end   -- real bags only
+
+        if button == "RightButton" then
+            -- Alt+right-click a bag item = deposit into the current tab (taint-free:
+            -- this is a post-hook, we don't replace the protected click handler)
+            if IsAltKeyDown() then GB.TryAutoDeposit(bag, slot) end
+            return                                           -- plain right-click = Blizzard use
+        end
+        -- left-click / drag-drop of a virtually-picked bank item = withdraw here
+        if not GB.picked then return end
+        if not (GB.frame and GB.frame:IsVisible()) then return end
+        GB.TryWithdrawTo(bag, slot)                          -- guards cursor-empty itself
     end
     local function onBagDrag(self) onBagClick(self, "LeftButton") end
 
