@@ -201,6 +201,37 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     end
 end)
 
+-- Hook the tooltip methods that build a spell/aura tooltip and call `handler`
+-- once the client has filled the lines in.
+--
+-- This has to be a positive signal. A GameTooltip OnShow hook fires for every
+-- tooltip, including world ones, and the mount/pet lookups fall back to matching
+-- the tooltip's first line by name - so a mob sharing a mount's name (the
+-- Nightsabers in Teldrassil) got rewritten too. Filtering that back out is not
+-- possible: a corpse does not set the "mouseover" unit, so the 1.12 client draws
+-- its tooltip natively instead of going through GameTooltip:SetUnit, leaving
+-- GetUnit(), GetOwner() and "mouseover" all holding stale values from whichever
+-- Lua-built tooltip came before it.
+local function WhcHookSpellTooltips(handler)
+    -- SetPlayerBuff is the 1.12 path for your own buffs; SetUnitAura the 1.14 one.
+    local methods = { "SetSpell", "SetSpellByID", "SetAction", "SetPetAction", "SetShapeshift",
+                      "SetPlayerBuff", "SetUnitBuff", "SetUnitDebuff", "SetUnitAura" }
+
+    for _, method in pairs(methods) do
+        local original = GameTooltip[method]
+        if original then
+            -- Explicit parameters rather than "...": 1.12 runs Lua 5.0, which
+            -- cannot forward a vararg from inside an expression. None of the
+            -- hooked methods take more than two arguments.
+            GameTooltip[method] = function(self, a1, a2, a3)
+                local result = original(self, a1, a2, a3)
+                handler(self)
+                return result
+            end
+        end
+    end
+end
+
 function WHC.InitializeDynamicMounts()
     local dynamicMounts = {
         [23220] = true, ["Swift Dawnsaber"] = true,
@@ -225,11 +256,12 @@ function WHC.InitializeDynamicMounts()
         if tooltip.GetSpell then
             mountName, mountSpellID = tooltip:GetSpell()
         end
+        -- 1.12 has no tooltip:GetSpell(), so fall back to the displayed name.
         mountName = mountName or GameTooltipTextLeft1:GetText()
 
         if dynamicMounts[mountSpellID] or dynamicMounts[mountName] then
             local buffDesc = GameTooltipTextLeft2:GetText()
-            local isBuff = string.find(buffDesc, speedPattern)
+            local isBuff = buffDesc and string.find(buffDesc, speedPattern)
 
             -- Make the spellbook name have artifact color
             if not isBuff then
@@ -243,8 +275,11 @@ function WHC.InitializeDynamicMounts()
                 GameTooltipTextLeft2:SetText(dynamicBuffText)
             end
 
-            -- Spellbook text
-            if GameTooltipTextLeft3 then
+            -- Spellbook text. Only touch line 3 when this tooltip actually has
+            -- one - the buff tooltip does not, and writing to a line this tooltip
+            -- never renders leaves the text parked on the shared fontstring for
+            -- whatever tooltip shows that line next.
+            if GameTooltipTextLeft3 and tooltip:NumLines() >= 3 then
                 GameTooltipTextLeft3:SetText(string.format("Summons and dismisses a rideable %s. This mount's speed changes depending on your Riding skill.", mountName))
             end
 
@@ -260,10 +295,7 @@ function WHC.InitializeDynamicMounts()
     end
 
     -- 1.12 spellbook and buff + 1.14 buff
-    local tooltip = CreateFrame("Frame", nil, GameTooltip)
-    tooltip:SetScript("OnShow", function()
-        setDynamicMountSpeedText(GameTooltip)
-    end)
+    WhcHookSpellTooltips(setDynamicMountSpeedText)
 end
 
 function WHC.InitializeShopPets()
@@ -278,14 +310,15 @@ function WHC.InitializeShopPets()
         if tooltip.GetSpell then
             petName, petSpellID = tooltip:GetSpell()
         end
+        -- 1.12 has no tooltip:GetSpell(), so fall back to the displayed name.
         petName = petName or GameTooltipTextLeft1:GetText()
 
         local correctName = shopPets[petSpellID] or shopPets[petName]
         if correctName then
             GameTooltipTextLeft1:SetText(correctName)
 
-            -- Spellbook text
-            if GameTooltipTextLeft3 then
+            -- Spellbook text, same shared-fontstring caveat as the mounts above.
+            if GameTooltipTextLeft3 and tooltip:NumLines() >= 3 then
                 GameTooltipTextLeft3:SetText(string.format("Right Click to summon and dismiss your %s.", string.lower(correctName)))
             end
 
@@ -301,10 +334,7 @@ function WHC.InitializeShopPets()
     end
 
     -- 1.12 spellbook
-    local tooltip = CreateFrame("Frame", nil, GameTooltip)
-    tooltip:SetScript("OnShow", function()
-        setShopPetTooltipText(GameTooltip)
-    end)
+    WhcHookSpellTooltips(setShopPetTooltipText)
 end
 
 function WHC.ShowUrlPopup(title, url)
