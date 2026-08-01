@@ -355,6 +355,15 @@ local function handleChatEvent(arg1)
         return 0
     end
 
+    -- Server-pushed shop open (e.g. non-sub talking to a murloc companion)
+    if string.find(lowerArg, "^::whc::shop:") then
+        local page = string.gsub(lowerArg, "^::whc::shop:", "")
+        if page == "subs" then
+            WHC.OpenSubscriptionTab()
+        end
+        return 0
+    end
+
     if string.find(lowerArg, "^::whc::ticket:") then
         local result = string.gsub(arg1, "^::whc::ticket:", "")
 
