@@ -94,12 +94,13 @@ local function Throttled()
     return false
 end
 
+-- no addon prefix; normal guild-bank messages are yellow, errors are red
 local function Msg(text)
-    DEFAULT_CHAT_FRAME:AddMessage(WHC.ADDON_PREFIX .. text)
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffff00" .. text .. "|r")
 end
 
 local function ErrMsg(text)
-    Msg("|cffff2020" .. text .. "|r")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffff2020" .. text .. "|r")
     if UIErrorsFrame then
         UIErrorsFrame:AddMessage(text, 1.0, 0.1, 0.1, 1.0)
     end
@@ -248,6 +249,7 @@ function WHC.InitializeGuildBank()
         Send("close")
         GB.state.mode = "closed"
         GB.ClearPicked()
+        GB.RefreshBagHooks()        -- restore protected container fns (untaint 1.14)
     end)
     f:Hide()
     tinsert(UISpecialFrames, "WhcGuildBank")
@@ -1263,64 +1265,147 @@ local function CursorHoldsItem()
     return CursorHasItem()
 end
 
+-- 1.14 taint-free withdraw-to-bag: HookScript (append, no taint) on each bag item
+-- button so we observe a click/drop regardless of how the button stored its handler.
+-- Inert unless a bank item is virtually picked and the bank window is open.
+function GB.Install114WithdrawHook()
+    if GB.withdrawHookInstalled then return end
+    GB.withdrawHookInstalled = true
+
+    local function onBagClick(self, button)
+        if button == "RightButton" then return end          -- don't fight right-click use
+        if not GB.picked then return end                     -- nothing picked from the bank
+        if not (GB.frame and GB.frame:IsVisible()) then return end
+        local slot = self and self.GetID and self:GetID()
+        local bag = self and self.GetBagID and self:GetBagID()
+        if bag == nil then
+            local p = self and self.GetParent and self:GetParent()
+            bag = p and p.GetID and p:GetID()
+        end
+        if bag == nil or slot == nil then return end
+        GB.TryWithdrawTo(bag, slot)                          -- guards cursor-empty / bag 0-4 itself
+    end
+    local function onBagDrag(self) onBagClick(self, "LeftButton") end
+
+    local function hookButton(b)
+        if not b or b.gbWdHooked or not b.HookScript then return end
+        if not (b.IsObjectType and b:IsObjectType("Button") and b.GetID) then return end
+        b.gbWdHooked = true
+        b:HookScript("OnClick", onBagClick)
+        b:HookScript("OnReceiveDrag", onBagDrag)
+    end
+    -- hook every child button of a container frame (buttons exist by the time it updates)
+    GB.hookBagButtons = function(frame)
+        if not frame or not frame.GetChildren then return end
+        local kids = { frame:GetChildren() }
+        for i = 1, table.getn(kids) do hookButton(kids[i]) end
+    end
+
+    -- ContainerFrame_Update fires whenever a bag redraws → hook its buttons then
+    if type(ContainerFrame_Update) == "function" then
+        hooksecurefunc("ContainerFrame_Update", function(frame) GB.hookBagButtons(frame) end)
+    end
+    -- also the global click handler (harmless duplicate; ClearPicked makes it idempotent)
+    if type(ContainerFrameItemButton_OnClick) == "function" then
+        hooksecurefunc("ContainerFrameItemButton_OnClick", onBagClick)
+    end
+    -- initial scan of any bag frames already built
+    for i = 1, 13 do GB.hookBagButtons(getglobal("ContainerFrame" .. i)) end
+end
+
 -- track real bag pickups so a drop on a bank slot knows the source (1.12 has no GetCursorInfo)
 function GB.InitBagHook()
+    -- PERMANENT, non-tainting: hooksecurefunc only observes, it doesn't replace the
+    -- protected function, so this is safe on 1.14. Used to remember the drop source.
     WHC.HookSecureFunc("PickupContainerItem", function(bag, slot)
         GB.cursorBag = { bag = bag, slot = slot }
     end)
     if WHC.client.is1_14 and C_Container and C_Container.PickupContainerItem then
-        -- 1.14 default UI calls C_Container.PickupContainerItem
         WHC.HookSecureFunc(C_Container, "PickupContainerItem", function(bag, slot)
             GB.cursorBag = { bag = bag, slot = slot }
         end)
     end
-
-    -- right-click in bags while the guild bank is open = auto-deposit into the
-    -- current tab (server slot 255 = fill matching stacks, then first empty),
-    -- and a picked bank item dropped on a bag slot = withdraw.
-    if C_Container then
-        -- 1.14.4+ builds route the bag buttons through the C_Container table;
-        -- wrap its entries (pcall-guarded in case a future build locks the table)
-        local function WrapContainerFn(name, pre)
-            local orig = C_Container[name]
-            if not orig then return end
-            local wrapped = function(bag, slot, a3)
-                if pre(bag, slot) then return end
-                return orig(bag, slot, a3)
-            end
-            pcall(function() C_Container[name] = wrapped end)
-        end
-        WrapContainerFn("PickupContainerItem", function(bag, slot)
-            return GB.TryWithdrawTo(bag, slot)
-        end)
-        WrapContainerFn("UseContainerItem", function(bag, slot)
-            return GB.TryAutoDeposit(bag, slot)
-        end)
-        return
+    -- 1.14 (with OR without C_Container): taint-free withdraw. We can't replace the
+    -- protected container fns to intercept a drop on a bag slot, but HookScript on each
+    -- bag button OBSERVES the click without taint. When a bank item is virtually picked
+    -- and the user clicks an (empty) bag slot, we withdraw there.
+    if WHC.client and WHC.client.is1_14 then
+        GB.Install114WithdrawHook()
     end
 
-    -- 1.12 AND 1.14.2: no C_Container — the container item buttons are plain
-    -- insecure XML handlers calling the GLOBALS PickupContainerItem (left click,
-    -- also the OnReceiveDrag path) and UseContainerItem (right click); verified
-    -- against Blizzard's archived 1.14.2 FrameXML (Gethe/wow-ui-source tag
-    -- 1.14.2, ContainerFrame.lua:1249/1266). One pre-hook pair covers both.
-    GB.InstallUseHook()
-    local origPickup = PickupContainerItem
-    PickupContainerItem = function(bag, slot, a3)
-        if GB.TryWithdrawTo(bag, slot) then return end
-        return origPickup(bag, slot, a3)
-    end
-    -- SetBlockEquipItems (AchievementHelpers.lua) reassigns the global
-    -- UseContainerItem at login and on every settings toggle — ON EVERY CLIENT —
-    -- so re-install our use-hook after each run (this was 1.12-only before,
-    -- which is why the 1.14 right-click deposit kept dying at login)
+    -- The click-INTERCEPTION hooks (right-click bag item = auto-deposit, picked bank
+    -- item dropped on a bag slot = withdraw) must REPLACE the container functions so
+    -- they can cancel the default action. On 1.14 those functions are PROTECTED, and
+    -- replacing them permanently taints them → the client blocks any later use of a
+    -- bag item / disenchant ("action only available to Blizzard UI"). So we install
+    -- them only while the bank is open AT A BANKER and restore the originals on close
+    -- (see GB.RefreshBagHooks, wired to OnShow/OnHide/OnOpenReply). On 1.12 the
+    -- functions are plain insecure FrameXML, so this scoping is harmless there too.
+
+    -- SetBlockEquipItems (AchievementHelpers.lua) reassigns the GLOBAL UseContainerItem
+    -- at login and on every settings toggle. If it fires while our hook is live we must
+    -- re-wrap the new function; harmless (no-op) when our hooks aren't installed.
     if WHC.SetBlockEquipItems and not GB.setBlockWrapped then
         GB.setBlockWrapped = true
         local origSet = WHC.SetBlockEquipItems
         WHC.SetBlockEquipItems = function()
             origSet()
-            GB.InstallUseHook()
+            if GB.bagHooksInstalled and not (WHC.client and WHC.client.is1_14) then
+                GB.hookedUse = nil          -- force re-hook of the freshly-assigned global
+                GB.InstallUseHook()
+            end
         end
+    end
+end
+
+-- install the click-interception hooks (only called while open at a banker)
+function GB.InstallBagHooks()
+    if GB.bagHooksInstalled then return end
+    GB.bagHooksInstalled = true
+
+    -- CRITICAL (any 1.14 client): the container functions are PROTECTED. Replacing
+    -- them — whether the C_Container table entry OR the _G global — permanently TAINTS
+    -- that slot for the whole session, after which the client BLOCKS every bag-item
+    -- USE ("action only available to Blizzard UI"). Restoring the original reference
+    -- on close does NOT clear it (taint is on the table/global slot, not the value).
+    -- So on 1.14 we NEVER wrap: right-click-in-bag-to-deposit is unavailable there;
+    -- deposit by dragging a bag item onto a bank slot, withdraw by right-clicking a
+    -- bank slot. The taint-safe hooksecurefunc trackers (InitBagHook) still run.
+    if WHC.client and WHC.client.is1_14 then return end
+
+    -- 1.12 only: plain insecure global functions, safe to wrap
+    GB.savedPickup = PickupContainerItem
+    PickupContainerItem = function(bag, slot, a3)
+        if GB.TryWithdrawTo(bag, slot) then return end
+        return GB.savedPickup(bag, slot, a3)
+    end
+    GB.InstallUseHook()
+end
+
+-- restore the untouched originals so normal use / disenchant works outside the bank
+function GB.RemoveBagHooks()
+    if not GB.bagHooksInstalled then return end
+    GB.bagHooksInstalled = false
+
+    if GB.savedPickup then
+        PickupContainerItem = GB.savedPickup
+        GB.savedPickup = nil
+    end
+    if GB.savedUse then
+        UseContainerItem = GB.savedUse
+        GB.savedUse = nil
+    end
+    GB.hookedUse = nil
+end
+
+-- install only when the window is open AND we have full (at-banker) access, since
+-- read-only/remote sessions can't deposit anyway; keeps the protected functions
+-- pristine (untainted) the rest of the time
+function GB.RefreshBagHooks()
+    if GB.frame and GB.frame:IsVisible() and GB.state.mode == "full" then
+        GB.InstallBagHooks()
+    else
+        GB.RemoveBagHooks()
     end
 end
 
@@ -1359,6 +1444,7 @@ end
 function GB.InstallUseHook()
     if UseContainerItem == GB.hookedUse then return end     -- already ours
     local orig = UseContainerItem
+    GB.savedUse = orig                                      -- restored by RemoveBagHooks
     GB.hookedUse = function(bagId, slot, onSelf)
         if GB.TryAutoDeposit(bagId, slot) then return end
         return orig(bagId, slot, onSelf)
@@ -1914,6 +2000,7 @@ function GB.OnOpenReply(payload)
         GB.frame:Show()
         PlaySound(WHC.SOUNDS.openFrame)
     end
+    GB.RefreshBagHooks()            -- full mode → intercept bag clicks; ro → leave fns pristine
     GB.UpdateHeader()
     GB.RepaintGrid()
 end
