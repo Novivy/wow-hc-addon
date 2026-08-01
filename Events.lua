@@ -349,6 +349,12 @@ local function handleChatEvent(arg1)
         return 0
     end
 
+    -- Guild Bank (all parsing lives in GuildBank.lua)
+    if string.find(lowerArg, "^::whc::gb:") then
+        WHC.GB.OnServerLine(arg1)
+        return 0
+    end
+
     if string.find(lowerArg, "^::whc::ticket:") then
         local result = string.gsub(arg1, "^::whc::ticket:", "")
 

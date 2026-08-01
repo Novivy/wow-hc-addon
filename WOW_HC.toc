@@ -21,5 +21,6 @@ SpeedRunTimer.lua
 Support.lua
 Events.lua
 GroupFinder.lua
+GuildBank.lua
 MinimapButton.lua
 AchievementHelpers.lua
