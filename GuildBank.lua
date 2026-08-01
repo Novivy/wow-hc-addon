@@ -42,6 +42,7 @@ local GB_ERRORS = {
     [20] = "Guild bank session expired. Reopen the guild bank.",
     [21] = "You must be at a guild banker. (Tier 3 Supporters can view the guild bank remotely.)",
     [22] = "Guild banks are currently disabled.",
+    [23] = "You cannot change the permissions of your own rank or a higher one.",
 }
 
 -- ---------------------------------------------------------------------------
@@ -315,6 +316,7 @@ function WHC.InitializeGuildBank()
     GB.BuildMoneyBar(f)
     GB.BuildViewTabs(f)
     GB.BuildLogView(f)
+    GB.BuildNoViewOverlay()     -- needs both the columns and the log panel
     GB.BuildInfoView(f)
     GB.BuildMoneyPopup(f)
     GB.BuildTabEditPopup(f)
@@ -425,6 +427,39 @@ function GB.BuildColumns(f)
     end
 end
 
+-- blackout shown when the current tab denies VIEW for our rank; one covers the
+-- slot grid (parented to column 1 so it hides with the grid on other views,
+-- RepaintGrid toggles it), one covers the log panel (UpdateLogList toggles it)
+local function MakeNoViewOverlay(name, parent, anchorTL, xTL, yTL, anchorBR, xBR, yBR, level)
+    local no = CreateFrame("Frame", name, parent)
+    no:SetPoint("TOPLEFT", anchorTL, "TOPLEFT", xTL, yTL)
+    no:SetPoint("BOTTOMRIGHT", anchorBR, "BOTTOMRIGHT", xBR, yBR)
+    no:SetFrameLevel(level)
+    no:EnableMouse(true)                    -- swallow clicks on covered content
+    local bg = no:CreateTexture(nil, "BACKGROUND")
+    bg:SetAllPoints(no)
+    if bg.SetColorTexture then
+        bg:SetColorTexture(0, 0, 0, 0.85)   -- 1.14
+    else
+        bg:SetTexture(0, 0, 0)              -- 1.12
+        bg:SetAlpha(0.85)
+    end
+    no.text = no:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    no.text:SetPoint("CENTER", no, "CENTER", 0, 0)
+    no.text:SetText("You do not have permission to view this tab.")
+    no:Hide()
+    return no
+end
+
+function GB.BuildNoViewOverlay()
+    GB.noViewOverlay = MakeNoViewOverlay("WhcGBNoView", GB.columns[1],
+        GB.columns[1], 4, 0, GB.columns[7], 4, 0,
+        GB.columns[1]:GetFrameLevel() + 3)                  -- above every slot button
+    GB.noViewLogOverlay = MakeNoViewOverlay("WhcGBNoViewLog", GB.logPanel,
+        GB.logPanel, 0, 0, GB.logPanel, 0, 0,
+        GB.logPanel:GetFrameLevel() + 3)                    -- above rows + scrollbar
+end
+
 -- shown instead of the slot grid while the guild owns no bank tab yet
 function GB.BuildEmptyPanel(f)
     local panel = CreateFrame("Frame", "WhcGBEmptyPanel", f)
@@ -497,7 +532,7 @@ function GB.BuildSideTabs(f)
         local tabF = CreateFrame("Frame", "WhcGBTab" .. t, f)
         tabF:SetWidth(42); tabF:SetHeight(50)
         if t == 1 then
-            tabF:SetPoint("TOPLEFT", f, "TOPRIGHT", -1, -32)
+            tabF:SetPoint("TOPLEFT", f, "TOPRIGHT", -2, -32)
         else
             tabF:SetPoint("TOPLEFT", getglobal("WhcGBTab" .. (t - 1)), "BOTTOMLEFT", 0, 0)
         end
@@ -514,8 +549,13 @@ function GB.BuildSideTabs(f)
         b.icon = b:CreateTexture(nil, "BORDER")
         b.icon:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
         b.icon:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 0, 0)
-        b:SetPushedTexture("Interface\\Buttons\\UI-Quickslot-Depress")
-        b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
+        -- NO pushed/highlight textures: same stuck-visual issue as the item slots
+        -- (a drag released off-button never delivers the mouse-up) — hover is manual
+        b.hover = b:CreateTexture(nil, "OVERLAY")
+        b.hover:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+        b.hover:SetBlendMode("ADD")
+        b.hover:SetAllPoints(b)
+        b.hover:Hide()
         b.checked = b:CreateTexture(nil, "OVERLAY")
         b.checked:SetTexture("Interface\\Buttons\\CheckButtonHilight")
         b.checked:SetBlendMode("ADD")
@@ -535,6 +575,7 @@ function GB.BuildSideTabs(f)
         end)
         b:SetScript("OnEnter", function(self)
             local btn = self or this
+            btn.hover:Show()
             local tabInfo = GB.state.tabs[btn.tabId]
             if tabInfo then
                 GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
@@ -552,7 +593,11 @@ function GB.BuildSideTabs(f)
                 GameTooltip:Show()
             end
         end)
-        b:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        b:SetScript("OnLeave", function(self)
+            local btn = self or this
+            btn.hover:Hide()
+            GameTooltip:Hide()
+        end)
         b:Hide()
         tabF:Hide()
         GB.tabButtons[t - 1] = { frame = tabF, button = b }
@@ -572,19 +617,29 @@ function GB.BuildSideTabs(f)
     icon:SetTexture(TEX .. "ui-guildbankframe-newtab")
     icon:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
     icon:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 0, 0)
-    b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
+    -- manual hover, same stuck-visual reasoning as the side tabs
+    b.hover = b:CreateTexture(nil, "OVERLAY")
+    b.hover:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+    b.hover:SetBlendMode("ADD")
+    b.hover:SetAllPoints(b)
+    b.hover:Hide()
     b:SetScript("OnClick", function()
         GB.OnBuyTabClick()
     end)
     b:SetScript("OnEnter", function(self)
         local btn = self or this
+        btn.hover:Show()
         GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
         GameTooltip:SetText("Buy Guild Bank Tab", 1, 1, 1)
         GameTooltip:AddLine("Cost: " .. FormatGold(GB.state.nextTabCost), 0.9, 0.9, 0.9)
         GameTooltip:AddLine("Anyone in the guild can buy a tab for the guild.", 0.6, 0.6, 0.6, 1)
         GameTooltip:Show()
     end)
-    b:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    b:SetScript("OnLeave", function(self)
+        local btn = self or this
+        btn.hover:Hide()
+        GameTooltip:Hide()
+    end)
     buyF:Hide()
     GB.buyTab = buyF
 end
@@ -705,7 +760,7 @@ function GB.BuildLogView(f)
 
     local scroll = CreateFrame("ScrollFrame", "WhcGBLogScroll", panel, "FauxScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", panel, "TOPLEFT", 0, 0)
-    scroll:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -24, 0)
+    scroll:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -5, -10)   -- scrollbar hugs the right edge, 10px taller
     scroll:SetScript("OnVerticalScroll", function(self, offset)
         if WHC.client.is1_12 then
             FauxScrollFrame_OnVerticalScroll(GB.logRowH, GB.UpdateLogList)
@@ -718,7 +773,7 @@ function GB.BuildLogView(f)
     for i = 1, NUM_ROWS do
         local row = panel:CreateFontString("WhcGBLogRow" .. i, "OVERLAY", "GameFontHighlightSmall")
         row:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -(i - 1) * GB.logRowH - 2)
-        row:SetWidth(660)
+        row:SetWidth(675)
         row:SetHeight(GB.logRowH)
         row:SetJustifyH("LEFT")
         row:SetText("")
@@ -735,15 +790,20 @@ function GB.BuildInfoView(f)
     GB.infoPanel = panel
 
     panel.hint = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    panel.hint:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, 0)
+    panel.hint:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -4)
     panel.hint:SetWidth(690)
     panel.hint:SetJustifyH("LEFT")
     panel.hint:SetText("Guild bank permissions per guild rank. Select a rank, adjust its rights, then Save. The Guild Master rank always has full access.")
 
-    -- rank selector
+    -- rank selector (same init pattern as the GroupFinder dropdowns: this.value
+    -- in the click func + direct Text widget updates, both verified on 1.12)
     local dd = CreateFrame("Frame", "WhcGBRankDD", panel, "UIDropDownMenuTemplate")
     dd:SetPoint("TOPLEFT", panel, "TOPLEFT", -10, -24)
     GB.rankDD = dd
+    GB.SetRankDDText = function(txt)
+        local t = getglobal("WhcGBRankDDText")
+        if t then t:SetWidth(0); t:SetText(txt) end
+    end
     if WHC.client.is1_12 then
         UIDropDownMenu_SetWidth(150, dd)
     else
@@ -751,18 +811,48 @@ function GB.BuildInfoView(f)
     end
     UIDropDownMenu_Initialize(dd, function()
         for _, rid in ipairs(GB.state.rankOrder) do
+            if GB.CanEditRank(rid) then     -- own/higher ranks are not offered at all
             local r = GB.state.ranks[rid]
+            local val = rid
             local info = {}
             info.text = rid .. " - " .. (r and r.name or "?")
-            info.value = rid
+            info.value = val
+            info.checked = (GB.selectedRank == val)
             info.func = function()
-                GB.SelectRank(rid)
+                local target = (this and this.value) or val
+                if target ~= GB.selectedRank and GB.RankFormDirty() then
+                    -- unsaved edits on the current rank: confirm before discarding
+                    GB.pendingRankSwitch = target
+                    GB.RefreshRankDD()          -- keep the closed dropdown on the old rank
+                    StaticPopup_Show("WHC_GB_DISCARD_RANK")
+                    return
+                end
+                GB.SelectRank(target)
             end
             UIDropDownMenu_AddButton(info)
+            end
         end
     end)
 
-    -- global rights
+    StaticPopupDialogs["WHC_GB_DISCARD_RANK"] = {
+        text = "You have unsaved changes to this rank. Discard them?",
+        button1 = "Discard",
+        button2 = "Cancel",
+        OnAccept = function()
+            if GB.pendingRankSwitch ~= nil then
+                GB.SelectRank(GB.pendingRankSwitch)
+            end
+            GB.pendingRankSwitch = nil
+        end,
+        OnCancel = function()
+            GB.pendingRankSwitch = nil
+        end,
+        timeout = 0,
+        whileDead = 1,
+        hideOnEscape = 1,
+    }
+
+    -- global rights, on the same line as the rank dropdown
     local function MakeCheck(name, label, x, y, parent)
         local cb = CreateFrame("CheckButton", name, parent or panel, "UICheckButtonTemplate")
         cb:SetWidth(22); cb:SetHeight(22)
@@ -775,25 +865,38 @@ function GB.BuildInfoView(f)
         return cb
     end
 
-    GB.cbManage   = MakeCheck("WhcGBcbManage", "Manage bank rights", 200, -50)
-    GB.cbDepGold  = MakeCheck("WhcGBcbDepGold", "Deposit gold", 340, -50)
-    GB.cbWdrGold  = MakeCheck("WhcGBcbWdrGold", "Withdraw gold", 450, -50)
+    -- gold deposits are open to everyone, so there is no "Deposit gold" right
+    GB.cbManage   = MakeCheck("WhcGBcbManage", "Manage bank rights", 200, -29)
+    GB.cbWdrGold  = MakeCheck("WhcGBcbWdrGold", "Withdraw gold", 370, -29)
 
     local goldLabel = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    goldLabel:SetPoint("TOPLEFT", panel, "TOPLEFT", 570, -56)
+    goldLabel:SetPoint("TOPLEFT", panel, "TOPLEFT", 500, -36)
     goldLabel:SetText("Gold/day:")
     GB.ebGold = CreateFrame("EditBox", "WhcGBebGold", panel, "InputBoxTemplate")
     GB.ebGold:SetWidth(60); GB.ebGold:SetHeight(18)
-    GB.ebGold:SetPoint("TOPLEFT", panel, "TOPLEFT", 630, -52)
+    GB.ebGold:SetPoint("TOPLEFT", panel, "TOPLEFT", 560, -31)
     GB.ebGold:SetAutoFocus(false)
     GB.ebGold:SetNumeric(true)
     GB.ebGold:SetMaxLetters(7)
 
     -- per-tab grid: 6 rows of (label + view/dep/move checkboxes + stacks editbox)
+    -- header labels are anchored per-column (centered over their checkbox column)
+    -- instead of one space-padded string, so they can't drift out of alignment
     GB.tabRights = {}
-    local header = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    header:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -84)
-    header:SetText("Tab                    View        Deposit      Move/Merge     Stacks withdrawable per day (-1 = unlimited)")
+    local tabHeader = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    tabHeader:SetPoint("TOPLEFT", panel, "TOPLEFT", 4, -84)
+    tabHeader:SetText("Tab")
+    local function ColHeader(label, cbX)
+        local h = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        h:SetPoint("TOP", panel, "TOPLEFT", cbX + 11, -84)   -- centered over the 22px checkbox
+        h:SetText(label)
+    end
+    ColHeader("View", 120)
+    ColHeader("Deposit", 185)
+    ColHeader("Move Items", 255)
+    local stacksHeader = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    stacksHeader:SetPoint("TOPLEFT", panel, "TOPLEFT", 333, -84)
+    stacksHeader:SetText("Stacks withdrawable/day (-1 = unlimited)")
     for t = 0, MAX_TABS - 1 do
         local y = -104 - t * 26
         local row = {}
@@ -814,12 +917,22 @@ function GB.BuildInfoView(f)
     end
 
     local save = CreateFrame("Button", "WhcGBRightsSave", panel, "UIPanelButtonTemplate")
-    save:SetWidth(120); save:SetHeight(22)
-    save:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -10, 4)
-    save:SetText("Save rank")
+    save:SetWidth(150); save:SetHeight(32)
+    save:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 4, -2)
+    save:SetText("Save Rank Changes")
     save:SetScript("OnClick", function() GB.SaveRank() end)
     GB.rightsSave = save
 
+end
+
+-- the stock dialog backdrop is fairly see-through; lay a solid dark fill inside
+-- the border insets so popup content doesn't compete with the bank grid below
+local function AddPopupFill(p)
+    local fill = p:CreateTexture(nil, "BACKGROUND")
+    fill:SetTexture(0, 0, 0)
+    fill:SetAlpha(0.82)
+    fill:SetPoint("TOPLEFT", p, "TOPLEFT", 11, -12)
+    fill:SetPoint("BOTTOMRIGHT", p, "BOTTOMRIGHT", -12, 11)
 end
 
 function GB.BuildMoneyPopup(f)
@@ -833,6 +946,7 @@ function GB.BuildMoneyPopup(f)
         tile = true, tileSize = 32, edgeSize = 32,
         insets = { left = 11, right = 12, top = 12, bottom = 11 }
     })
+    AddPopupFill(p)
     p:EnableMouse(true)
     p:Hide()
     GB.moneyPopup = p
@@ -895,31 +1009,89 @@ end
 -- ---------------------------------------------------------------------------
 -- tab edit popup (right-click a side tab): rename + icon picker
 -- ---------------------------------------------------------------------------
+-- every name below is verified against the 1.12 client's ItemDisplayInfo/SpellIcon
+-- string blocks (tools: scratchpad check_icons.py) — do not add unverified names
 local TAB_ICONS = {
     -- bags / containers
-    "INV_Misc_Bag_08", "INV_Misc_Bag_10", "INV_Box_01", "INV_Crate_02",
-    -- coins / gems
-    "INV_Misc_Coin_01", "INV_Misc_Coin_02", "INV_Misc_Gem_Ruby_02", "INV_Misc_Gem_Sapphire_02",
-    "INV_Misc_Gem_Emerald_02", "INV_Misc_Gem_Diamond_02", "INV_Misc_Gem_Pearl_03",
-    -- weapons / armor
-    "INV_Sword_27", "INV_Axe_09", "INV_Mace_01", "INV_Weapon_Bow_07", "INV_ThrowingKnife_02",
-    "INV_Staff_13", "INV_Wand_07", "INV_Shield_06", "INV_Helmet_29", "INV_Chest_Cloth_17",
-    "INV_Chest_Plate04", "INV_Boots_05", "INV_Gauntlets_04", "INV_Belt_03", "INV_Shoulder_09",
+    "INV_Misc_Bag_08", "INV_Misc_Bag_09", "INV_Misc_Bag_10", "INV_Misc_Bag_11",
+    "INV_Misc_Bag_12", "INV_Misc_Bag_14", "INV_Misc_Bag_17",
+    "INV_Box_01", "INV_Box_02", "INV_Box_03",
+    "INV_Crate_01", "INV_Crate_02", "INV_Crate_03", "INV_Crate_04", "INV_Crate_05",
+    -- coins / gems / jewelry
+    "INV_Misc_Coin_03", "INV_Misc_Coin_04", "INV_Misc_Coin_05", "INV_Misc_Coin_06",
+    "INV_Misc_Gem_Ruby_02", "INV_Misc_Gem_Sapphire_02", "INV_Misc_Gem_Emerald_02",
+    "INV_Misc_Gem_Topaz_02", "INV_Misc_Gem_Opal_02", "INV_Misc_Gem_Amethyst_02",
+    "INV_Misc_Gem_Diamond_02", "INV_Misc_Gem_Pearl_03", "INV_Misc_Gem_Crystal_02",
+    "INV_Jewelry_Ring_03", "INV_Jewelry_Ring_05", "INV_Jewelry_Ring_14",
+    "INV_Jewelry_Necklace_07", "INV_Jewelry_Talisman_03", "INV_Jewelry_Talisman_07",
+    -- weapons
+    "INV_Sword_04", "INV_Sword_27", "INV_Sword_39", "INV_Sword_48",
+    "INV_Weapon_ShortBlade_05", "INV_Weapon_ShortBlade_25",
+    "INV_Axe_06", "INV_Axe_09", "INV_Axe_12", "INV_Mace_01", "INV_Mace_02", "INV_Hammer_05",
+    "INV_Spear_05", "INV_Weapon_Halberd_10", "INV_Weapon_Bow_07", "INV_Weapon_Crossbow_02",
+    "INV_Weapon_Rifle_01", "INV_Weapon_Rifle_07", "INV_ThrowingKnife_02",
+    "INV_Staff_13", "INV_Wand_07",
+    -- armor
+    "INV_Shield_04", "INV_Shield_05", "INV_Shield_06", "INV_Shield_09",
+    "INV_Helmet_01", "INV_Helmet_03", "INV_Helmet_20", "INV_Helmet_29",
+    "INV_Chest_Cloth_17", "INV_Chest_Leather_01", "INV_Chest_Leather_08",
+    "INV_Chest_Chain_05", "INV_Chest_Plate04",
+    "INV_Boots_02", "INV_Boots_05", "INV_Boots_07", "INV_Bracer_02", "INV_Bracer_07",
+    "INV_Gauntlets_04", "INV_Belt_03", "INV_Shoulder_09",
+    "INV_Misc_Cape_02", "INV_Misc_Cape_11", "INV_Misc_Cape_18",
     -- consumables
-    "INV_Potion_51", "INV_Potion_54", "INV_Potion_62", "INV_Alchemy_Elixir_04",
-    "INV_Misc_Food_15", "INV_Misc_Food_23", "INV_Drink_07", "INV_Scroll_03", "INV_Scroll_05",
+    "INV_Potion_01", "INV_Potion_17", "INV_Potion_20", "INV_Potion_35", "INV_Potion_43",
+    "INV_Potion_51", "INV_Potion_54", "INV_Potion_62", "INV_Potion_76", "INV_Potion_87",
+    "INV_Potion_93",
+    "INV_Misc_Food_01", "INV_Misc_Food_02", "INV_Misc_Food_14", "INV_Misc_Food_15",
+    "INV_Misc_Food_19", "INV_Misc_Food_23",
+    "INV_Misc_Fish_01", "INV_Misc_Fish_02", "INV_Misc_Fish_04", "INV_Misc_Fish_24",
+    "INV_Drink_05", "INV_Drink_07", "INV_Drink_10", "INV_Drink_16", "INV_Drink_17",
+    "INV_Scroll_01", "INV_Scroll_02", "INV_Scroll_03", "INV_Scroll_05", "INV_Scroll_06",
+    "INV_Misc_Bandage_08", "INV_Misc_Bandage_12",
     -- trade goods
-    "INV_Fabric_Linen_01", "INV_Fabric_Wool_01", "INV_Fabric_Runecloth",
-    "INV_Ore_Copper_01", "INV_Ore_Iron_01", "INV_Ore_Thorium_02", "INV_Ingot_02", "INV_Ingot_08",
-    "INV_Misc_LeatherScrap_02", "INV_Misc_Herb_03", "INV_Misc_Flower_02",
-    "INV_Enchant_DustIllusion", "INV_Enchant_ShardBrilliantLarge", "INV_Misc_Rune_01",
+    "INV_Fabric_Linen_01", "INV_Fabric_Wool_01", "INV_Fabric_Silk_01",
+    "INV_Fabric_MageWeave_01", "INV_Fabric_PurpleFire_01", "INV_Fabric_MoonRag_01",
+    "INV_Ore_Copper_01", "INV_Ore_Tin_01", "INV_Ore_Iron_01", "INV_Ore_Mithril_02",
+    "INV_Ore_TrueSilver_01", "INV_Ore_Thorium_02", "INV_Stone_12",
+    "INV_Ingot_02", "INV_Ingot_03", "INV_Ingot_04", "INV_Ingot_05", "INV_Ingot_06",
+    "INV_Ingot_07", "INV_Ingot_08", "INV_Ingot_Mithril", "INV_Ingot_Thorium",
+    "INV_Misc_LeatherScrap_02", "INV_Misc_LeatherScrap_03", "INV_Misc_LeatherScrap_05",
+    "INV_Misc_LeatherScrap_08", "INV_Misc_Pelt_Wolf_01", "INV_Misc_Pelt_Bear_03",
+    "INV_Misc_Herb_01", "INV_Misc_Herb_03", "INV_Misc_Herb_07", "INV_Misc_Herb_09",
+    "INV_Misc_Flower_01", "INV_Misc_Flower_02", "INV_Misc_Flower_04",
+    "INV_Misc_Root_01", "INV_Mushroom_11",
+    "INV_Enchant_DustIllusion", "INV_Enchant_ShardBrilliantLarge",
+    "INV_Enchant_ShardGlimmeringLarge", "INV_Enchant_ShardRadientLarge",
+    "INV_Enchant_EssenceEternalLarge", "INV_Enchant_EssenceMagicLarge",
+    "INV_Misc_Dust_02", "INV_Misc_Dust_06", "INV_Misc_Rune_01",
+    -- engineering
+    "INV_Misc_Gear_01", "INV_Misc_Gear_02", "INV_Misc_Gear_08",
+    "INV_Misc_Bomb_02", "INV_Misc_Bomb_04", "INV_Misc_Bomb_05",
+    "INV_Battery_02", "INV_Gizmo_02", "INV_Misc_EngGizmos_01",
     -- professions
     "Trade_Alchemy", "Trade_BlackSmithing", "Trade_Engineering", "Trade_Engraving",
-    "Trade_Fishing", "Trade_Herbalism", "Trade_Mining", "Trade_Tailoring", "INV_Misc_ArmorKit_17",
+    "Trade_Fishing", "Trade_Herbalism", "Trade_LeatherWorking", "Trade_Mining",
+    "Trade_Tailoring", "INV_Misc_ArmorKit_17", "Ability_Repair",
+    -- ammo
+    "INV_Ammo_Arrow_01", "INV_Ammo_Arrow_02", "INV_Ammo_Bullet_01", "INV_Ammo_Bullet_02",
+    "INV_Musket_03",
+    -- spell schools
+    "Spell_Fire_FlameBolt", "Spell_Fire_Fireball02", "Spell_Frost_FrostBolt02",
+    "Spell_Frost_IceStorm", "Spell_Nature_Lightning", "Spell_Nature_StarFall",
+    "Spell_Nature_MoonKey", "Spell_Holy_HolyBolt", "Spell_Holy_PrayerOfHealing",
+    "Spell_Shadow_ShadowWordPain",
     -- misc
-    "INV_Ammo_Arrow_02", "INV_Ammo_Bullet_01", "INV_Misc_Book_09", "INV_Misc_Note_01",
-    "INV_Misc_Key_03", "INV_Misc_Map_01", "INV_Misc_Bone_HumanSkull_01", "INV_Egg_01",
-    "INV_Feather_04", "INV_Misc_Orb_01", "INV_Misc_MonsterClaw_04", "INV_Jewelry_Ring_03",
+    "INV_Misc_Book_01", "INV_Misc_Book_05", "INV_Misc_Book_09", "INV_Misc_Book_11",
+    "INV_Misc_Note_01", "INV_Misc_Note_02", "INV_Misc_Note_05",
+    "INV_Misc_Key_01", "INV_Misc_Key_03", "INV_Misc_Key_04", "INV_Misc_Key_06",
+    "INV_Misc_Key_10", "INV_Misc_Map_01", "INV_Misc_Bone_HumanSkull_01",
+    "INV_Misc_Head_Dragon_01", "INV_Misc_Horn_01", "INV_Misc_Shell_01",
+    "INV_Egg_01", "INV_Misc_ShadowEgg", "INV_Feather_04", "INV_Misc_Orb_01",
+    "INV_Misc_MonsterClaw_04", "INV_Misc_MonsterScales_02", "INV_Misc_MonsterScales_08",
+    "INV_Misc_Gift_01", "INV_Misc_Gift_05", "INV_Hammer_20",
+    "INV_Banner_01", "INV_Banner_02", "INV_Banner_03",
+    "INV_BannerPVP_01", "INV_BannerPVP_02", "INV_Misc_QuestionMark",
 }
 
 local ICON_COLS, ICON_ROWS, ICON_PITCH = 7, 4, 26
@@ -935,6 +1107,7 @@ function GB.BuildTabEditPopup(f)
         tile = true, tileSize = 32, edgeSize = 32,
         insets = { left = 11, right = 12, top = 12, bottom = 11 }
     })
+    AddPopupFill(p)
     p:EnableMouse(true)
     p:Hide()
     GB.tabEditPopup = p
@@ -1347,8 +1520,14 @@ function GB.SelectTab(tabId)
     GB.ClearPicked()
     GB.RepaintGrid()
     Send("tab " .. tabId)
-    if GB.state.view == "log" then
-        Send("log " .. tabId)
+    local info = GB.state.tabs[tabId]
+    if GB.state.view == "log" and info and info.view == 1 then
+        Send("log " .. tabId)       -- skipped for unviewable tabs: blackout instead of a server error
+    end
+    -- re-evaluate the log blackout right away: a denied log request never
+    -- replies, so the overlay must not wait on server data
+    if GB.state.view == "log" or GB.state.view == "moneylog" then
+        GB.UpdateLogList()
     end
 end
 
@@ -1356,6 +1535,10 @@ function GB.RepaintGrid()
     local tab = GB.state.curTab
     local tabInfo = GB.state.tabs[tab]
     local canView = tabInfo and tabInfo.view == 1
+    if GB.noViewOverlay then
+        -- only when the tab is known AND denied; no overlay while data loads
+        if tabInfo and not canView then GB.noViewOverlay:Show() else GB.noViewOverlay:Hide() end
+    end
     local items = GB.state.items[tab] or {}
     for slot = 0, SLOTS - 1 do
         local b = GB.slotButtons[slot]
@@ -1435,12 +1618,13 @@ function GB.UpdateHeader()
     else
         local tabName = "|cffffffff" .. (tabInfo.name or ("Tab " .. (GB.state.curTab + 1))) .. "|r"
         local remain = tabInfo.stacksRemain or 0
+        local unit = (remain == 1) and " Stack" or " Stacks"
         if remain == -1 then
             GB.limitText:SetText("Remaining Daily Withdrawals for " .. tabName .. ":  |cff20ff20Unlimited|r")
         elseif remain > 0 then
-            GB.limitText:SetText("Remaining Daily Withdrawals for " .. tabName .. ":  |cff20ff20" .. remain .. " Stacks|r")
+            GB.limitText:SetText("Remaining Daily Withdrawals for " .. tabName .. ":  |cff20ff20" .. remain .. unit .. "|r")
         else
-            GB.limitText:SetText("Remaining Daily Withdrawals for " .. tabName .. ":  |cffff2020" .. remain .. " Stacks|r")
+            GB.limitText:SetText("Remaining Daily Withdrawals for " .. tabName .. ":  |cffff2020" .. remain .. unit .. "|r")
         end
     end
     if GB.limitBanner then
@@ -1462,6 +1646,8 @@ function GB.UpdateHeader()
                 else
                     tb.button.icon:SetVertexColor(1, 1, 1)
                 end
+                -- safety: never let the manual hover glow stick on a repainted tab
+                if tb.button.hover and not MouseIsOver(tb.button) then tb.button.hover:Hide() end
             else
                 tb.frame:Hide()
             end
@@ -1471,7 +1657,7 @@ function GB.UpdateHeader()
     if GB.state.numTabs < MAX_TABS then
         GB.buyTab:ClearAllPoints()
         if GB.state.numTabs == 0 then
-            GB.buyTab:SetPoint("TOPLEFT", GB.frame, "TOPRIGHT", -1, -32)
+            GB.buyTab:SetPoint("TOPLEFT", GB.frame, "TOPRIGHT", -2, -32)
         else
             GB.buyTab:SetPoint("TOPLEFT", GB.tabButtons[GB.state.numTabs - 1].frame, "BOTTOMLEFT", 0, 0)
         end
@@ -1508,6 +1694,20 @@ function GB.UpdateLogList()
         return
     end
     local tab = (GB.state.view == "moneylog") and MONEY_TAB or GB.state.curTab
+    -- selected side tab not viewable: blackout (item log AND money log) and
+    -- blank the rows so stale lines from the previous tab can't shine through
+    if GB.noViewLogOverlay then
+        local curInfo = GB.state.tabs[GB.state.curTab]
+        if curInfo and curInfo.view ~= 1 then
+            GB.noViewLogOverlay:Show()
+            for i = 1, GB.NUM_LOG_ROWS or 0 do
+                GB.rows[i]:SetText("")
+            end
+            FauxScrollFrame_Update(GB.logScroll, 0, GB.NUM_LOG_ROWS, GB.logRowH)
+            return
+        end
+        GB.noViewLogOverlay:Hide()
+    end
     local data = GB.state.logs[tab] or {}
     local total = table.getn(data)
     local shown = GB.NUM_LOG_ROWS
@@ -1561,21 +1761,51 @@ function GB.FormatLogLine(e, tab)
     return who .. " ?" .. when
 end
 
+-- only rank 0 edits everything; a manager edits only ranks strictly below their
+-- own (mirrors GbCanEditRank server-side). Unknown own-rank: let the server decide.
+function GB.CanEditRank(rid)
+    local my = GB.state.myRank
+    if my == nil or my == 0 then return true end
+    return rid > my
+end
+
+-- serialized snapshot of every widget on the permissions form; taken when a rank
+-- is painted (and after Save) so a dropdown switch can detect unsaved edits
+function GB.RankFormState()
+    local s = (GB.cbManage:GetChecked() and "1" or "0")
+           .. (GB.cbWdrGold:GetChecked() and "1" or "0")
+           .. "|" .. GB.ebGold:GetText()
+    for t = 0, MAX_TABS - 1 do
+        local row = GB.tabRights[t]
+        s = s .. "|" .. (row.view:GetChecked() and "1" or "0")
+              .. (row.dep:GetChecked() and "1" or "0")
+              .. (row.move:GetChecked() and "1" or "0")
+              .. "," .. row.stacks:GetText()
+    end
+    return s
+end
+
+function GB.RankFormDirty()
+    return GB.rankSnapshot ~= nil and GB.RankFormState() ~= GB.rankSnapshot
+end
+
+-- reassert the dropdown's displayed selection from GB.selectedRank
+function GB.RefreshRankDD()
+    local rid = GB.selectedRank
+    local r = (rid ~= nil) and GB.state.ranks[rid] or nil
+    if not r then return end
+    UIDropDownMenu_SetSelectedValue(GB.rankDD, rid)
+    GB.SetRankDDText(rid .. " - " .. r.name)
+end
+
 function GB.SelectRank(rid)
     GB.selectedRank = rid
     local r = GB.state.ranks[rid]
     if not r then return end
     UIDropDownMenu_SetSelectedValue(GB.rankDD, rid)
-    if UIDropDownMenu_SetText then
-        if WHC.client.is1_12 then
-            UIDropDownMenu_SetText(rid .. " - " .. r.name, GB.rankDD)
-        else
-            UIDropDownMenu_SetText(GB.rankDD, rid .. " - " .. r.name)
-        end
-    end
+    GB.SetRankDDText(rid .. " - " .. r.name)
     local isGM = (rid == 0)
     GB.cbManage:SetChecked(WHC.CheckedValue(GB.HasBit(r.rights, 1) and 1 or 0))
-    GB.cbDepGold:SetChecked(WHC.CheckedValue(GB.HasBit(r.rights, 2) and 1 or 0))
     GB.cbWdrGold:SetChecked(WHC.CheckedValue(GB.HasBit(r.rights, 4) and 1 or 0))
     GB.ebGold:SetText(tostring(math.floor((r.goldPerDay or 0) / 10000)))
     for t = 0, MAX_TABS - 1 do
@@ -1593,6 +1823,7 @@ function GB.SelectRank(rid)
     else
         GB.rightsSave:Enable()
     end
+    GB.rankSnapshot = GB.RankFormState()
 end
 
 function GB.HasBit(value, bit)
@@ -1603,12 +1834,22 @@ end
 function GB.SaveRank()
     local rid = GB.selectedRank
     if not rid or rid == 0 then return end
+    if not GB.CanEditRank(rid) then
+        ErrMsg(GB_ERRORS[23])
+        return
+    end
     local rights = 0
     if GB.cbManage:GetChecked() then rights = rights + 1 end
-    if GB.cbDepGold:GetChecked() then rights = rights + 2 end
     if GB.cbWdrGold:GetChecked() then rights = rights + 4 end
     local gold = (tonumber(GB.ebGold:GetText()) or 0) * 10000
     Send("setrank " .. rid .. " " .. rights .. " " .. gold)
+    -- update the local rank cache as we go: without this, reselecting the rank
+    -- before the server re-push repaints the pre-save values ("save didn't work")
+    local r = GB.state.ranks[rid]
+    if r then
+        r.rights = rights
+        r.goldPerDay = gold
+    end
     for t = 0, MAX_TABS - 1 do
         local row = GB.tabRights[t]
         local tr = 0
@@ -1617,7 +1858,13 @@ function GB.SaveRank()
         if row.move:GetChecked() then tr = tr + 4 end
         local stacks = tonumber(row.stacks:GetText()) or 0
         Send("setranktab " .. rid .. " " .. t .. " " .. tr .. " " .. stacks)
+        if r then
+            r.tabs[t] = { rights = tr, stacks = stacks }
+        end
     end
+    -- the server broadcasts the authoritative rank block to all open managers
+    -- (incl. us) ~750ms after the burst above; the optimistic cache covers the gap
+    GB.rankSnapshot = GB.RankFormState()
     Msg("Rank permissions saved.")
 end
 
@@ -1644,6 +1891,7 @@ function GB.OnOpenReply(payload)
     GB.state.grights = tonumber(f[5]) or 0
     GB.state.goldRemain = tonumber(f[6]) or 0
     GB.state.nextTabCost = tonumber(f[7]) or 0
+    GB.state.myRank = tonumber(f[8])            -- own rank id (nil on old servers)
     GB.openFallback = nil
     if not GB.frame:IsVisible() then
         GB.frame:Show()
@@ -1764,6 +2012,12 @@ function GB.OnServerLine(line)
         return
     end
 
+    if string.find(body, "^wmoneyok%^") then
+        local copper = tonumber((string.gsub(body, "^wmoneyok%^", ""))) or 0
+        Msg("You withdrew " .. FormatMoney(copper) .. " from the guild bank.")
+        return
+    end
+
     if string.find(body, "^remain%^") then
         local f = Split(string.gsub(body, "^remain%^", ""), "^")
         GB.state.goldRemain = tonumber(f[1]) or 0
@@ -1812,8 +2066,22 @@ function GB.OnServerLine(line)
             GB.state.ranks = GB.pendingRanks.ranks
             GB.state.rankOrder = GB.pendingRanks.order
             GB.pendingRanks = nil
-            local first = GB.state.rankOrder[2] or GB.state.rankOrder[1]
-            if GB.selectedRank and GB.state.ranks[GB.selectedRank] then
+            -- server also broadcasts this block when another manager saves; if
+            -- this form has unsaved edits, keep them (cache is fresh regardless)
+            if GB.RankFormDirty() then
+                return
+            end
+            -- default to the LOWEST rank (last in order) that we may edit;
+            -- keep the current selection across refreshes while it stays valid
+            local order = GB.state.rankOrder
+            local first = nil
+            for i = table.getn(order), 1, -1 do
+                if GB.CanEditRank(order[i]) then
+                    first = order[i]
+                    break
+                end
+            end
+            if GB.selectedRank and GB.state.ranks[GB.selectedRank] and GB.CanEditRank(GB.selectedRank) then
                 first = GB.selectedRank
             end
             if first ~= nil then
