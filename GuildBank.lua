@@ -299,13 +299,6 @@ function WHC.InitializeGuildBank()
     bannerR:SetPoint("LEFT", bannerC, "RIGHT", 0, 0)
     GB.titleBanner = bannerC
 
-    -- TEMP: dev reload button outside the right edge (below the side tabs) — remove later
-    local reload = CreateFrame("Button", "WhcGBReloadBtn", f, "UIPanelButtonTemplate")
-    reload:SetWidth(70); reload:SetHeight(22)
-    reload:SetPoint("TOPLEFT", f, "TOPRIGHT", 8, -380)
-    reload:SetText("Reload")
-    reload:SetScript("OnClick", function() ReloadUI() end)
-
     -- close button, flush with the frame corner (WotLK placement)
     local close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", f, "TOPRIGHT", 3, -8)
