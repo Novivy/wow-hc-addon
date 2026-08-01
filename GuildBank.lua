@@ -43,6 +43,7 @@ local GB_ERRORS = {
     [21] = "You must be at a guild banker. (Tier 3 Supporters can view the guild bank remotely.)",
     [22] = "Guild banks are currently disabled.",
     [23] = "You cannot change the permissions of your own rank or a higher one.",
+    [24] = "Items cannot be moved between guild bank tabs.",
 }
 
 -- ---------------------------------------------------------------------------
