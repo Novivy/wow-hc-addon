@@ -14,6 +14,9 @@ end
 -- Tooltip shown on hover for the Noggenfogger card(s)
 local NOGGEN_TOOLTIP = "Added to your spellbook as a spell. Cast it for a permanent Skeletal Skin transformation. Lasts until you cancel the buff."
 
+-- Tooltip shown on hover for the Faction Change card
+local FACTION_TOOLTIP = "Move a level 40 or higher character to the opposite faction. Reputations, languages, racials, faction gear, mounts, mage portals and the main attunement chains are converted. Paladins and Shamans cannot be transferred."
+
 -- HC realm catalog, mirrored from services.php (realm 1, status 1).
 -- image = filename in /img/services (added to Images\services as .blp/.tga); price = HC coin price.
 local catalog = {
@@ -39,6 +42,7 @@ local catalog = {
     { key = "account-transfer", name = "Character Account Transfer", category = "Services",   image = "account-transfer",  price = 50 },
     { key = "realm-clone",      name = "Realm Clone",                category = "Services",   image = "realm-clone",       price = "Open" },
     { key = "customization",    name = "Character Customization",    category = "Services",   image = "custom",            price = "Open" },
+    { key = "faction-change",   name = "Faction Change",             category = "Services",   image = "faction-change",    price = 170, tooltip = FACTION_TOOLTIP },
     { key = "noggenfogger",     name = "Noggenfogger",               category = "Services",   image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
     { key = "noggenfogger-mnt", name = "Noggenfogger",               category = "Mounts",     image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
     { key = "noggenfogger-pet", name = "Noggenfogger",               category = "Companions", image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
@@ -98,7 +102,7 @@ local categoryDesc = {
     Mounts = "Mount speed adjusts to your riding skill (60% or 100%).\nDelivered to your spellbook (no bag space).\nYou still need the Riding skill to use it.",
     Companions = "A passive companion that follows you around. Delivered to your spellbook (no bag space), works like any other spell.",
     Bags = "Extra bag space for your character, delivered to your mailbox.",
-    Services = "Account services: rename, character & account transfer, realm clone and appearance customization.",
+    Services = "Account services: rename, character & account transfer, realm clone, appearance customization and faction change.",
     Subscriptions = "Support the server each month and unlock in-game rewards for every character. Hover a perk for details.",
 }
 
