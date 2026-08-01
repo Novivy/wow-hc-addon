@@ -195,28 +195,18 @@ end
 
 -- split a separator-delimited payload; keeps empty fields.
 -- sep is the LITERAL separator character (e.g. "^"), escaped internally.
+-- 1.12 (Lua 5.0) only has string.gfind; 1.14 keeps string.gfind as an
+-- error-throwing deprecation stub, so gmatch MUST win when both exist
+local strGmatch = string.gmatch or string.gfind
 local function Split(payload, sep)
     local out = {}
     local esc = "%" .. sep
     local pattern = "([^" .. esc .. "]*)" .. esc
     local rest = payload .. sep
-    for field in string.gfind(rest, pattern) do
+    for field in strGmatch(rest, pattern) do
         table.insert(out, field)
     end
     return out
-end
--- 1.14 has no string.gfind
-if not string.gfind then
-    Split = function(payload, sep)
-        local out = {}
-        local esc = "%" .. sep
-        local pattern = "([^" .. esc .. "]*)" .. esc
-        local rest = payload .. sep
-        for field in string.gmatch(rest, pattern) do
-            table.insert(out, field)
-        end
-        return out
-    end
 end
 
 local function IsFull()
@@ -1123,8 +1113,13 @@ function GB.BuildTabEditPopup(f)
     local scroll = CreateFrame("ScrollFrame", "WhcGBTabEditScroll", p, "FauxScrollFrameTemplate")
     scroll:SetWidth(ICON_COLS * ICON_PITCH); scroll:SetHeight(ICON_ROWS * ICON_PITCH)
     scroll:SetPoint("TOPLEFT", p, "TOPLEFT", 22, -64)
-    scroll:SetScript("OnVerticalScroll", function()
-        FauxScrollFrame_OnVerticalScroll(ICON_PITCH, GB.UpdateTabEditIcons)
+    -- signature differs by client: 1.12 = (itemHeight, updateFunc), 1.14 = (frame, offset, itemHeight, updateFunc)
+    scroll:SetScript("OnVerticalScroll", function(self, offset)
+        if WHC.client.is1_12 then
+            FauxScrollFrame_OnVerticalScroll(ICON_PITCH, GB.UpdateTabEditIcons)
+        else
+            FauxScrollFrame_OnVerticalScroll(self or this, offset or arg1, ICON_PITCH, GB.UpdateTabEditIcons)
+        end
     end)
     p.scroll = scroll
 
@@ -1261,6 +1256,13 @@ function GB.HighlightPicked()
     end
 end
 
+-- container/cursor API compat: 1.14 moved the container getters under C_Container
+local GetBagItemLink = GetContainerItemLink or (C_Container and C_Container.GetContainerItemLink)
+local function CursorHoldsItem()
+    if GetCursorInfo then return (GetCursorInfo()) == "item" end
+    return CursorHasItem()
+end
+
 -- track real bag pickups so a drop on a bank slot knows the source (1.12 has no GetCursorInfo)
 function GB.InitBagHook()
     WHC.HookSecureFunc("PickupContainerItem", function(bag, slot)
@@ -1274,29 +1276,50 @@ function GB.InitBagHook()
     end
 
     -- right-click in bags while the guild bank is open = auto-deposit into the
-    -- current tab (server slot 255 = fill matching stacks, then first empty).
-    -- UseContainerItem is protected on 1.14, so this is 1.12 only.
-    if not (WHC.client and WHC.client.is1_14) then
-        GB.InstallUseHook()
-        -- click/drag a picked bank item onto a bag slot = withdraw. Both the
-        -- default OnClick and OnReceiveDrag container handlers end up calling
-        -- PickupContainerItem when the cursor is empty, so one pre-hook covers
-        -- click-drop and drag-drop. Installed after the HookSecureFunc tracker
-        -- above, so the tracker still records real pickups underneath.
-        local origPickup = PickupContainerItem
-        PickupContainerItem = function(bag, slot)
-            if GB.TryWithdrawTo(bag, slot) then return end
-            return origPickup(bag, slot)
-        end
-        -- SetBlockEquipItems (AchievementHelpers.lua) reassigns the global
-        -- UseContainerItem at login and on every settings toggle — re-wrap after it.
-        if WHC.SetBlockEquipItems and not GB.setBlockWrapped then
-            GB.setBlockWrapped = true
-            local origSet = WHC.SetBlockEquipItems
-            WHC.SetBlockEquipItems = function()
-                origSet()
-                GB.InstallUseHook()
+    -- current tab (server slot 255 = fill matching stacks, then first empty),
+    -- and a picked bank item dropped on a bag slot = withdraw.
+    if C_Container then
+        -- 1.14.4+ builds route the bag buttons through the C_Container table;
+        -- wrap its entries (pcall-guarded in case a future build locks the table)
+        local function WrapContainerFn(name, pre)
+            local orig = C_Container[name]
+            if not orig then return end
+            local wrapped = function(bag, slot, a3)
+                if pre(bag, slot) then return end
+                return orig(bag, slot, a3)
             end
+            pcall(function() C_Container[name] = wrapped end)
+        end
+        WrapContainerFn("PickupContainerItem", function(bag, slot)
+            return GB.TryWithdrawTo(bag, slot)
+        end)
+        WrapContainerFn("UseContainerItem", function(bag, slot)
+            return GB.TryAutoDeposit(bag, slot)
+        end)
+        return
+    end
+
+    -- 1.12 AND 1.14.2: no C_Container — the container item buttons are plain
+    -- insecure XML handlers calling the GLOBALS PickupContainerItem (left click,
+    -- also the OnReceiveDrag path) and UseContainerItem (right click); verified
+    -- against Blizzard's archived 1.14.2 FrameXML (Gethe/wow-ui-source tag
+    -- 1.14.2, ContainerFrame.lua:1249/1266). One pre-hook pair covers both.
+    GB.InstallUseHook()
+    local origPickup = PickupContainerItem
+    PickupContainerItem = function(bag, slot, a3)
+        if GB.TryWithdrawTo(bag, slot) then return end
+        return origPickup(bag, slot, a3)
+    end
+    -- SetBlockEquipItems (AchievementHelpers.lua) reassigns the global
+    -- UseContainerItem at login and on every settings toggle — ON EVERY CLIENT —
+    -- so re-install our use-hook after each run (this was 1.12-only before,
+    -- which is why the 1.14 right-click deposit kept dying at login)
+    if WHC.SetBlockEquipItems and not GB.setBlockWrapped then
+        GB.setBlockWrapped = true
+        local origSet = WHC.SetBlockEquipItems
+        WHC.SetBlockEquipItems = function()
+            origSet()
+            GB.InstallUseHook()
         end
     end
 end
@@ -1306,7 +1329,7 @@ function GB.TryWithdrawTo(bag, slot)
     if not GB.picked then return false end
     if not (GB.frame and GB.frame:IsVisible()) then return false end
     if bag == nil or bag < 0 or bag > 4 then return false end   -- real bags only (bank/keyring use other ids)
-    if CursorHasItem() then return false end                    -- real item on the cursor: normal behavior
+    if CursorHoldsItem() then return false end                  -- real item on the cursor: normal behavior
     local picked = GB.picked
     GB.ClearPicked()
     if Throttled() then return true end                         -- swallow, pick already cleared
@@ -1327,7 +1350,7 @@ function GB.TryAutoDeposit(bag, slot)
     if MailFrame and MailFrame:IsVisible() then return false end
     if TradeFrame and TradeFrame:IsVisible() then return false end
     if AuctionFrame and AuctionFrame:IsVisible() then return false end
-    if not GetContainerItemLink(bag, slot) then return false end
+    if not GetBagItemLink(bag, slot) then return false end
     if Throttled() then return true end                     -- swallow, don't use/equip
     Send("deposit " .. GB.state.curTab .. " 255 " .. bag .. " " .. slot .. " 0")
     return true
@@ -1380,7 +1403,7 @@ function GB.OnSlotClick(btn, button)
         return
     end
 
-    if CursorHasItem() and GB.cursorBag then
+    if CursorHoldsItem() and GB.cursorBag then
         -- deposit the real bag item on the cursor into this slot
         if not CheckFull() then return end
         if Throttled() then return end
