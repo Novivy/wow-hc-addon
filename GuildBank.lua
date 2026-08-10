@@ -245,11 +245,23 @@ function WHC.InitializeGuildBank()
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", function() f:StartMoving() end)
     f:SetScript("OnDragStop", function() f:StopMovingOrSizing() end)
+    f:SetScript("OnShow", function()
+        -- the window sits at HIGH strata like UIErrorsFrame, so its slots would
+        -- bury the center-screen error text; float the error frame above it
+        if UIErrorsFrame then
+            GB.savedErrStrata = UIErrorsFrame:GetFrameStrata()
+            UIErrorsFrame:SetFrameStrata("DIALOG")
+        end
+    end)
     f:SetScript("OnHide", function()
         Send("close")
         GB.state.mode = "closed"
         GB.ClearPicked()
         GB.RefreshBagHooks()        -- restore protected container fns (untaint 1.14)
+        if UIErrorsFrame and GB.savedErrStrata then
+            UIErrorsFrame:SetFrameStrata(GB.savedErrStrata)
+            GB.savedErrStrata = nil
+        end
     end)
     f:Hide()
     tinsert(UISpecialFrames, "WhcGuildBank")
