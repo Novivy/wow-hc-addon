@@ -1629,6 +1629,7 @@ function GB.SelectTab(tabId)
     end
     GB.ClearPicked()
     GB.RepaintGrid()
+    GB.UpdateHeader()           -- refresh the per-tab "Remaining Daily Withdrawals" label
     Send("tab " .. tabId)
     local info = GB.state.tabs[tabId]
     if GB.state.view == "log" and info and info.view == 1 then
