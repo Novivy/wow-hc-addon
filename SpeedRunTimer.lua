@@ -149,10 +149,10 @@ function WHC.InitializeSpeedRunTimer()
     end
 
     function speedRunTimer:StartTimer(status, seconds)
-        if status ~= STATUS_VALID then
-            return self:StopTimer(status, seconds)
-        end
-
+        -- An invalid run keeps running: the server still times it and still
+        -- records it, so the clock and the boss counter stay live. The status
+        -- row is what tells the group it will not count. StopTimer below
+        -- refuses to bank a record from anything that is not STATUS_VALID.
         self:SetStatus(status)
         local firstTimestamp = GetTime()
         local i = 0

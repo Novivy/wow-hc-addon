@@ -519,6 +519,14 @@ local function handleChatEvent(arg1)
             return 0
         end
 
+        -- Run just became invalid (level or world buff). It keeps ticking and
+        -- is still recorded, so only repaint the status row.
+        _, _, status = string.find(lowerArg, "^::whc::speedrun:status:(%d+)")
+        if status then
+            WHC.Frames.SpeedRunTimer:SetStatus(tonumber(status))
+            return 0
+        end
+
         local _, _, killed, total = string.find(lowerArg, "^::whc::speedrun:boss:(%d+):(%d+)")
         if killed and total then
             WHC.Frames.SpeedRunTimer:SetBossesKilled(tonumber(killed), tonumber(total))
