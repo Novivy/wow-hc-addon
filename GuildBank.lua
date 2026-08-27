@@ -44,6 +44,7 @@ local GB_ERRORS = {
     [22] = "Guild banks are currently disabled.",
     [23] = "You cannot change the permissions of your own rank or a higher one.",
     [24] = "Items cannot be moved between guild bank tabs.",
+    [25] = "Your guild does not meet the requirements to buy a bank tab yet.",
 }
 
 -- ---------------------------------------------------------------------------
@@ -473,19 +474,35 @@ function GB.BuildEmptyPanel(f)
     end
 
     panel.text = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    panel.text:SetPoint("CENTER", panel, "CENTER", 0, 30)
+    panel.text:SetPoint("CENTER", panel, "CENTER", 0, 60)
     panel.text:SetText("Your guild does not own a guild bank tab yet.")
 
     local buy = CreateFrame("Button", "WhcGBEmptyBuyBtn", panel, "UIPanelButtonTemplate")
-    buy:SetWidth(240); buy:SetHeight(28)
-    buy:SetPoint("CENTER", panel, "CENTER", 0, -10)
+    buy:SetWidth(168); buy:SetHeight(56)
+    buy:SetPoint("CENTER", panel, "CENTER", 0, 5)
+    local buyFS = buy:GetFontString()
+    if buyFS then
+        buyFS:SetJustifyH("CENTER"); buyFS:SetJustifyV("TOP")
+        buyFS:SetTextColor(1, 1, 1)
+        buyFS:ClearAllPoints()
+        buyFS:SetPoint("TOP", buy, "TOP", 0, -17)
+    end
     buy:SetText("Buy first tab")
+    -- price row uses a REAL coin texture (inline |T does not render in 1.12 button fontstrings)
+    buy.priceIcon = buy:CreateTexture(nil, "OVERLAY")
+    buy.priceIcon:SetTexture(COIN_TEX.gold)
+    buy.priceIcon:SetWidth(14); buy.priceIcon:SetHeight(14)
+    buy.priceIcon:SetPoint("CENTER", buy, "CENTER", 14, -9)
+    buy.priceNum = buy:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    buy.priceNum:SetTextColor(1, 0.84, 0)
+    buy.priceNum:SetPoint("RIGHT", buy.priceIcon, "LEFT", -2, 0)
     buy:SetScript("OnClick", function() GB.OnBuyTabClick() end)
     panel.buyBtn = buy
 
     panel.hint = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    panel.hint:SetPoint("CENTER", panel, "CENTER", 0, -40)
-    panel.hint:SetText("Anyone in the guild can buy a tab for the guild.")
+    panel.hint:SetPoint("CENTER", panel, "CENTER", 0, -55)
+    panel.hint:SetWidth(307)
+    panel.hint:SetText("Anyone in the guild can buy a tab for the guild.\nBuying the first tab requires at least 5 active members who are level 15+, have been in the guild for at least 7 days, and are on different accounts/IPs.")
 
     panel:Hide()
     GB.emptyPanel = panel
@@ -514,9 +531,10 @@ function GB.UpdateBankPanels()
     end
     if GB.emptyPanel then
         if bankView and noTabs then
-            GB.emptyPanel.buyBtn:SetText("Buy first tab for " .. FormatGold(GB.state.nextTabCost))
+            GB.emptyPanel.buyBtn:SetText("Buy first tab")
+            GB.emptyPanel.buyBtn.priceNum:SetText(math.floor((tonumber(GB.state.nextTabCost) or 0) / 10000))
             GB.emptyPanel.buyBtn:Enable()
-            GB.emptyPanel.hint:SetText("Anyone in the guild can buy a tab for the guild.")
+            GB.emptyPanel.hint:SetText("Anyone in the guild can buy a tab for the guild.\nBuying the first tab requires at least 5 active members who are level 15+, have been in the guild for at least 7 days, and are on different accounts/IPs.")
             GB.emptyPanel:Show()
         else
             GB.emptyPanel:Hide()
@@ -631,6 +649,7 @@ function GB.BuildSideTabs(f)
         GameTooltip:SetText("Buy Guild Bank Tab", 1, 1, 1)
         GameTooltip:AddLine("Cost: " .. FormatGold(GB.state.nextTabCost), 0.9, 0.9, 0.9)
         GameTooltip:AddLine("Anyone in the guild can buy a tab for the guild.", 0.6, 0.6, 0.6, 1)
+        GameTooltip:AddLine("Buying the first tab requires at least 5 active members who are level 15+, have been in the guild for at least 7 days, and are on different accounts/IPs.", 0.6, 0.6, 0.6, 1)
         GameTooltip:Show()
     end)
     b:SetScript("OnLeave", function(self)
