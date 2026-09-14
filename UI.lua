@@ -333,7 +333,7 @@ function WHC.InitializeUI()
     SLASH_WOWHC1 = "/wowhc"
     SLASH_WOWHC2 = "/whc"
     SlashCmdList["WOWHC"] = function(msg)
-        local tab = WHC.TAB[string.upper(msg)] or WHC.TAB.lastTab
+        local tab = WHC.TAB[string.upper(msg or "")] or WHC.lastTab
 
         WHC.UIShowTabContent(tab)
     end
