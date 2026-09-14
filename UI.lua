@@ -106,6 +106,69 @@ function WHC.UIShowTabContent(tabIndex)
     end
 end
 
+-- "Copy this URL" modal shared by the wow-hc / Discord buttons, the overview post button
+-- and the death appeal. One frame, reused; `onBack` runs when the Back button is clicked.
+local urlPopup
+function WHC.ShowUrlPopup(message, url, onBack)
+    if not urlPopup then
+        urlPopup = CreateFrame("Frame", "WhcUrlPopup", UIParent, RETAIL_BACKDROP)
+        urlPopup:SetWidth(300)
+        urlPopup:SetHeight(150)
+        urlPopup:SetPoint("TOP", UIParent, "TOP", 0, -128)
+        urlPopup:SetBackdrop({
+            bgFile = "Interface/RaidFrame/UI-RaidFrame-GroupBg",
+            edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+            tile = true,
+            tileSize = 300,
+            edgeSize = 32,
+            insets = { left = 11, right = 12, top = 12, bottom = 11 }
+        })
+        urlPopup:SetFrameStrata("HIGH")
+        urlPopup:SetFrameLevel(10)
+
+        local title = urlPopup:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        title:SetPoint("TOP", urlPopup, "TOP", 0, -20)
+        title:SetWidth(200)
+        urlPopup.title = title
+
+        local editBox = CreateFrame("EditBox", "WhcUrlPopupInputBox", urlPopup)
+        editBox:SetWidth(250)
+        editBox:SetHeight(20)
+        editBox:SetPoint("TOP", title, "BOTTOM", 0, -20)
+        editBox:SetFontObject("ChatFontNormal")
+        editBox:SetJustifyH("CENTER")
+        editBox:SetAutoFocus(false)
+        editBox:SetTextColor(1, 0.631, 0.317)
+        editBox:SetScript("OnMouseDown", function()
+            editBox:HighlightText()
+            editBox:SetFocus()
+        end)
+        editBox:SetScript("OnEscapePressed", function()
+            editBox:ClearFocus()
+        end)
+        urlPopup.editBox = editBox
+
+        local backButton = CreateFrame("Button", nil, urlPopup, "UIPanelButtonTemplate")
+        backButton:SetWidth(80)
+        backButton:SetHeight(30)
+        backButton:SetPoint("TOP", editBox, "BOTTOM", 0, -20)
+        backButton:SetText("Back")
+        backButton:SetScript("OnClick", function()
+            urlPopup:Hide()
+            if urlPopup.onBack then
+                urlPopup.onBack()
+            end
+        end)
+    end
+
+    urlPopup.title:SetText(message)
+    urlPopup.editBox:SetText(url)
+    urlPopup.onBack = onBack
+    urlPopup:Show()
+    urlPopup.editBox:HighlightText()
+    urlPopup.editBox:SetFocus()
+end
+
 -- Open the shop tab. The category is sticky between openings, so callers that
 -- care which page is shown (Lorh -> Mounts, the sub-gate -> Subscriptions) pass
 -- one explicitly; otherwise the last-shown category is kept.
@@ -210,7 +273,14 @@ function WHC.InitializeUI()
         end
 
         tabHeader:SetNormalTexture("Interface/PaperDollInfoFrame/UI-Character-InActiveTab")
-        tabHeader:SetHighlightTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight")
+        -- Same layout as Blizzard's CharacterFrameTabButtonTemplate: the glow is inset 10px on
+        -- each side and lifted a bit, otherwise it fills the whole button and sits too low.
+        tabHeader:SetHighlightTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight", "ADD")
+        local highlight = tabHeader:GetHighlightTexture()
+        highlight:ClearAllPoints()
+        highlight:SetHeight(30)
+        highlight:SetPoint("LEFT", tabHeader, "LEFT", 10, 3)
+        highlight:SetPoint("RIGHT", tabHeader, "RIGHT", -10, 3)
         tabHeader:EnableMouse(true)
 
         local tabText = tabHeader:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -261,6 +331,7 @@ function WHC.InitializeUI()
 
     -- Slash command to toggle the frame
     SLASH_WOWHC1 = "/wowhc"
+    SLASH_WOWHC2 = "/whc"
     SlashCmdList["WOWHC"] = function(msg)
         local tab = WHC.TAB[string.upper(msg)] or WHC.TAB.lastTab
 

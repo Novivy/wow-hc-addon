@@ -86,6 +86,7 @@ local subscriptions = {
             { icon = "bank",         name = "5 Free Bank Slots",  desc = "First 5 bank slots unlocked by default on each character." },
             { icon = "bag",          name = "4 x 20 Slot Bag",    desc = "Four 20 slot bags for each character." },
             { icon = "ah",           name = "Auction House",      desc = "Access the Auction House from anywhere (read/buy only)." },
+            { icon = "gbank",        name = "Guild Bank",         desc = "Browse your guild bank from anywhere (read only, deposits and withdrawals at the banker)." },
             { icon = "nightsaber",   name = "Nightsaber Mount",   desc = "Speed adapts to your riding skill (60% or 100%)." },
             { icon = "tabard-frost", name = "Tabard of Frost",    desc = "Unique tabard formerly from the WoW Trading Card Game." },
             { icon = "tabard-flame", name = "Tabard of Flame",    desc = "Unique tabard formerly from the WoW Trading Card Game." },

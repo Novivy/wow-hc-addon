@@ -69,9 +69,10 @@ WHC.SOUNDS = {
     openFrame    = RETAIL == 0 and "igCharacterInfoOpen" or SOUNDKIT.IG_CHARACTER_INFO_OPEN,
     closeFrame   = RETAIL == 0 and "igCharacterInfoClose" or SOUNDKIT.IG_CHARACTER_INFO_CLOSE,
     selectTab    = RETAIL == 0 and "igCharacterInfoTab" or SOUNDKIT.IG_CHARACTER_INFO_TAB,
+    playerInvite = RETAIL == 0 and "igPlayerInvite" or SOUNDKIT.IG_PLAYER_INVITE,
 }
 
-WHC.ADDON_PREFIX = ITEM_QUALITY_COLORS[WHC.ITEM_QUALITY.LEGENDARY].hex.."[WOW-HC addon]: "..FONT_COLOR_CODE_CLOSE
+WHC.ADDON_PREFIX = ITEM_QUALITY_COLORS[WHC.ITEM_QUALITY.LEGENDARY].hex.."[WHC]: "..FONT_COLOR_CODE_CLOSE
 
 WHC:RegisterEvent("ADDON_LOADED")
 WHC:SetScript("OnEvent", function(self, event, addonName)
@@ -171,6 +172,8 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeBlueShaman()
     WHC.InitializeAchievementButtons()
     WHC.InitializeSupport()
+    WHC.InitializeUnitPopup()
+    WHC.InitializeMakgora()
     WHC.InitializeDynamicMounts()
     WHC.InitializeShopPets()
     WHC.InitializeTradableRaidLoot()

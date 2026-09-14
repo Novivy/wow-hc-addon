@@ -316,6 +316,11 @@ end
 -- return 0 for the skipped copy so the line stays hidden from every chat window.
 local lastWhcMsg, lastWhcFrame
 local function handleChatEvent(arg1)
+    -- Plain-text Mak'gora lines are replaced by the addon's own UI (Makgora.lua)
+    if WHC.Makgora.IsServerLine(arg1) then
+        return 0
+    end
+
     local lowerArg = string.lower(arg1)
     if not string.find(lowerArg, "^::whc::") then
         return 1
@@ -354,6 +359,18 @@ local function handleChatEvent(arg1)
         WHC.GB.OnServerLine(arg1)
         return 0
     end
+
+
+    -- Mak'gora (keep original case for the player name)
+    if string.find(lowerArg, "^::whc::makgora:") then
+        local _, _, kind, name, state = string.find(arg1, "^::whc::makgora:(%a+):([^:]+):?(%d*)$")
+        -- error lines carry free text (may contain "." but never ":")
+        if kind then
+            WHC.Makgora.OnServerMessage(kind, name, state)
+        end
+        return 0
+    end
+
 
     -- Server-pushed shop open (e.g. non-sub talking to a murloc companion)
     if string.find(lowerArg, "^::whc::shop:") then
