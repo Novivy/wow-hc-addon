@@ -2,9 +2,9 @@
 -- entry in the right-click menu of a player and, on both sides, a confirmation popup that
 -- requires typing I AGREE. Once both agreed the server starts the duel itself (see
 -- HandleMakgoraCommand), the addon only closes the now stale native duel popup.
--- The server keeps sending its plain-text lines
--- for players without the addon; we hide those (chat filter in Events.lua, UIErrorsFrame
--- wrapper below) and render our own UI from the "::whc::makgora:<kind>:<name>" lines:
+-- The server keeps sending its plain-text lines for players without the addon; we hide
+-- those (WHC.HideServerLines) and render our own UI from the
+-- "::whc::makgora:<kind>:<name>" lines:
 --   challenge:<name>  we were challenged by <name>
 --   sent:<name>       our challenge to <name> is out
 --   error:<text>      request refused (duel pending, cooldown...)
@@ -21,35 +21,17 @@ local MENU_VALUE = "WHC_MAKGORA"
 local AGREE_TEXT = "I AGREE"
 
 -- Distinctive snippets of the server's plain-text Mak'gora lines (chat and notification)
-local SERVER_LINES = {
+WHC.HideServerLines({
     "has challenged you in a Mak'gora duel",
     "to a Mak'gora duel to the death",
     "has accepted your Mak'gora request",
     "Mak'gora request accepted",
     "Cannot initiate a Mak'gora",
     "between each Mak'gora request",
-}
-
-function M.IsServerLine(text)
-    if not text then
-        return false
-    end
-    for _, snippet in ipairs(SERVER_LINES) do
-        if string.find(text, snippet, 1, true) then
-            return true
-        end
-    end
-    return false
-end
+})
 
 local function Send(name)
     SendChatMessage(".whc makgora " .. name, "WHISPER", GetDefaultLanguage(), UnitName("player"))
-end
-
-local origUIErrorsAddMessage
-local function Announce(msg)
-    DEFAULT_CHAT_FRAME:AddMessage(WHC.ADDON_PREFIX .. RED_FONT_COLOR_CODE .. msg .. FONT_COLOR_CODE_CLOSE)
-    origUIErrorsAddMessage(UIErrorsFrame, msg, 1.0, 0.1, 0.1, 1.0, UIERRORS_HOLD_TIME)
 end
 
 -- Accept button of an I AGREE popup is only enabled once the box reads I AGREE
@@ -159,7 +141,7 @@ end
 -- state (accepted/agreed): 1 = countdown running, 0 = too far apart for the duel spell
 local function OnBothAgreed(name, state, headline)
     HideChallengePopup()
-    Announce(headline)
+    WHC.Announce(headline)
     if state == 1 then
         -- the server confirmed the duel for us, the native "accept duel" popup is stale
         StaticPopup_Hide("DUEL_REQUESTED")
@@ -176,9 +158,9 @@ function M.OnServerMessage(kind, name, state)
         PlaySound(WHC.SOUNDS.playerInvite)
     elseif kind == "error" then
         -- name carries the message here; nothing to confirm, the request was refused
-        Announce(name)
+        WHC.Announce(name)
     elseif kind == "sent" then
-        Announce("You have challenged " .. name .. " to a Mak'gora. Waiting for their answer.")
+        WHC.Announce("You have challenged " .. name .. " to a Mak'gora. Waiting for their answer.")
     elseif kind == "accepted" then
         OnBothAgreed(name, state, name .. " has accepted your Mak'gora." .. (state == 1 and " The Mak'gora begins!" or ""))
     elseif kind == "agreed" then
@@ -195,14 +177,4 @@ function WHC.InitializeMakgora()
         menus = { "PLAYER", "PARTY", "RAID_PLAYER", "ENEMY_PLAYER" },
         onClick = function(unit, name) M.Challenge(name) end,
     })
-
-    -- Server notifications (SendNotification) land in UIErrorsFrame; drop the Mak'gora ones,
-    -- the addon shows its own. Chat lines are dropped in Events.lua handleChatEvent.
-    origUIErrorsAddMessage = UIErrorsFrame.AddMessage
-    UIErrorsFrame.AddMessage = function(frame, text, r, g, b, a, holdTime)
-        if M.IsServerLine(text) then
-            return
-        end
-        return origUIErrorsAddMessage(frame, text, r, g, b, a, holdTime)
-    end
 end

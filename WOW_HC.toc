@@ -21,6 +21,7 @@ SpeedRunTimer.lua
 Support.lua
 UnitPopup.lua
 Makgora.lua
+Spec.lua
 Events.lua
 GroupFinder.lua
 GuildBank.lua

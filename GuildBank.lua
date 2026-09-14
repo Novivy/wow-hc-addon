@@ -547,38 +547,14 @@ end
 -- 6 side tabs + buy button, stacked down the right edge
 function GB.BuildSideTabs(f)
     for t = 1, MAX_TABS do
-        local tabF = CreateFrame("Frame", "WhcGBTab" .. t, f)
-        tabF:SetWidth(42); tabF:SetHeight(50)
+        local b = WHC.CreateSideTab("WhcGBTab" .. t, f)
+        local tabF = b.frame
         if t == 1 then
             tabF:SetPoint("TOPLEFT", f, "TOPRIGHT", -2, -32)
         else
             tabF:SetPoint("TOPLEFT", getglobal("WhcGBTab" .. (t - 1)), "BOTTOMLEFT", 0, 0)
         end
-        local bg = tabF:CreateTexture(nil, "BACKGROUND")
-        bg:SetTexture(TEX .. "ui-guildbankframe-tab")
-        bg:SetWidth(64); bg:SetHeight(64)
-        bg:SetPoint("TOPLEFT", tabF, "TOPLEFT", 0, 0)
-
-        local b = CreateFrame("Button", "WhcGBTab" .. t .. "Button", tabF)
-        b:SetWidth(36); b:SetHeight(34)
-        b:SetPoint("TOPLEFT", tabF, "TOPLEFT", 2, -8)
         b.tabId = t - 1
-        -- no quickslot normal texture: the tab flange art provides the well
-        b.icon = b:CreateTexture(nil, "BORDER")
-        b.icon:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
-        b.icon:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 0, 0)
-        -- NO pushed/highlight textures: same stuck-visual issue as the item slots
-        -- (a drag released off-button never delivers the mouse-up) — hover is manual
-        b.hover = b:CreateTexture(nil, "OVERLAY")
-        b.hover:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
-        b.hover:SetBlendMode("ADD")
-        b.hover:SetAllPoints(b)
-        b.hover:Hide()
-        b.checked = b:CreateTexture(nil, "OVERLAY")
-        b.checked:SetTexture("Interface\\Buttons\\CheckButtonHilight")
-        b.checked:SetBlendMode("ADD")
-        b.checked:SetAllPoints(b)
-        b.checked:Hide()
         b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         b:SetScript("OnClick", function(self, button)
             local btn = self or this
@@ -622,25 +598,9 @@ function GB.BuildSideTabs(f)
     end
 
     -- buy-tab button (shows on the first unpurchased tab position)
-    local buyF = CreateFrame("Frame", "WhcGBBuyTab", f)
-    buyF:SetWidth(42); buyF:SetHeight(50)
-    local bg = buyF:CreateTexture(nil, "BACKGROUND")
-    bg:SetTexture(TEX .. "ui-guildbankframe-tab")
-    bg:SetWidth(64); bg:SetHeight(64)
-    bg:SetPoint("TOPLEFT", buyF, "TOPLEFT", 0, 0)
-    local b = CreateFrame("Button", "WhcGBBuyTabButton", buyF)
-    b:SetWidth(36); b:SetHeight(34)
-    b:SetPoint("TOPLEFT", buyF, "TOPLEFT", 2, -8)
-    local icon = b:CreateTexture(nil, "BORDER")
-    icon:SetTexture(TEX .. "ui-guildbankframe-newtab")
-    icon:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
-    icon:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 0, 0)
-    -- manual hover, same stuck-visual reasoning as the side tabs
-    b.hover = b:CreateTexture(nil, "OVERLAY")
-    b.hover:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
-    b.hover:SetBlendMode("ADD")
-    b.hover:SetAllPoints(b)
-    b.hover:Hide()
+    local b = WHC.CreateSideTab("WhcGBBuyTab", f)
+    local buyF = b.frame
+    b.icon:SetTexture(TEX .. "ui-guildbankframe-newtab")
     b:SetScript("OnClick", function()
         GB.OnBuyTabClick()
     end)

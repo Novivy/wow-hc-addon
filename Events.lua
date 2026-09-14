@@ -316,13 +316,13 @@ end
 -- return 0 for the skipped copy so the line stays hidden from every chat window.
 local lastWhcMsg, lastWhcFrame
 local function handleChatEvent(arg1)
-    -- Plain-text Mak'gora lines are replaced by the addon's own UI (Makgora.lua)
-    if WHC.Makgora.IsServerLine(arg1) then
-        return 0
-    end
-
     local lowerArg = string.lower(arg1)
     if not string.find(lowerArg, "^::whc::") then
+        -- Plain-text server lines a feature replaces with its own UI (WHC.HideServerLines);
+        -- checked only here so a control line carrying the same words still gets through
+        if WHC.IsHiddenServerLine(arg1) then
+            return 0
+        end
         return 1
     end
     local frameTime = GetTime()
@@ -373,6 +373,12 @@ local function handleChatEvent(arg1)
 
 
     -- Server-pushed shop open (e.g. non-sub talking to a murloc companion)
+    -- Dual spec: "::whc::spec:<active>:<tab1>:<tab2>", "::whc::spec:error:<text>", "::whc::spec:locked"
+    if string.find(lowerArg, "^::whc::spec:") then
+        WHC.Spec.OnServerMessage((string.gsub(arg1, "^::whc::spec:", "")))
+        return 0
+    end
+
     if string.find(lowerArg, "^::whc::shop:") then
         local page = string.gsub(lowerArg, "^::whc::shop:", "")
         if page == "subs" then

@@ -139,3 +139,80 @@ end
 
 
 
+
+-- ---------------------------------------------------------------------------
+-- Server lines the addon replaces with its own UI. Features register distinctive
+-- snippets of the plain-text lines the server keeps sending for players without the
+-- addon; Events.lua drops matching chat lines and the UIErrorsFrame wrapper below drops
+-- matching on-screen notifications (SendNotification).
+local hiddenServerLines = {}
+function WHC.HideServerLines(snippets)
+    for _, snippet in ipairs(snippets) do
+        table.insert(hiddenServerLines, snippet)
+    end
+end
+
+function WHC.IsHiddenServerLine(text)
+    if not text then
+        return false
+    end
+    for _, snippet in ipairs(hiddenServerLines) do
+        if string.find(text, snippet, 1, true) then
+            return true
+        end
+    end
+    return false
+end
+
+local origUIErrorsAddMessage = UIErrorsFrame.AddMessage
+UIErrorsFrame.AddMessage = function(frame, text, r, g, b, a, holdTime)
+    if WHC.IsHiddenServerLine(text) then
+        return
+    end
+    return origUIErrorsAddMessage(frame, text, r, g, b, a, holdTime)
+end
+
+-- Red [WHC]: chat line plus the same text on screen (bypasses the filter above)
+function WHC.Announce(msg)
+    DEFAULT_CHAT_FRAME:AddMessage(WHC.ADDON_PREFIX .. RED_FONT_COLOR_CODE .. msg .. FONT_COLOR_CODE_CLOSE)
+    origUIErrorsAddMessage(UIErrorsFrame, msg, 1.0, 0.1, 0.1, 1.0, UIERRORS_HOLD_TIME)
+end
+
+-- ---------------------------------------------------------------------------
+-- Side tab hanging off the right border of a frame (guild bank tabs, talent specs):
+-- a 42x50 flange with an icon button. Returns the button; button.frame is the flange
+-- (anchor it), button.icon / .hover / .checked the textures. No pushed/highlight textures
+-- on purpose: a drag released off-button never delivers the mouse-up and the visual
+-- sticks, so hover is driven from OnEnter/OnLeave by the caller.
+-- Art: WHC.SIDE_TAB_GUILDBANK (red flange, the default) or WHC.SIDE_TAB_GREY (Blizzard's
+-- spellbook side tab, 64x64 art drawn at -3/+11 around a 32x32 button).
+WHC.SIDE_TAB_GUILDBANK = { texture = "Interface\\AddOns\\WOW_HC\\Images\\guildbank\\ui-guildbankframe-tab", x = 2, y = -8, width = 36, height = 34 }
+WHC.SIDE_TAB_GREY = { texture = "Interface\\SpellBook\\SpellBook-SkillLineTab", x = 3, y = -11, width = 32, height = 32 }
+function WHC.CreateSideTab(name, parent, art)
+    art = art or WHC.SIDE_TAB_GUILDBANK
+    local tab = CreateFrame("Frame", name, parent)
+    tab:SetWidth(42); tab:SetHeight(50)
+    local bg = tab:CreateTexture(nil, "BACKGROUND")
+    bg:SetTexture(art.texture)
+    bg:SetWidth(64); bg:SetHeight(64)
+    bg:SetPoint("TOPLEFT", tab, "TOPLEFT", 0, 0)
+
+    local button = CreateFrame("Button", name .. "Button", tab)
+    button:SetWidth(art.width); button:SetHeight(art.height)
+    button:SetPoint("TOPLEFT", tab, "TOPLEFT", art.x, art.y)
+    button.frame = tab
+    button.icon = button:CreateTexture(nil, "BORDER")
+    button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+    button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+    button.hover = button:CreateTexture(nil, "OVERLAY")
+    button.hover:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+    button.hover:SetBlendMode("ADD")
+    button.hover:SetAllPoints(button)
+    button.hover:Hide()
+    button.checked = button:CreateTexture(nil, "OVERLAY")
+    button.checked:SetTexture("Interface\\Buttons\\CheckButtonHilight")
+    button.checked:SetBlendMode("ADD")
+    button.checked:SetAllPoints(button)
+    button.checked:Hide()
+    return button
+end
