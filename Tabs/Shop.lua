@@ -31,7 +31,6 @@ local catalog = {
     { key = "green-mech",       name = "Green Mecha",                category = "Mounts",     image = "mount-fluo-mech",   price = 50 },
     { key = "palomino",         name = "Palomino",                   category = "Mounts",     image = "mount-palomino",    price = 60 },
     -- Companions
-    { key = "spectral-wolf",    name = "Spectral Wolf",              category = "Companions", image = "pet-ghost",         price = 35 },
     { key = "diablo",           name = "Diablo",                     category = "Companions", image = "pet-diablo",        price = 20 },
     { key = "panda",            name = "Panda",                      category = "Companions", image = "pet-panda",         price = 20 },
     { key = "zergling",         name = "Zergling",                   category = "Companions", image = "pet-zerg",          price = 20 },
@@ -44,8 +43,6 @@ local catalog = {
     { key = "customization",    name = "Character Customization",    category = "Services",   image = "custom",            price = "Open" },
     { key = "faction-change",   name = "Faction Change",             category = "Services",   image = "faction-change",    price = 170, tooltip = FACTION_TOOLTIP },
     { key = "noggenfogger",     name = "Noggenfogger",               category = "Services",   image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
-    { key = "noggenfogger-mnt", name = "Noggenfogger",               category = "Mounts",     image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
-    { key = "noggenfogger-pet", name = "Noggenfogger",               category = "Companions", image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
 }
 
 -- Subscription tiers, mirrored from api
