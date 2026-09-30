@@ -22,6 +22,7 @@ Support.lua
 UnitPopup.lua
 Makgora.lua
 Spec.lua
+HonorPanel.lua
 Events.lua
 GroupFinder.lua
 GuildBank.lua
