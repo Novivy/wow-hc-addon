@@ -1,5 +1,6 @@
 local instanceLevelRange = {
     ["Ragefire Chasm"]            = "(13-18)",
+    ["The Wolfmarch"]             = "(14-19)",
     ["The Deadmines"]             = "(17-26)",
     ["Wailing Caverns"]           = "(17-24)",
     ["Shadowfang Keep"]           = "(22-30)",

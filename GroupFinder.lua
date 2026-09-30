@@ -41,6 +41,7 @@ local ROLE_ICON_FILE = { [1] = "tank2", [2] = "healer2", [4] = "damage2" }
 -- ============================================================================
 GF.dungeons = {
     { id = 389, name = "Ragefire Chasm",     min = 13, max = 18, t = "dungeon", icon = nil },
+    { id = 1001, name = "The Wolfmarch",     min = 14, max = 19, t = "dungeon", icon = nil },
     { id = 36,  name = "The Deadmines",      min = 17, max = 26, t = "dungeon", icon = "deadmines" },
     { id = 43,  name = "Wailing Caverns",    min = 17, max = 24, t = "dungeon", icon = "wailingcaverns" },
     { id = 33,  name = "Shadowfang Keep",    min = 22, max = 30, t = "dungeon", icon = "shadowfangkeep" },
@@ -92,7 +93,7 @@ end
 
 -- per-listing background art (file = ui-lfg-background-<name>.blp); nil -> no art
 local DUNGEON_BG = {
-    [389] = "ragefirechasm", [36] = "deadmines", [43] = "wailingcaverns", [33] = "shadowfangkeep",
+    [389] = "ragefirechasm", [1001] = "wolfmarch", [36] = "deadmines", [43] = "wailingcaverns", [33] = "shadowfangkeep",
     [34] = "stormwindstockades", [48] = "blackfathomdeeps", [90] = "gnomeregan", [47] = "razorfenkraul",
     [189] = "scarletmonastery", [129] = "razorfendowns", [70] = "uldaman", [209] = "zulfarak",
     [349] = "maraudon", [109] = "sunkentemple", [230] = "blackrockdepths", [229] = "blackrockspire",
