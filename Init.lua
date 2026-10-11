@@ -127,6 +127,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.speedRunTimer.showTimer = WhcAddonSettings.speedRunTimer.showTimer or 1
     WhcAddonSettings.speedRunTimer.personalRecords = WhcAddonSettings.speedRunTimer.personalRecords or {}
     WhcAddonSettings.blueShaman = WhcAddonSettings.blueShaman or 1
+    WhcAddonSettings.hideDeathNoticeInRaid = WhcAddonSettings.hideDeathNoticeInRaid or 1
 
     WhcAddonSettings.splash = WhcAddonSettings.splash or 0
     WhcAddonSettings.minimapAngle = WhcAddonSettings.minimapAngle or 225
@@ -180,6 +181,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WHC.InitializeShopPets()
     WHC.InitializeTradableRaidLoot()
     WHC.InitializeDotCommandFix()
+    WHC.InitializeDeathAnnouncementFilter()
 
     if WHC.server.isHardcore then
         WHC.InitializeDeathPopupAppeal()

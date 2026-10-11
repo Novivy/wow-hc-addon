@@ -45,3 +45,54 @@ function WHC.InitializeDeathPopupAppeal()
     addDeathPopupAppealButton()
     updateDeathPopupText()
 end
+
+-- The server announces the death of any level 15+ character as a raid boss emote
+-- (Unit.cpp, CHAT_MSG_RAID_BOSS_EMOTE), which the client paints in the middle of the
+-- screen on top of the boss frames. Raiders want to keep the chat line but drop the
+-- banner while they are fighting.
+--
+-- The two clients paint it through completely different code, so both are wrapped:
+--  * 1.12 has no RaidNotice system at all. RaidBossEmoteFrame is a plain MessageFrame
+--    and ChatFrame.lua calls RaidBossEmoteFrame:AddMessage(body, ...) from inside
+--    ChatFrame_OnEvent, so the frame method is the only place to intercept.
+--  * 1.14 fires the separate RAID_BOSS_EMOTE event on RaidBossEmoteFrame, whose handler
+--    funnels into the global RaidNotice_AddMessage. Nothing on that path touches a
+--    protected function, so replacing the global is harmless there.
+-- Only the death text is matched, so raid warnings and real boss emotes are untouched.
+
+-- The one place that recognises the server's death announcement, shared with the
+-- chat-line handler in Events.lua.
+function WHC.IsDeathAnnouncement(text)
+    return text and string.find(string.lower(text), "has died at level", 1, true) and true or false
+end
+
+local function hideDeathNotice(text)
+    return WhcAddonSettings.hideDeathNoticeInRaid == 1
+            and WHC.IsDeathAnnouncement(text)
+            and UnitAffectingCombat("player")
+            and WHC.IsInRaid()
+end
+
+function WHC.InitializeDeathAnnouncementFilter()
+    if RaidBossEmoteFrame and RaidBossEmoteFrame.AddMessage then
+        local origAddMessage = RaidBossEmoteFrame.AddMessage
+        RaidBossEmoteFrame.AddMessage = function(frame, text, r, g, b, a, holdTime)
+            if hideDeathNotice(text) then
+                return
+            end
+
+            return origAddMessage(frame, text, r, g, b, a, holdTime)
+        end
+    end
+
+    if RaidNotice_AddMessage then
+        local origRaidNoticeAddMessage = RaidNotice_AddMessage
+        RaidNotice_AddMessage = function(noticeFrame, textString, colorInfo, displayTime)
+            if hideDeathNotice(textString) then
+                return
+            end
+
+            return origRaidNoticeAddMessage(noticeFrame, textString, colorInfo, displayTime)
+        end
+    end
+end

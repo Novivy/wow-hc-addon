@@ -239,6 +239,11 @@ function WHC.Tab_Settings(content)
         end
     end)
 
+    WHC_SETTINGS.hideDeathNoticeInRaidBtn = createSettingsCheckBox(scrollContent, "Hide the on-screen death announcement while in combat in a raid")
+    WHC_SETTINGS.hideDeathNoticeInRaidBtn:SetScript("OnClick", function()
+        WhcAddonSettings.hideDeathNoticeInRaid = getCheckedValueAndPlaySound(WHC_SETTINGS.hideDeathNoticeInRaidBtn)
+    end)
+
     WHC_SETTINGS.blueShamanBtn = createSettingsCheckBox(scrollContent, "Display Shamans in blue instead of pink")
     WHC_SETTINGS.blueShamanBtn:SetScript("OnClick", function()
         WhcAddonSettings.blueShaman = getCheckedValueAndPlaySound(WHC_SETTINGS.blueShamanBtn)

@@ -572,7 +572,7 @@ local function handleChatEvent(arg1)
 end
 
 local function handleMonsterChatEvent(arg1)
-    if (string.find(string.lower(arg1), "has died at level")) then
+    if WHC.IsDeathAnnouncement(arg1) then
 
         WHC.LogDeathMessage(arg1)
         return 0

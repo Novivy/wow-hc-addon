@@ -90,6 +90,14 @@ function WHC.IsInBattleground()
     return instanceType == "pvp"
 end
 
+-- 1.12 has GetNumRaidMembers, 1.14 (Classic) only IsInRaid
+function WHC.IsInRaid()
+    if WHC.client and WHC.client.is1_12 then
+        return GetNumRaidMembers() > 0
+    end
+    return IsInRaid() and true or false
+end
+
 -- Function to print debug messages
 function WHC.DebugPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage(tostring(message))
