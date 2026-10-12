@@ -1831,11 +1831,23 @@ function GB.UpdateLogList()
     end
 end
 
+-- a deleted character keeps its row with an empty name server side, so an empty
+-- name field means "deleted"; the guid comes with the log line and goes in the label
+local function LogWhoName(e)
+    if e.who and e.who ~= "" then
+        return e.who
+    end
+    if e.whoGuid and e.whoGuid > 0 then
+        return "<deleted (" .. e.whoGuid .. ")>"
+    end
+    return "<deleted>"
+end
+
 -- deposits/buys in green, withdrawals in red; player names stay white;
 -- item names in their quality color with [brackets]
 function GB.FormatLogLine(e, tab)
     local GREEN, RED, NEUTRAL = "|cff20ff20", "|cffff2020", "|cffffd100"
-    local who = "|cffffffff" .. (e.who or "?") .. "|r"
+    local who = "|cffffffff" .. LogWhoName(e) .. "|r"
     local when = "  |cff009999" .. FormatAge(e.age) .. "|r"
     if tab == MONEY_TAB then
         local amount = FormatMoney(e.itemOrMoney)
@@ -2212,6 +2224,7 @@ function GB.OnServerLine(line)
                 icon = f[8],
                 itemName = f[9],
                 who = f[10],
+                whoGuid = tonumber(f[11]),
             }
             -- newest first
             table.insert(GB.pendingLogs[t], 1, entry)
