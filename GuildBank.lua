@@ -61,7 +61,9 @@ GB.state = {
     tabs = {},                  -- [tabId] = {view, dep, move, stacksRemain, icon, name}
     items = {},                 -- [tabId][slot] = {id, count, quality, maxStack, rand, ench, icon, name}
     tabText = {},               -- [tabId] = string
-    logs = {},                  -- [tabId] = { {type, itemOrMoney, count, destTab, age, icon, who}, ... }
+    logs = {},                  -- [tabId] = { {type, itemOrMoney, count, destTab, age, icon, who}, ... } newest first
+    logCursor = {},             -- [tabId] = logGuid of the oldest line held, sent back to ask for the next page
+    logMore = {},               -- [tabId] = true when the server still has older entries
     ranks = {},                 -- [rid] = {rights, goldPerDay, tabs={[t]={rights, stacks}}, name}
     rankOrder = {},
     curTab = 0,
@@ -504,7 +506,7 @@ function GB.BuildEmptyPanel(f)
     panel.hint = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     panel.hint:SetPoint("CENTER", panel, "CENTER", 0, -55)
     panel.hint:SetWidth(307)
-    panel.hint:SetText("Anyone in the guild can buy a tab for the guild.\nBuying the first tab requires at least 5 active members who are level 15+, have been in the guild for at least 7 days, and are on different accounts/IPs.")
+    panel.hint:SetText("Anyone in the guild can buy a tab.\nBuying a tab requires at least 5 active members who are level 15+, have been in the guild for at least 7 days, and are on different accounts/IPs.")
 
     panel:Hide()
     GB.emptyPanel = panel
@@ -536,7 +538,7 @@ function GB.UpdateBankPanels()
             GB.emptyPanel.buyBtn:SetText("Buy first tab")
             GB.emptyPanel.buyBtn.priceNum:SetText(math.floor((tonumber(GB.state.nextTabCost) or 0) / 10000))
             GB.emptyPanel.buyBtn:Enable()
-            GB.emptyPanel.hint:SetText("Anyone in the guild can buy a tab for the guild.\nBuying the first tab requires at least 5 active members who are level 15+, have been in the guild for at least 7 days, and are on different accounts/IPs.")
+            GB.emptyPanel.hint:SetText("Anyone in the guild can buy a tab.\nBuying a tab requires at least 5 active members who are level 15+, have been in the guild for at least 7 days, and are on different accounts/IPs.")
             GB.emptyPanel:Show()
         else
             GB.emptyPanel:Hide()
@@ -610,8 +612,9 @@ function GB.BuildSideTabs(f)
         GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
         GameTooltip:SetText("Buy Guild Bank Tab", 1, 1, 1)
         GameTooltip:AddLine("Cost: " .. FormatGold(GB.state.nextTabCost), 0.9, 0.9, 0.9)
-        GameTooltip:AddLine("Anyone in the guild can buy a tab for the guild.", 0.6, 0.6, 0.6, 1)
-        GameTooltip:AddLine("Buying the first tab requires at least 5 active members who are level 15+, have been in the guild for at least 7 days, and are on different accounts/IPs.", 0.6, 0.6, 0.6, 1)
+        GameTooltip:AddLine("Anyone in the guild can buy a tab.", 0.6, 0.6, 0.6, 1)
+        -- the gate runs on every purchase, not only the first (GuildBankMgr::HandleBuyTab)
+        GameTooltip:AddLine("Buying a tab requires at least 5 active members who are level 15+, have been in the guild for at least 7 days, and are on different accounts/IPs.", 0.6, 0.6, 0.6, 1)
         GameTooltip:Show()
     end)
     b:SetScript("OnLeave", function(self)
@@ -758,6 +761,24 @@ function GB.BuildLogView(f)
         row:SetText("")
         GB.rows[i] = row
     end
+
+    -- the server only keeps the newest page in memory; older pages come out of the
+    -- database on demand, one click at a time
+    local more = CreateFrame("Button", "WhcGBLogMore", panel, "UIPanelButtonTemplate")
+    more:SetWidth(110); more:SetHeight(22)
+    more:SetPoint("TOP", panel, "BOTTOM", 0, -4)
+    more:SetText("Load more")
+    more:SetScript("OnClick", function()
+        local tab = (GB.state.view == "moneylog") and MONEY_TAB or GB.state.curTab
+        local cursor = GB.state.logCursor[tab] or 0
+        if cursor > 0 and not GB.logLoading then
+            GB.logLoading = tab
+            GB.UpdateLogList()
+            Send("log " .. tab .. " " .. cursor)
+        end
+    end)
+    more:Hide()
+    GB.logMoreBtn = more
 end
 
 -- permissions editor (guild master / managers)
@@ -1795,6 +1816,7 @@ function GB.UpdateLogList()
         for i = 1, GB.NUM_LOG_ROWS or 0 do
             GB.rows[i]:SetText("")
         end
+        if GB.logMoreBtn then GB.logMoreBtn:Hide() end
         return
     end
     local tab = (GB.state.view == "moneylog") and MONEY_TAB or GB.state.curTab
@@ -1808,6 +1830,7 @@ function GB.UpdateLogList()
                 GB.rows[i]:SetText("")
             end
             FauxScrollFrame_Update(GB.logScroll, 0, GB.NUM_LOG_ROWS, GB.logRowH)
+            if GB.logMoreBtn then GB.logMoreBtn:Hide() end
             return
         end
         GB.noViewLogOverlay:Hide()
@@ -1829,25 +1852,40 @@ function GB.UpdateLogList()
     if total == 0 and GB.rows[1] then
         GB.rows[1]:SetText("|cff808080No transactions recorded.|r")
     end
+    if GB.logMoreBtn then
+        if GB.state.logMore[tab] then
+            GB.logMoreBtn:Show()
+            if GB.logLoading then
+                GB.logMoreBtn:SetText("Loading...")
+                GB.logMoreBtn:Disable()
+            else
+                GB.logMoreBtn:SetText("Load more")
+                GB.logMoreBtn:Enable()
+            end
+        else
+            GB.logMoreBtn:Hide()
+        end
+    end
 end
 
 -- a deleted character keeps its row with an empty name server side, so an empty
--- name field means "deleted"; the guid comes with the log line and goes in the label
+-- name field means "deleted"; the guid comes with the log line and goes in the label.
+-- Returns the name already colored: live names white, the deleted label grey.
 local function LogWhoName(e)
     if e.who and e.who ~= "" then
-        return e.who
+        return "|cffffffff" .. e.who .. "|r"
     end
     if e.whoGuid and e.whoGuid > 0 then
-        return "<deleted (" .. e.whoGuid .. ")>"
+        return "|cff808080<deleted (" .. e.whoGuid .. ")>|r"
     end
-    return "<deleted>"
+    return "|cff808080<deleted>|r"
 end
 
 -- deposits/buys in green, withdrawals in red; player names stay white;
 -- item names in their quality color with [brackets]
 function GB.FormatLogLine(e, tab)
     local GREEN, RED, NEUTRAL = "|cff20ff20", "|cffff2020", "|cffffd100"
-    local who = "|cffffffff" .. LogWhoName(e) .. "|r"
+    local who = LogWhoName(e)
     local when = "  |cff009999" .. FormatAge(e.age) .. "|r"
     if tab == MONEY_TAB then
         local amount = FormatMoney(e.itemOrMoney)
@@ -2231,11 +2269,35 @@ function GB.OnServerLine(line)
         end
         return
     end
+    -- logend^t^oldestLogGuid^hasOlder^isOlderPage
     if string.find(body, "^logend%^") then
-        local t = tonumber((string.gsub(body, "^logend%^", "")))
+        local f = Split(string.gsub(body, "^logend%^", ""), "^")
+        local t = tonumber(f[1])
         if t then
-            GB.state.logs[t] = (GB.pendingLogs and GB.pendingLogs[t]) or {}
+            local page = (GB.pendingLogs and GB.pendingLogs[t]) or {}
             if GB.pendingLogs then GB.pendingLogs[t] = nil end
+            local cursor = tonumber(f[2]) or 0
+            local prevCursor = GB.state.logCursor[t] or 0
+            if tonumber(f[4]) == 1 then
+                -- every line of an older page is older than what is already listed, so the
+                -- block goes after it (the list runs newest first). The cursor has to have
+                -- moved back for that to hold: a page answering a cursor we already consumed
+                -- is a duplicate reply and appending it would list those lines twice
+                if cursor > 0 and cursor < prevCursor then
+                    local list = GB.state.logs[t] or {}
+                    for i = 1, table.getn(page) do
+                        table.insert(list, page[i])
+                    end
+                    GB.state.logs[t] = list
+                    GB.state.logCursor[t] = cursor
+                end
+                if tonumber(f[3]) ~= 1 then GB.state.logMore[t] = false end
+            else
+                GB.state.logs[t] = page
+                GB.state.logCursor[t] = cursor
+                GB.state.logMore[t] = (tonumber(f[3]) == 1)
+            end
+            GB.logLoading = nil
             GB.UpdateLogList()
         end
         return
@@ -2268,6 +2330,10 @@ function GB.OnServerLine(line)
             return
         end
         GB.openFallback = nil
+        if GB.logLoading then           -- a denied log page never answers with logend
+            GB.logLoading = nil
+            GB.UpdateLogList()
+        end
         ErrMsg(GB_ERRORS[code] or ("Guild bank error " .. tostring(code)))
         return
     end
