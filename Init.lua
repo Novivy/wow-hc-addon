@@ -130,6 +130,7 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
     WhcAddonSettings.hideDeathNoticeInRaid = WhcAddonSettings.hideDeathNoticeInRaid or 1
 
     WhcAddonSettings.splash = WhcAddonSettings.splash or 0
+    WhcAddonSettings.dungeonSplash = WhcAddonSettings.dungeonSplash or 0
     WhcAddonSettings.minimapAngle = WhcAddonSettings.minimapAngle or 225
     WhcAddonSettings.auction_short = WhcAddonSettings.auction_short or 0
     WhcAddonSettings.auction_medium = WhcAddonSettings.auction_medium or 0
@@ -187,10 +188,17 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         WHC.InitializeDeathPopupAppeal()
     end
 
+    -- splash is account wide, so 0 means a fresh install: a newcomer gets the General tab and
+    -- is marked as having seen the current dungeon splash, which is only for returning players
     if (WhcAddonSettings.splash == 0) then
         WhcAddonSettings.splash = 1
+        WhcAddonSettings.dungeonSplash = WHC.DUNGEON_SPLASH_VERSION
 
         WHC.UIShowTabContent(WHC.TAB.GENERAL)
+    elseif (WhcAddonSettings.dungeonSplash < WHC.DUNGEON_SPLASH_VERSION) then
+        WhcAddonSettings.dungeonSplash = WHC.DUNGEON_SPLASH_VERSION
+
+        WHC.QueueDungeonSplash()
     end
 
     WHC.SetBlockInvites()
@@ -397,6 +405,102 @@ function WHC.ShowUrlPopup(title, url)
     end)
 
     urlFrame:Show()
+end
+
+-- Bump to show a new splash once to every returning player
+WHC.DUNGEON_SPLASH_VERSION = 1
+
+-- ADDON_LOADED is too early on 1.14: a frame shown there is gone once the world loads,
+-- so wait for PLAYER_ENTERING_WORLD plus a second
+function WHC.QueueDungeonSplash()
+    local waitFrame = CreateFrame("Frame")
+    waitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    waitFrame:SetScript("OnEvent", function()
+        waitFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        local waited = 0
+        waitFrame:SetScript("OnUpdate", function(self, elapsed)
+            waited = waited + (elapsed or arg1)
+            if waited < 1 then
+                return
+            end
+            waitFrame:SetScript("OnUpdate", nil)
+
+            WHC.ShowDungeonSplash()
+        end)
+    end)
+end
+
+function WHC.ShowDungeonSplash()
+    local splashFrame = getglobal("WhcDungeonSplash")
+    if splashFrame then
+        return splashFrame:Show()
+    end
+
+    splashFrame = CreateFrame("Frame", "WhcDungeonSplash", UIParent, RETAIL_BACKDROP)
+    splashFrame:SetWidth(536)
+    splashFrame:SetHeight(280)
+    splashFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 100)
+    splashFrame:SetBackdrop({
+        bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
+        edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+        tile = true,
+        tileSize = 32,
+        edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+    splashFrame:SetBackdropColor(0, 0, 0, 1)
+    -- Above the main window (MEDIUM, same spot), below the url popup's level 10 so Read More opens on top
+    splashFrame:SetFrameStrata("HIGH")
+    splashFrame:SetFrameLevel(5)
+    tinsert(UISpecialFrames, "WhcDungeonSplash")
+
+    -- The 1024x512 art is split in four 512x256 tiles (TL, TR, BL, BR): a single 1024 wide
+    -- texture crashes the 1.12 client
+    local tilePoints = { { "BOTTOMRIGHT", "CENTER" }, { "BOTTOMLEFT", "CENTER" }, { "TOPRIGHT", "CENTER" }, { "TOPLEFT", "CENTER" } }
+    for i = 1, 4 do
+        local tile = splashFrame:CreateTexture(nil, "ARTWORK")
+        tile:SetTexture("Interface\\AddOns\\WOW_HC\\Images\\wolfmarch" .. i)
+        tile:SetWidth(256)
+        tile:SetHeight(128)
+        tile:SetPoint(tilePoints[i][1], splashFrame, tilePoints[i][2], 0, 0)
+    end
+
+    local closeButton = CreateFrame("Button", nil, splashFrame, "UIPanelCloseButton")
+    closeButton:SetWidth(30)
+    closeButton:SetHeight(30)
+    closeButton:SetPoint("TOPRIGHT", splashFrame, "TOPRIGHT", 7, 6)
+    closeButton:SetScript("OnClick", function()
+        splashFrame:Hide()
+    end)
+
+    local readMoreButton = CreateFrame("Button", nil, splashFrame, "UIPanelButtonTemplate")
+    readMoreButton:SetWidth(120)
+    readMoreButton:SetHeight(30)
+    readMoreButton:SetPoint("BOTTOM", splashFrame, "BOTTOM", -72, 68)
+    readMoreButton:SetText("Read More")
+    readMoreButton:SetScript("OnClick", function()
+        WHC.ShowUrlPopup("Copy and paste the following URL to your browser", "https://wow-hc.com/forums/7322")
+    end)
+
+    -- Same as the Special Event JOIN button in the PVP tab
+    local teleportButton = CreateFrame("Button", nil, splashFrame, "UIPanelButtonTemplate")
+    teleportButton:SetWidth(120)
+    teleportButton:SetHeight(30)
+    teleportButton:SetPoint("BOTTOM", splashFrame, "BOTTOM", 72, 68)
+    teleportButton:SetText("Teleport")
+    teleportButton:SetScript("OnClick", function()
+        SendChatMessage(".attend", "WHISPER", GetDefaultLanguage(), UnitName("player"));
+        splashFrame:Hide()
+    end)
+
+    splashFrame:SetScript("OnShow", function()
+        PlaySound(WHC.SOUNDS.openFrame)
+    end)
+    splashFrame:SetScript("OnHide", function()
+        PlaySound(WHC.SOUNDS.closeFrame)
+    end)
+
+    splashFrame:Show()
 end
 
 function WHC.InitializeTradableRaidLoot()
