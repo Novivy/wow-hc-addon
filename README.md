@@ -8,6 +8,7 @@ https://wow-hc.com
 
 
 
+
 ## Changelog for next update
 
 ## Future versions:
