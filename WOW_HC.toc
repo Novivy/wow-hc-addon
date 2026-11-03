@@ -26,6 +26,7 @@ HonorPanel.lua
 Events.lua
 GroupFinder.lua
 GuildBank.lua
+ExtraAuras.lua
 MinimapButton.lua
 AchievementHelpers.lua
 Legacy\LegacyArt.lua
