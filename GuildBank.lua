@@ -1959,15 +1959,15 @@ function GB.SelectRank(rid)
     UIDropDownMenu_SetSelectedValue(GB.rankDD, rid)
     GB.SetRankDDText(rid .. " - " .. r.name)
     local isGM = (rid == 0)
-    GB.cbManage:SetChecked(WHC.CheckedValue(GB.HasBit(r.rights, 1) and 1 or 0))
-    GB.cbWdrGold:SetChecked(WHC.CheckedValue(GB.HasBit(r.rights, 4) and 1 or 0))
+    GB.cbManage:SetChecked(WHC.CheckedValue(WHC.HasBit(r.rights, 1) and 1 or 0))
+    GB.cbWdrGold:SetChecked(WHC.CheckedValue(WHC.HasBit(r.rights, 4) and 1 or 0))
     GB.ebGold:SetText(tostring(math.floor((r.goldPerDay or 0) / 10000)))
     for t = 0, MAX_TABS - 1 do
         local row = GB.tabRights[t]
         local tr = r.tabs[t] or { rights = 0, stacks = 0 }
-        row.view:SetChecked(WHC.CheckedValue(GB.HasBit(tr.rights, 1) and 1 or 0))
-        row.dep:SetChecked(WHC.CheckedValue(GB.HasBit(tr.rights, 2) and 1 or 0))
-        row.move:SetChecked(WHC.CheckedValue(GB.HasBit(tr.rights, 4) and 1 or 0))
+        row.view:SetChecked(WHC.CheckedValue(WHC.HasBit(tr.rights, 1) and 1 or 0))
+        row.dep:SetChecked(WHC.CheckedValue(WHC.HasBit(tr.rights, 2) and 1 or 0))
+        row.move:SetChecked(WHC.CheckedValue(WHC.HasBit(tr.rights, 4) and 1 or 0))
         row.stacks:SetText(tostring(tr.stacks or 0))
         local info = GB.state.tabs[t]
         row.label:SetText((info and info.name) or ("Tab " .. (t + 1)))
@@ -1978,11 +1978,6 @@ function GB.SelectRank(rid)
         GB.rightsSave:Enable()
     end
     GB.rankSnapshot = GB.RankFormState()
-end
-
-function GB.HasBit(value, bit)
-    value = tonumber(value) or 0
-    return math.floor(value / bit) - 2 * math.floor(value / (bit * 2)) == 1
 end
 
 function GB.SaveRank()

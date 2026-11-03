@@ -258,6 +258,7 @@ function WHC.InitializeSpec()
     events:SetScript("OnEvent", function(self, eventName)
         eventName = eventName or event -- 1.12 passes nothing, the event is a global
         if eventName == "PLAYER_LOGIN" then
+            WHC.AnnounceAddon()     -- the server refuses .whc commands until the addon announced itself
             RequestInfo()
         else
             S.Update()

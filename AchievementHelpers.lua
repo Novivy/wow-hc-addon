@@ -901,7 +901,7 @@ function WHC.SetBlockQuests()
 end
 --endregion
 
---region ====== Demon Slayer & Lightbringer & That Which Has No Life ======
+--region ====== Demonslayer & Lightbringer & That Which Has No Life ======
 local demonSlayer = WHC.Achievements.DEMON_SLAYER
 local lightbringer = WHC.Achievements.LIGHTBRINGER
 local thatWhichHasNoLife = WHC.Achievements.THAT_WHICH_HAS_NO_LIFE

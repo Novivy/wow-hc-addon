@@ -69,6 +69,38 @@ function WHC.Modulus(x, y)
     return math.fmod(x, y)
 end
 
+-- Bit masks by arithmetic only: no `^` (Lua 5.0 maps it to a global __pow) and no bit library (1.12 has none;
+-- sign-safe on both clients, masks are plain numbers up to 2^32 - 1). WHC.POW2[b] = 2^b for b = 0..32.
+WHC.POW2 = {}
+do
+    local v = 1
+    for b = 0, 32 do
+        WHC.POW2[b] = v
+        v = v * 2
+    end
+end
+
+-- is the bit of value `bit` (1, 2, 4...) set in `value` (nil counts as 0)
+function WHC.HasBit(value, bit)
+    value = tonumber(value) or 0
+    return math.floor(value / bit) - 2 * math.floor(value / (bit * 2)) == 1
+end
+
+-- bit `index` of an array of 32 bit words (bit i lives in words[floor(i / 32)], missing words count as 0)
+function WHC.HasWordBit(words, index)
+    local w = math.floor(index / 32)
+    return words ~= nil and WHC.HasBit(words[w], WHC.POW2[index - 32 * w])
+end
+
+function WHC.SetWordBit(words, index)
+    local w = math.floor(index / 32)
+    local p = WHC.POW2[index - 32 * w]
+    local v = words[w] or 0
+    if not WHC.HasBit(v, p) then
+        words[w] = v + p
+    end
+end
+
 function WHC.SecondsToClock(seconds)
     if seconds < 0 then
         seconds = 0

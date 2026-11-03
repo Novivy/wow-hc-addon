@@ -118,7 +118,7 @@ function WHC.ToggleAchievement(itemAch, failed)
 end
 
 WHC.Achievements = {
-    DEMON_SLAYER           = { id = 16384,  icon = "spell_shadow_unsummonbuilding",       itemId = "707016", itemLink = "", name = "Demon Slayer",           desc = "Reach level 60 while only gaining monster experience from demons." },
+    DEMON_SLAYER           = { id = 16384,  icon = "spell_shadow_unsummonbuilding",       itemId = "707016", itemLink = "", name = "Demonslayer",            desc = "Reach level 60 while only gaining monster experience from demons." },
     GROUNDED               = { id = 4096,   icon = "spell_nature_strengthofearthtotem02", itemId = "707014", itemLink = "", name = "Grounded",               desc = "Reach level 60 without ever using flying services." },
     HELP_YOURSELF          = { id = 64,     icon = "inv_misc_note_02",                    itemId = "707006", itemLink = "", name = "Help Yourself",          desc = "Reach level 60 without ever turning in a quest (class and profession quests allowed)." },
     IRON_BONES             = { id = 1,      icon = "trade_blacksmithing",                 itemId = "707000", itemLink = "", name = "Iron Bones",             desc = "Reach level 60 without ever repairing the durability of an item." },

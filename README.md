@@ -64,7 +64,7 @@ https://wow-hc.com
 - Settings checkbox for Marathon Runner achievement, blocking learning riding skill
 - Settings checkbox for Help Yourself achievement, auto abandoning non-class or profession quests
 - Settings checkbox for Soft Hands achievement, blocking learning primary professions
-- Settings checkbox for Demon Slayer achievement, showing a warning when not targeting a demon
+- Settings checkbox for Demonslayer achievement, showing a warning when not targeting a demon
 - Settings checkbox for Lightbringer achievement, showing a warning when not targeting an undead
 - Settings checkbox for That Which Has No Life achievement, showing a warning when not targeting a boar or quilboar
 - Settings checkbox for Untalented achievement, blocking learning talents

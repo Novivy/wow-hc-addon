@@ -1,3 +1,15 @@
+-- The server refuses every other .whc command until this announce arrived for the current login, so any
+-- module that sends a .whc command on PLAYER_LOGIN calls this first (once per login, whoever is first).
+local announcedThisLogin = false
+function WHC.AnnounceAddon()
+    if announcedThisLogin then
+        return
+    end
+    announcedThisLogin = true
+    local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
+    SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+end
+
 local playerLogin = CreateFrame("Frame");
 playerLogin:RegisterEvent("PLAYER_LOGIN")
 playerLogin:SetScript("OnEvent", function(self, event)
@@ -13,8 +25,7 @@ playerLogin:SetScript("OnEvent", function(self, event)
         JoinChannelByName("world", nil, DEFAULT_CHAT_FRAME) -- Not working on retail version
     end
 
-    local msg = ".whc version " .. GetAddOnMetadata("WOW_HC", "Version")
-    SendChatMessage(msg, "WHISPER", GetDefaultLanguage(), UnitName("player"));
+    WHC.AnnounceAddon()
 
     -- Initialize UI to same state as server
     WHC.SendGetRestedXpStatusCommand()
@@ -111,7 +122,9 @@ local function createAchievementButton(frame, name)
         ResetCursor()
     end)
 
+    local isInspect = name == "inspect"
     viewAchButton:SetScript("OnClick", function()
+        WHC.legacyInspectNext = isInspect                        -- the inspect frame's button shows the target's
         WHC.UIShowTabContent(WHC.TAB.ACHIEVEMENTS)
     end)
 
@@ -406,6 +419,11 @@ local function handleChatEvent(arg1)
 
         WHC.Frames.UItab[WHC.TAB.ACHIEVEMENTS].desc1:SetText(desc)
 
+        -- the achievements window: "<Name>'s Achievements" while inspecting (original case, not lowerArg)
+        if WHC_LegacyPreview and WHC_LegacyPreview.SetInspectTarget then
+            WHC_LegacyPreview.SetInspectTarget(string.sub(arg1, string.len("::whc::achievement-target:") + 1))
+        end
+
         return 0
     end
 
@@ -559,6 +577,53 @@ local function handleChatEvent(arg1)
         _, _, seconds = string.find(lowerArg, "^::whc::speedrun:record:(%d+)")
         if seconds then
             WHC.Frames.SpeedRunTimer:SetServerRecord(tonumber(seconds))
+            return 0
+        end
+    end
+
+    -- Legacy Challenges (PLAN_LEGACY_CHALLENGES.md "Phase 3 landed"): replies to `.whc challenges`, live pushes
+    if string.find(lowerArg, "^::whc::ch") then
+        local LPW = WHC_LegacyPreview
+        -- `.achievements` (`.ach`) with this addon: the server answers with this line instead of its chat list
+        if lowerArg == "::whc::ch-open" then
+            if LPW and LPW.RequestOnOpen then LPW.RequestOnOpen(false) end
+            if WHC.OpenLegacyChallenges then WHC.OpenLegacyChallenges() end
+            return 0
+        end
+        -- live progress: a counter / mask / list word changed, an exploration card area was discovered
+        local _, _, pushWord, pushHex = string.find(arg1, "^::whc::ch%-w:(%d+):(%x+)$")
+        if pushHex then
+            if LPW then LPW.OnWordPush(tonumber(pushWord), pushHex) end
+            return 0
+        end
+        local _, _, areaIndex = string.find(arg1, "^::whc::ch%-area:(%d+)$")
+        if areaIndex then
+            if LPW then LPW.OnAreaPush(tonumber(areaIndex)) end
+            return 0
+        end
+        local _, _, eName, eHex = string.find(arg1, "^::whc::ch%-explore:([^:]*):(%x+)$")
+        if eHex then
+            if LPW then LPW.OnExploreReply(eName, eHex) end
+            return 0
+        end
+        local _, _, takenList = string.find(arg1, "^::whc::ch%-taken:([%d,]*)$")
+        if takenList then
+            if LPW then LPW.OnTakenReply(takenList) end
+            return 0
+        end
+        local _, _, feats = string.find(arg1, "^::whc::ch%-feats:(%d+)$")
+        if feats then
+            if LPW then LPW.OnFeatsSecured(tonumber(feats)) end
+            return 0
+        end
+        local _, _, grantedId = string.find(arg1, "^::whc::ch:(%d+)$")
+        if grantedId then
+            if LPW then LPW.OnGranted(tonumber(grantedId)) end
+            return 0
+        end
+        local _, _, sName, sHex = string.find(arg1, "^::whc::ch:([^:]*):(%x+)$")
+        if sHex then
+            if LPW then LPW.OnStateReply(sName, sHex) end
             return 0
         end
     end

@@ -219,6 +219,11 @@ function WHC.Tab_Settings(content)
         end
     end)
 
+    WHC_SETTINGS.achievementToastBtn = createSettingsCheckBox(scrollContent, "Display a notification when you complete an achievement")
+    WHC_SETTINGS.achievementToastBtn:SetScript("OnClick", function()
+        WhcAddonSettings.achievementToast = getCheckedValueAndPlaySound(WHC_SETTINGS.achievementToastBtn)
+    end)
+
     WHC_SETTINGS.recentDeathsBtn = createSettingsCheckBox(scrollContent, "Display Recent deaths frame")
     WHC_SETTINGS.recentDeathsBtn:SetScript("OnClick", function()
         WhcAddonSettings.recentDeaths = getCheckedValueAndPlaySound(WHC_SETTINGS.recentDeathsBtn)

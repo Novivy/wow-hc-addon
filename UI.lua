@@ -16,6 +16,18 @@ function WHC.UIShowTabContent(tabIndex)
         return WHC:Hide()
     end
 
+    -- The Legacy Challenges window replaces the Achievements tab. It asks the server with `.whc challenges` only
+    -- (one reply line, the Feats included in its word 0), `target` from the inspect frame's button.
+    if tabIndex == WHC.TAB.ACHIEVEMENTS and WHC.OpenLegacyChallenges then
+        local inspect = WHC.legacyInspectNext
+        WHC.legacyInspectNext = nil
+        if WHC_LegacyPreview and WHC_LegacyPreview.RequestOnOpen then
+            WHC_LegacyPreview.RequestOnOpen(inspect)
+        end
+        WHC:Hide()
+        return WHC.OpenLegacyChallenges()
+    end
+
     if tabIndex == WHC.lastTab and WHC:IsVisible() then
         return WHC:Hide()
     end
@@ -59,6 +71,7 @@ function WHC.UIShowTabContent(tabIndex)
         WHC_SETTINGS.minimap:SetChecked(WHC.CheckedValue(WhcAddonSettings.minimapicon))
         WHC_SETTINGS.groupFinderIcon:SetChecked(WHC.CheckedValue(WhcAddonSettings.groupFinderIcon))
         WHC_SETTINGS.achievementbtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementbtn))
+        WHC_SETTINGS.achievementToastBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.achievementToast))
         WHC_SETTINGS.recentDeathsBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.recentDeaths))
         WHC_SETTINGS.speedRunTimerBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.speedRunTimer.showTimer))
         WHC_SETTINGS.hideDeathNoticeInRaidBtn:SetChecked(WHC.CheckedValue(WhcAddonSettings.hideDeathNoticeInRaid))

@@ -12,12 +12,6 @@ local ART = "Interface\\AddOns\\WOW_HC\\Images\\groupfinder\\"
 
 GF.ROLE = { TANK = 1, HEALER = 2, DPS = 4 }
 
-local function hasRole(mask, bit)
-    mask = tonumber(mask) or 0
-    local q = math.floor(mask / bit)
-    return (q - math.floor(q / 2) * 2) == 1
-end
-
 -- WoW class id -> English token (for RAID_CLASS_COLORS)
 local CLASS_TOKEN = {
     [1] = "WARRIOR", [2] = "PALADIN", [3] = "HUNTER", [4] = "ROGUE", [5] = "PRIEST",
@@ -185,18 +179,18 @@ local function RoleText(mask)
     -- always render all three slots in fixed order so every row stays aligned;
     -- roles the player doesn't have are dimmed instead of omitted
     local dim = "|cff3a3a3a"
-    local tank = hasRole(mask, GF.ROLE.TANK)   and "|cff4a90d9Tank|r" or (dim .. "Tank|r")
-    local heal = hasRole(mask, GF.ROLE.HEALER) and "|cff40c040Heal|r" or (dim .. "Heal|r")
-    local dps  = hasRole(mask, GF.ROLE.DPS)    and "|cffd04040DPS|r"  or (dim .. "DPS|r")
+    local tank = WHC.HasBit(mask, GF.ROLE.TANK)   and "|cff4a90d9Tank|r" or (dim .. "Tank|r")
+    local heal = WHC.HasBit(mask, GF.ROLE.HEALER) and "|cff40c040Heal|r" or (dim .. "Heal|r")
+    local dps  = WHC.HasBit(mask, GF.ROLE.DPS)    and "|cffd04040DPS|r"  or (dim .. "DPS|r")
     return tank .. " " .. heal .. " " .. dps
 end
 
 -- sort priority by primary role: Tank > Heal > DPS > none
 local function roleRank(mask)
     mask = tonumber(mask) or 0
-    if hasRole(mask, GF.ROLE.TANK) then return 1 end
-    if hasRole(mask, GF.ROLE.HEALER) then return 2 end
-    if hasRole(mask, GF.ROLE.DPS) then return 3 end
+    if WHC.HasBit(mask, GF.ROLE.TANK) then return 1 end
+    if WHC.HasBit(mask, GF.ROLE.HEALER) then return 2 end
+    if WHC.HasBit(mask, GF.ROLE.DPS) then return 3 end
     return 4
 end
 
@@ -360,9 +354,9 @@ function GF.OnMine(payload)
         for _, idStr in ipairs(gfSplit(GF.mine.dungeons, ",")) do GF.selected[tonumber(idStr)] = true end
     end
     if GF.mine.state == 1 or GF.mine.state == 2 then
-        GF.roleSel.TANK = hasRole(GF.mine.role, GF.ROLE.TANK)
-        GF.roleSel.HEALER = hasRole(GF.mine.role, GF.ROLE.HEALER)
-        GF.roleSel.DPS = hasRole(GF.mine.role, GF.ROLE.DPS)
+        GF.roleSel.TANK = WHC.HasBit(GF.mine.role, GF.ROLE.TANK)
+        GF.roleSel.HEALER = WHC.HasBit(GF.mine.role, GF.ROLE.HEALER)
+        GF.roleSel.DPS = WHC.HasBit(GF.mine.role, GF.ROLE.DPS)
     end
     if GF.frame and GF.frame:IsVisible() then GF.RefreshControls() end
 end
@@ -392,9 +386,9 @@ function GF.OnMyListing(payload)
         for _, m in ipairs(l.members) do
             if m.name == me then
                 GF.mine.role = m.roles
-                GF.roleSel.TANK = hasRole(m.roles, GF.ROLE.TANK)
-                GF.roleSel.HEALER = hasRole(m.roles, GF.ROLE.HEALER)
-                GF.roleSel.DPS = hasRole(m.roles, GF.ROLE.DPS)
+                GF.roleSel.TANK = WHC.HasBit(m.roles, GF.ROLE.TANK)
+                GF.roleSel.HEALER = WHC.HasBit(m.roles, GF.ROLE.HEALER)
+                GF.roleSel.DPS = WHC.HasBit(m.roles, GF.ROLE.DPS)
             end
         end
     end
@@ -1301,9 +1295,9 @@ function GF.LayoutRoleIcons(row, l)
     -- Members who haven't picked a role (roles == 0) stay empty dots.
     local function roleCount(mask)
         local n = 0
-        if hasRole(mask, GF.ROLE.TANK)   then n = n + 1 end
-        if hasRole(mask, GF.ROLE.HEALER) then n = n + 1 end
-        if hasRole(mask, GF.ROLE.DPS)    then n = n + 1 end
+        if WHC.HasBit(mask, GF.ROLE.TANK)   then n = n + 1 end
+        if WHC.HasBit(mask, GF.ROLE.HEALER) then n = n + 1 end
+        if WHC.HasBit(mask, GF.ROLE.DPS)    then n = n + 1 end
         return n
     end
     local roled = {}
@@ -1314,9 +1308,9 @@ function GF.LayoutRoleIcons(row, l)
 
     local fTank, fHeal, fDps = 0, 0, 0
     for _, m in ipairs(roled) do
-        if     hasRole(m.roles, GF.ROLE.TANK)   and fTank < capTank then fTank = fTank + 1
-        elseif hasRole(m.roles, GF.ROLE.HEALER) and fHeal < capHeal then fHeal = fHeal + 1
-        elseif hasRole(m.roles, GF.ROLE.DPS)    and fDps  < capDps  then fDps  = fDps  + 1 end
+        if     WHC.HasBit(m.roles, GF.ROLE.TANK)   and fTank < capTank then fTank = fTank + 1
+        elseif WHC.HasBit(m.roles, GF.ROLE.HEALER) and fHeal < capHeal then fHeal = fHeal + 1
+        elseif WHC.HasBit(m.roles, GF.ROLE.DPS)    and fDps  < capDps  then fDps  = fDps  + 1 end
     end
 
     -- comp slots; with a "+X" we drop to 4 icons (tank, dps, dps, heal) to make
@@ -1636,9 +1630,9 @@ function GF.SetView(view)
                 local d = GF.dungeonById[tonumber(idStr)]
                 if d and activityMatch(d, GF.filterType) then GF.selected[tonumber(idStr)] = true end
             end
-            GF.roleSel.TANK = hasRole(last.role, GF.ROLE.TANK)
-            GF.roleSel.HEALER = hasRole(last.role, GF.ROLE.HEALER)
-            GF.roleSel.DPS = hasRole(last.role, GF.ROLE.DPS)
+            GF.roleSel.TANK = WHC.HasBit(last.role, GF.ROLE.TANK)
+            GF.roleSel.HEALER = WHC.HasBit(last.role, GF.ROLE.HEALER)
+            GF.roleSel.DPS = WHC.HasBit(last.role, GF.ROLE.DPS)
         end
         if GF.noteBox then GF.noteBox:SetText(last and last.note or "") end
     else
@@ -1762,9 +1756,9 @@ function GF.BuildRolePick()
         d:Hide()
         -- you just joined: pull your own listing (no cooldown) so your group shows
         -- highlighted right away; the bulk list stays cached
-        GF.roleSel.TANK = hasRole(mask, GF.ROLE.TANK)
-        GF.roleSel.HEALER = hasRole(mask, GF.ROLE.HEALER)
-        GF.roleSel.DPS = hasRole(mask, GF.ROLE.DPS)
+        GF.roleSel.TANK = WHC.HasBit(mask, GF.ROLE.TANK)
+        GF.roleSel.HEALER = WHC.HasBit(mask, GF.ROLE.HEALER)
+        GF.roleSel.DPS = WHC.HasBit(mask, GF.ROLE.DPS)
         GF.RequestMyListing()
     end)
 end
