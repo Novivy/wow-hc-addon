@@ -8,7 +8,11 @@ local function bgSlot(content, index, icon, label, desc)
     local desc1 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     desc1:SetPoint("TOP", title, "TOP", 0, -25) -- Adjust y-offset based on logo size
     desc1:SetWidth(400)
-    desc1:SetText("No permadeath in battlegrounds—join from anywhere!")
+    if WHC.server.isHardcore then
+        desc1:SetText("No permadeath in battlegrounds—join from anywhere!")
+    else
+        desc1:SetText("Join a battleground from anywhere!")
+    end
 
 
     local MerchantItemTemplate = CreateFrame("Frame", "MerchantItemTemplate", content)

@@ -21,7 +21,7 @@ function WHC.Tab_Support(content)
     local desc2 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     desc2:SetPoint("TOP", desc1, "TOP", 0, -20) -- Adjust y-offset based on logo size
     desc2:SetText(
-        "All other issues should be reported through our forums [wow-hc.com]")
+        "All other issues should be reported through our forums [" .. WHC.BRAND.siteLabel .. "]")
     desc2:SetWidth(260)
 
     local label = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")

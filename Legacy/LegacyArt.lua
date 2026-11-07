@@ -50,6 +50,7 @@ WHC_LegacyArt = {
     points = { file = "points", w = 50, h = 73, u = 0.781250, v = 0.570312 },
     points_big = { file = "points_big", w = 50, h = 73, u = 0.781250, v = 0.570312 },
     portrait = { file = "portrait", w = 198, h = 273, u = 0.773438, v = 0.533203 },
+    portrait_dawnrest = { file = "portrait_dawnrest", w = 128, h = 128, u = 1.000000, v = 1.000000 },
     portrait_hc = { file = "portrait_hc", w = 128, h = 128, u = 1.000000, v = 1.000000 },
     redx = { file = "redx", w = 64, h = 64, u = 1.000000, v = 1.000000 },
     ribbon = { file = "ribbon", w = 479, h = 46, u = 0.935547, v = 0.718750 },

@@ -129,6 +129,37 @@ WHC:SetScript("OnEvent", function(self, event, addonName)
         isHardcore = realmName == "Permadeath - EU"
     }
 
+    -- Branding. Any realm other than the hardcore one is Dawnrest (same account DB, dawnrest.com runs the same
+    -- website backend as wow-hc.com, so the /shop, /addon and /forums paths are the same on both).
+    -- The Dawnrest full logo is 768x512: drawn from the top 171 rows of a 256x256 texture (logoV).
+    if WHC.server.isHardcore then
+        WHC.BRAND = {
+            name = "WOW-HC",
+            site = "https://wow-hc.com",
+            siteLabel = "wow-hc.com",
+            discord = "discord.gg/uGWu5YFjE3",
+            welcome = "Welcome to WOW Hardcore!",
+            tagline = "A permadeath realm where you permanently lose your character if you die.",
+            logo = "Interface\\AddOns\\WOW_HC\\Images\\wow-hardcore-logo",
+            logoW = 150, logoH = 75, logoY = 42, logoV = 1,
+            logoRound = "Interface\\AddOns\\WOW_HC\\Images\\wow-hardcore-logo-round",
+            legacyPortrait = "portrait_hc",
+        }
+    else
+        WHC.BRAND = {
+            name = "Dawnrest",
+            site = "https://dawnrest.com",
+            siteLabel = "dawnrest.com",
+            discord = "discord.gg/dFkaUH66Fc",
+            welcome = "Welcome to Dawnrest!",
+            tagline = "A Classic PvP realm built on 3+ years of bug fixes from the main WOW-HC Hardcore realm.",
+            logo = "Interface\\AddOns\\WOW_HC\\Images\\dawnrest-logo",
+            logoW = 132, logoH = 88, logoY = 48, logoV = 171 / 256,
+            logoRound = "Interface\\AddOns\\WOW_HC\\Images\\dawnrest-logo-round",
+            legacyPortrait = "portrait_dawnrest",
+        }
+    end
+
     WhcAddonSettings = WhcAddonSettings or {}
     -- Ensure the specific setting exists and has a default value
     WhcAddonSettings.minimapicon = WhcAddonSettings.minimapicon or 1
@@ -364,61 +395,6 @@ function WHC.InitializeShopPets()
 
     -- 1.12 spellbook
     WhcHookSpellTooltips(setShopPetTooltipText)
-end
-
-function WHC.ShowUrlPopup(title, url)
-    local urlFrame = CreateFrame("Frame", nil, UIParent, RETAIL_BACKDROP)
-    urlFrame:SetWidth(300)
-    urlFrame:SetHeight(150)
-    urlFrame:SetPoint("TOP", UIParent, "TOP", 0, -128)
-    urlFrame:SetBackdrop({
-        bgFile = "Interface/RaidFrame/UI-RaidFrame-GroupBg",
-        edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
-        tile = true,
-        tileSize = 300,
-        edgeSize = 32,
-        insets = { left = 11, right = 12, top = 12, bottom = 11 }
-    })
-
-    urlFrame:SetFrameStrata("HIGH")
-    urlFrame:SetFrameLevel(10)
-
-    local titleText = urlFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    titleText:SetPoint("TOP", urlFrame, "TOP", 0, -20)
-    titleText:SetText(title)
-    titleText:SetWidth(200)
-
-    local urlEditBox = CreateFrame("EditBox", nil, urlFrame)
-    urlEditBox:SetWidth(250)
-    urlEditBox:SetHeight(20)
-    urlEditBox:SetPoint("TOP", titleText, "BOTTOM", 0, -20)
-    urlEditBox:SetFontObject("ChatFontNormal")
-    urlEditBox:SetText(url)
-    urlEditBox:SetJustifyH("CENTER")
-    urlEditBox:SetAutoFocus(false)
-    urlEditBox:HighlightText()
-    urlEditBox:SetFocus()
-    urlEditBox:SetTextColor(1, 0.631, 0.317)
-    urlEditBox:SetScript("OnMouseDown", function(self)
-        urlEditBox:HighlightText()
-        urlEditBox:SetFocus()
-    end)
-
-    local buttonContainer = CreateFrame("Frame", nil, urlFrame)
-    buttonContainer:SetWidth(250)
-    buttonContainer:SetHeight(30)
-    buttonContainer:SetPoint("TOP", urlEditBox, "BOTTOM", 0, -20)
-
-    local cancelButton = CreateFrame("Button", nil, buttonContainer, "UIPanelButtonTemplate")
-    cancelButton:SetWidth(80)
-    cancelButton:SetHeight(30)
-    cancelButton:SetPoint("CENTER", buttonContainer, "CENTER", 5, 0)
-    cancelButton:SetText("Back")
-    cancelButton:SetScript("OnClick", function()
-        urlFrame:Hide()
-    end)
-
-    urlFrame:Show()
 end
 
 -- 2.7: the new achievements window opens once by itself for every pre-existing install (bump to do it again)

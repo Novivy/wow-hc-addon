@@ -903,7 +903,8 @@ local function createChrome(f)
     local p = CreateFrame("Frame", nil, f)
     p:SetAllPoints(f)
     p:SetFrameLevel(f:GetFrameLevel() + 40)
-    local portrait = artTexture(p, "OVERLAY", "portrait_hc", 50, 50)
+    -- (the Dawnrest realm shows its round logo instead, WHC.BRAND.legacyPortrait)
+    local portrait = artTexture(p, "OVERLAY", WHC.BRAND and WHC.BRAND.legacyPortrait or "portrait_hc", 50, 50)
     portrait:SetPoint("CENTER", f, "TOPLEFT", 24.75, -21.75)
 
     -- title (TitleContainer frameLevel 510), text TOP -5, GameFontNormal. Blizzard's container runs from 58 to -24,

@@ -236,10 +236,11 @@ function WHC.InitializeUI()
     end)
 
     local logo = WHC:CreateTexture(nil, "ARTWORK")
-    logo:SetTexture("Interface\\AddOns\\WOW_HC\\Images\\wow-hardcore-logo")
-    logo:SetWidth(150)
-    logo:SetHeight(75)
-    logo:SetPoint("TOP", WHC, "TOP", 0, 42)
+    logo:SetTexture(WHC.BRAND.logo)
+    logo:SetTexCoord(0, 1, 0, WHC.BRAND.logoV)
+    logo:SetWidth(WHC.BRAND.logoW)
+    logo:SetHeight(WHC.BRAND.logoH)
+    logo:SetPoint("TOP", WHC, "TOP", 0, WHC.BRAND.logoY)
 
 
     local tabContainer = CreateFrame("Frame", "TabContainer", WHC)

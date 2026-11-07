@@ -221,7 +221,7 @@ function WHC.Tab_Achievements(content)
     local desc2 = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     desc2:SetPoint("BOTTOM", scrollFrame, "BOTTOM", 10, -50) -- Adjust y-offset based on logo size
     desc2:SetText(
-        "A new WOW-HC button is available when you inspect other players.\n\nAchievements are secured once you hit level 60")
+        "A new " .. WHC.BRAND.name .. " button is available when you inspect other players.\n\nAchievements are secured once you hit level 60")
     desc2:SetWidth(450)
     desc2:SetFont("Fonts\\FRIZQT__.TTF", 10)
 

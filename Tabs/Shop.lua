@@ -17,32 +17,38 @@ local NOGGEN_TOOLTIP = "Added to your spellbook as a spell. Cast it for a perman
 -- Tooltip shown on hover for the Faction Change card
 local FACTION_TOOLTIP = "Move a level 40 or higher character to the opposite faction. Reputations, languages, racials, faction gear, mounts, mage portals and the main attunement chains are converted. Paladins and Shamans cannot be transferred."
 
--- HC realm catalog, mirrored from services.php (realm 1, status 1).
--- image = filename in /img/services (added to Images\services as .blp/.tga); price = HC coin price.
+-- Shop catalog, mirrored from the API's services.php (status 1), same shape: price = the standard (Dawnrest) price,
+-- priceHc = the hardcore price when it differs ('price_hc', cosmetics are lost on death there), realm = 1 (hardcore
+-- only) or 2 (Dawnrest only), nil = both. The hardcore realm is WHC.server.isHardcore, every other realm is Dawnrest.
+-- image = filename in /img/services (added to Images\services as .blp/.tga).
+-- Left out on both realms: Spectral Wolf (out_of_stock) and Gift a Subscription.
 local catalog = {
     -- Mounts
-    { key = "dawnsaber",        name = "Dawnsaber",                  category = "Mounts",     image = "mount-dawnsaber",   price = 50 },
-    { key = "red-raptor",       name = "Mottled Red Raptor",         category = "Mounts",     image = "mount-red-raptor",  price = 45 },
-    { key = "ivory-raptor",     name = "Ivory Raptor",               category = "Mounts",     image = "mount-ivory",       price = 50 },
-    { key = "tiger",            name = "Tiger",                      category = "Mounts",     image = "mount-tiger",       price = 45 },
-    { key = "artic-wolf",       name = "Artic Wolf",                 category = "Mounts",     image = "mount-artic-wolf",  price = 50 },
-    { key = "black-wolf",       name = "Black Wolf",                 category = "Mounts",     image = "mount-black-wolf",  price = 40 },
-    { key = "violet-mech",      name = "Violet Mecha",               category = "Mounts",     image = "mount-violet-mech", price = 40 },
-    { key = "green-mech",       name = "Green Mecha",                category = "Mounts",     image = "mount-fluo-mech",   price = 50 },
-    { key = "palomino",         name = "Palomino",                   category = "Mounts",     image = "mount-palomino",    price = 60 },
+    { key = "dawnsaber",        name = "Dawnsaber",                  category = "Mounts",     image = "mount-dawnsaber",   price = 180, priceHc = 50 },
+    { key = "red-raptor",       name = "Mottled Red Raptor",         category = "Mounts",     image = "mount-red-raptor",  price = 140, priceHc = 40 },
+    { key = "ivory-raptor",     name = "Ivory Raptor",               category = "Mounts",     image = "mount-ivory",       price = 180, priceHc = 50 },
+    { key = "tiger",            name = "Tiger",                      category = "Mounts",     image = "mount-tiger",       price = 140, priceHc = 40 },
+    { key = "artic-wolf",       name = "Artic Wolf",                 category = "Mounts",     image = "mount-artic-wolf",  price = 180, priceHc = 50 },
+    { key = "black-wolf",       name = "Black Wolf",                 category = "Mounts",     image = "mount-black-wolf",  price = 140, priceHc = 40 },
+    { key = "violet-mech",      name = "Violet Mecha",               category = "Mounts",     image = "mount-violet-mech", price = 140, priceHc = 40 },
+    { key = "green-mech",       name = "Green Mecha",                category = "Mounts",     image = "mount-fluo-mech",   price = 140, priceHc = 50 },
+    { key = "palomino",         name = "Palomino",                   category = "Mounts",     image = "mount-palomino",    price = 200, priceHc = 60 },
     -- Companions
-    { key = "diablo",           name = "Diablo",                     category = "Companions", image = "pet-diablo",        price = 20 },
-    { key = "panda",            name = "Panda",                      category = "Companions", image = "pet-panda",         price = 20 },
-    { key = "zergling",         name = "Zergling",                   category = "Companions", image = "pet-zerg",          price = 20 },
+    { key = "diablo",           name = "Diablo",                     category = "Companions", image = "pet-diablo",        price = 50,  priceHc = 20 },
+    { key = "panda",            name = "Panda",                      category = "Companions", image = "pet-panda",         price = 50,  priceHc = 20 },
+    { key = "zergling",         name = "Zergling",                   category = "Companions", image = "pet-zerg",          price = 50,  priceHc = 20 },
     -- Bags
-    { key = "bag-20",           name = "20 Slot Bag",                category = "Bags",       image = "oneshot-bag-hc",    price = 45 },
+    { key = "bag-20",           name = "20 Slot Bag",                category = "Bags",       image = "oneshot-bag-hc",    price = 35 },
     -- Services
     { key = "rename",           name = "Rename",                     category = "Services",   image = "rename",            price = 80 },
     { key = "account-transfer", name = "Character Account Transfer", category = "Services",   image = "account-transfer",  price = 50 },
-    { key = "realm-clone",      name = "Realm Clone",                category = "Services",   image = "realm-clone",       price = "Open" },
+    { key = "realm-clone",      name = "Realm Clone",                category = "Services",   image = "realm-clone",       price = "Free", realm = 1 },
+    { key = "level-boost",      name = "Character Level Boost",      category = "Services",   image = "level-boost",       price = 190,    realm = 2 },
+    { key = "gold",             name = "Gold",                       category = "Services",   image = "gold",              price = "Open", realm = 2 },
+    { key = "rested-xp",        name = "Rested XP",                  category = "Services",   image = "rested",            price = 40,     realm = 2 },
     { key = "customization",    name = "Character Customization",    category = "Services",   image = "custom",            price = "Open" },
     { key = "faction-change",   name = "Faction Change",             category = "Services",   image = "faction-change",    price = 170, tooltip = FACTION_TOOLTIP },
-    { key = "noggenfogger",     name = "Noggenfogger",               category = "Services",   image = "noggen",            price = 50, tooltip = NOGGEN_TOOLTIP },
+    { key = "noggenfogger",     name = "Noggenfogger",               category = "Services",   image = "noggen",            price = 100, priceHc = 50, tooltip = NOGGEN_TOOLTIP },
 }
 
 -- Subscription tiers, mirrored from api
@@ -128,8 +134,8 @@ function WHC.OnCoinsReceived(coins)
     end
 end
 
--- One shop card
-local function CreateCard(parent, item)
+-- One shop card, `price` = the price on this realm (a number of coins, or a label like "Open")
+local function CreateCard(parent, item, price)
     local card = CreateFrame("Frame", nil, parent, RETAIL_BACKDROP)
     card:SetWidth(CARD_W)
     card:SetHeight(CARD_H)
@@ -174,8 +180,8 @@ local function CreateCard(parent, item)
     buy:SetWidth(116)
     buy:SetHeight(26)
     buy:SetPoint("BOTTOM", card, "BOTTOM", 0, 6)
-    if type(item.price) == "number" then
-        buy:SetText(item.price)
+    if type(price) == "number" then
+        buy:SetText(price)
         local fs = buy:GetFontString()
         local coin = buy:CreateTexture(nil, "OVERLAY")
         coin:SetWidth(24)
@@ -189,10 +195,10 @@ local function CreateCard(parent, item)
             coin:SetPoint("CENTER", buy, "CENTER", -14, 0)
         end
     else
-        buy:SetText(item.price)
+        buy:SetText(price)
     end
     buy:SetScript("OnClick", function()
-        WHC.ShowUrlPopup("Visit the shop to purchase", "https://wow-hc.com/shop")
+        WHC.ShowUrlPopup("Visit the shop to purchase", WHC.BRAND.site .. "/shop")
     end)
 
     if item.tooltip then
@@ -252,7 +258,7 @@ local function CreateSubscriptions(parent)
         subscribe:SetPoint("TOP", price, "BOTTOM", 0, -6)
         subscribe:SetText("Subscribe")
         subscribe:SetScript("OnClick", function()
-            WHC.ShowUrlPopup("Visit the shop to subscribe", "https://wow-hc.com/shop")
+            WHC.ShowUrlPopup("Visit the shop to subscribe", WHC.BRAND.site .. "/shop")
         end)
 
         local y = -76
@@ -367,7 +373,7 @@ function WHC.ShowDonatePopup()
     donate:SetText("I'm a Kind Soul")
     donate:SetScript("OnClick", function()
         frame:Hide()
-        WHC.ShowUrlPopup("Visit the shop to donate", "https://wow-hc.com/shop")
+        WHC.ShowUrlPopup("Visit the shop to donate", WHC.BRAND.site .. "/shop")
     end)
 
     local close = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -445,12 +451,23 @@ function WHC.Tab_Shop(content)
     subsFrame:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
     subsFrame:Hide()
 
-    -- Build one card per catalog item (positioned per category below)
+    -- Build one card per catalog item this realm sells (positioned per category below)
+    local isHardcore = WHC.server.isHardcore
+    local realmId = isHardcore and 1 or 2
+    if not isHardcore then
+        categoryDesc.Services = "Account services: rename, character & account transfer, level boost, gold, rested XP, appearance customization and faction change."
+    end
     local itemFrames = {}
     for _, item in ipairs(catalog) do
-        local card = CreateCard(scrollChild, item)
-        card:Hide()
-        table.insert(itemFrames, card)
+        if not item.realm or item.realm == realmId then
+            local price = item.price
+            if isHardcore and item.priceHc then
+                price = item.priceHc
+            end
+            local card = CreateCard(scrollChild, item, price)
+            card:Hide()
+            table.insert(itemFrames, card)
+        end
     end
 
     local menuButtons = {}
@@ -599,7 +616,7 @@ function WHC.Tab_Shop(content)
     addCoins:SetPoint("RIGHT", coinBox, "RIGHT", -9, 0)
     addCoins:SetText("+")
     addCoins:SetScript("OnClick", function()
-        WHC.ShowUrlPopup("Visit the shop to buy coins", "https://wow-hc.com/shop")
+        WHC.ShowUrlPopup("Visit the shop to buy coins", WHC.BRAND.site .. "/shop")
     end)
     addCoins:SetScript("OnEnter", function()
         GameTooltip:SetOwner(addCoins, "ANCHOR_RIGHT")

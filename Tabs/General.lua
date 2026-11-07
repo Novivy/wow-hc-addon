@@ -1,6 +1,7 @@
--- Welcome tab: the corner link buttons (wow-hc.com, Discord, Group Finder) and a short
+-- Welcome tab: the corner link buttons (website, Discord, Group Finder) and a short
 -- pointer to the server overview post, everything else lives on the website.
-local OVERVIEW_URL = "https://wow-hc.com/forums/6215"
+-- Texts and links come from WHC.BRAND (Init.lua): wow-hc.com on the hardcore realm, dawnrest.com otherwise.
+local OVERVIEW_PATH = "/forums/6215"
 
 -- Round icon button with the minimap-style ring, top right corner of the tab
 local function cornerButton(name, parent, x, y, texture, tooltip, onClick)
@@ -33,11 +34,11 @@ local function cornerButton(name, parent, x, y, texture, tooltip, onClick)
 end
 
 function WHC.Tab_General(content)
-    cornerButton("WowhcBtn", content, 2, 10, "Interface\\AddOns\\WOW_HC\\Images\\wow-hardcore-logo-round", "Visit wow-hc.com", function()
-        WHC.ShowUrlPopup("Copy and paste the following URL to your browser", "https://wow-hc.com")
+    cornerButton("WowhcBtn", content, 2, 10, WHC.BRAND.logoRound, "Visit " .. WHC.BRAND.siteLabel, function()
+        WHC.ShowUrlPopup("Copy and paste the following URL to your browser", WHC.BRAND.site)
     end)
-    cornerButton("DiscordBtn", content, 2, -28, "Interface\\AddOns\\WOW_HC\\Images\\discord", "Visit discord.gg/uGWu5YFjE3", function()
-        WHC.ShowUrlPopup("Copy and paste the following URL to your browser", "https://discord.gg/uGWu5YFjE3")
+    cornerButton("DiscordBtn", content, 2, -28, "Interface\\AddOns\\WOW_HC\\Images\\discord", "Visit " .. WHC.BRAND.discord, function()
+        WHC.ShowUrlPopup("Copy and paste the following URL to your browser", "https://" .. WHC.BRAND.discord)
     end)
 
     -- Group Finder button (parented to the main frame so it shows on every tab)
@@ -79,7 +80,7 @@ function WHC.Tab_General(content)
 
     local title = block:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     title:SetPoint("TOP", block, "TOP", 0, 0)
-    title:SetText("Welcome to WOW Hardcore!")
+    title:SetText(WHC.BRAND.welcome)
     title:SetFont("Fonts\\FRIZQT__.TTF", 18)
     title:SetTextColor(0.933, 0.765, 0)
 
@@ -87,7 +88,7 @@ function WHC.Tab_General(content)
     tagline:SetPoint("TOP", title, "BOTTOM", 0, -28)
     tagline:SetWidth(272)
     tagline:SetJustifyH("CENTER")
-    tagline:SetText("A permadeath realm where you permanently lose your character if you die.")
+    tagline:SetText(WHC.BRAND.tagline)
 
     local desc = block:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     desc:SetPoint("TOP", tagline, "BOTTOM", 0, -32)
@@ -101,7 +102,7 @@ function WHC.Tab_General(content)
     readButton:SetPoint("TOP", desc, "BOTTOM", 0, -32)
     readButton:SetText("Read the server overview")
     readButton:SetScript("OnClick", function()
-        WHC.ShowUrlPopup("Copy and paste the following URL to your browser", OVERVIEW_URL)
+        WHC.ShowUrlPopup("Copy and paste the following URL to your browser", WHC.BRAND.site .. OVERVIEW_PATH)
     end)
 
     return content
