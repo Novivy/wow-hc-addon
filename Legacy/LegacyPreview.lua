@@ -1,6 +1,6 @@
 -- Legacy Challenges preview: the 1.60 classic beta Challenges page rebuilt with 1.12 / 1.14 frames, our challenge list
 -- (tools/legacy-challenges/legacy_challenges.def).
--- /whclegacy toggles the window, /whctoast shows the completion toast. No server calls yet: progress is local only.
+-- /ach and /achievements open the window (through the server's `.ach`).
 -- Anchors, sizes and fonts follow Blizzard_LegacySystem + the camelot PortraitFrameTemplate of build 1.60.1.70532;
 -- the few values that come from the beta screenshots instead of the code say so where they are used.
 
@@ -702,7 +702,7 @@ function LP.EnsureData()
         buildData()
         computeAll()
         -- buildData copied what it needs into CHALLENGES: free the loader and the source rows (the categories stay,
-        -- /whclegacy debug reads them)
+        -- /ach debug reads them)
         WHC_LoadLegacyData, WHC_LegacyChallenges, WHC_LegacyFeats = nil, nil, nil
     end
 end
@@ -730,7 +730,16 @@ local function matchesSearch(ch)
     return false
 end
 
+-- ours (user 2026-11-17): challenges that stay out of the window (list, category counts, checks) until whoever is
+-- viewed has earned them. 238 = Leeeeeeeeeeeeeroy!
+local HIDDEN_UNTIL_EARNED = { [238] = true }
+
+local function isHiddenUnearned(ch)
+    return ch.id ~= nil and HIDDEN_UNTIL_EARNED[ch.id] and not ch.done
+end
+
 local function isVisibleChallenge(ch)
+    if isHiddenUnearned(ch) then return false end
     if ch.done and not LP.showCompleted then return false end
     if not ch.done and not LP.showIncomplete then return false end
     if LP.searchText ~= "" and not matchesSearch(ch) then
@@ -1331,12 +1340,14 @@ local function categoryCounts()
             s = { total = 0, done = 0, open = 0 }
             stats[id] = s
         end
-        s.total = s.total + 1
-        if ch.done then
-            s.done = s.done + 1
-            if ch.bonusState == "ACTIVE" then s.open = s.open + 1 end
-        elseif not ch.missed then
-            s.open = s.open + 1
+        if not isHiddenUnearned(ch) then
+            s.total = s.total + 1
+            if ch.done then
+                s.done = s.done + 1
+                if ch.bonusState == "ACTIVE" then s.open = s.open + 1 end
+            elseif not ch.missed then
+                s.open = s.open + 1
+            end
         end
     end
     return visible, stats
@@ -1539,13 +1550,22 @@ function LP.CreateDetailPane(page)
 end
 
 local function createCriterion(card)
-    local c = CreateFrame("Frame", nil, card)
+    -- a Button so a META / dungeon tier row can take the mouse (layoutCriteria enables it only on rows that point to a
+    -- card); every other row stays mouse-transparent and a click on it still toggles the card under it
+    local c = CreateFrame("Button", nil, card)
     c:SetHeight(CRIT_ROW_H)
+    c:EnableMouse(false)
 
     -- text row: Legacy-Challenge-Cards-Bar, SystemFont_Small2 at LEFT 6 / RIGHT -24, check (0.4 scale) at RIGHT -6
     c.bg = c:CreateTexture(nil, "BACKGROUND")
     c.bg:SetAllPoints(c)
     setArt(c.bg, "crit_bar")
+    -- ours: hover glow on a row that links to its card, the category list's highlight recipe (ADD, alpha 0.4)
+    c.highlight = c:CreateTexture(nil, "HIGHLIGHT")
+    c.highlight:SetAllPoints(c)
+    setArt(c.highlight, "crit_bar")
+    c.highlight:SetBlendMode("ADD")
+    c.highlight:SetAlpha(0.4)
     c.name = c:CreateFontString(nil, "ARTWORK")
     setFont(c.name, 13)   -- SystemFont_Small2 is 11, +2 for WINDOW_SCALE
     c.name:SetPoint("LEFT", c, "LEFT", 6, 0)
@@ -1553,8 +1573,22 @@ local function createCriterion(card)
     c.name:SetJustifyH("LEFT")
     c.check = artTexture(c, "ARTWORK", "check", 16, 14)
     c.check:SetPoint("RIGHT", c, "RIGHT", -6, 0)
-    -- ours: red cross in the check's place when the criterion can no longer be earned (a lost dungeon on a tier META)
-    c.redx = createRedX(c, 16, nil)
+    c:SetScript("OnEnter", function()
+        if c.member then setColor(c.name, NORMAL_COLOR) end
+    end)
+    c:SetScript("OnLeave", function()
+        if c.nameColor then setColor(c.name, c.nameColor) end
+    end)
+    c:SetScript("OnClick", function()
+        local m = c.member
+        if not m then return end
+        if IsShiftKeyDown() and LP.InsertChatLink(m) then return end
+        playSound(WHC.SOUNDS.checkBoxOn)
+        LP.ShowChallenge(m)
+    end)
+    -- ours: red cross in the check's place when the criterion can no longer be earned (a lost dungeon on a tier META);
+    -- it has its own tooltip, and a click on it follows the row's link
+    c.redx = createRedX(c, 16, c)
     c.redx:SetPoint("RIGHT", c, "RIGHT", -6, 0)
 
     -- counted row: ProgressBarBackground 16 high across the row, bar 13 high on top of it, frame -8,7 / 8,-10
@@ -1732,6 +1766,9 @@ local function layoutCriteria(card, ch, show, top)
                     c:SetPoint("TOPRIGHT", card, "TOPRIGHT", -CRIT_OFFSET_X, y)
                 end
             end
+            -- only a META / dungeon tier row whose card exists for this character links to it
+            c.member = (not isBar) and crit.member or nil
+            c:EnableMouse(c.member ~= nil)
             if isBar then
                 c.bg:Hide()
                 c.name:Hide()
@@ -1748,7 +1785,8 @@ local function layoutCriteria(card, ch, show, top)
                 c.barBg:Hide()
                 c.bar:Hide()
                 c.name:SetText(text)
-                setColor(c.name, critDone and WHITE_COLOR or GRAY_COLOR)
+                c.nameColor = critDone and WHITE_COLOR or GRAY_COLOR
+                setColor(c.name, c.nameColor)
                 if critDone then c.check:Show() else c.check:Hide() end
                 c.redx.text = crit.missedReason
                 if crit.missed and not critDone then c.redx:Show() else c.redx:Hide() end
@@ -1865,6 +1903,7 @@ local function setupCard(card, ch)
 
 
     card:SetScript("OnClick", function()
+        if IsShiftKeyDown() and LP.InsertChatLink(ch) then return end
         if LP.selectedChallenge == ch then
             LP.selectedChallenge = nil
         else
@@ -2169,6 +2208,13 @@ function LP.OpenToChallenge(ch)
     if not (LP.frame and LP.frame:IsShown()) then
         LP.Toggle()
     end
+    LP.ShowChallenge(ch)
+end
+
+-- in the open window, whoever is viewed: the challenge's category with its card selected and scrolled into view (a
+-- toast, or a META / dungeon tier row clicked); clears the search and the Completed / Incomplete filter so the card
+-- can't be hidden
+function LP.ShowChallenge(ch)
     LP.showCompleted, LP.showIncomplete = true, true
     if LP.searchBox and LP.searchText ~= "" then
         LP.searchBox:SetText("")                                 -- OnTextChanged resets LP.searchText
@@ -2182,6 +2228,286 @@ function LP.OpenToChallenge(ch)
             LP.detailBar.ScrollTo(-card.topY - CARDS_TOP_PAD)
             return
         end
+    end
+end
+
+-- [[ Chat links ]] -- shift-click a card (or a META / dungeon tier row) with the chat box open: it inserts plain text,
+-- "[Wailing Caverns (Legacy #157, earned by Novivy)]" ("not earned by" otherwise) for whoever the window shows, so the
+-- server and the 1.14 client pass it like any chat line (no hyperlink to validate or strip) and a reader without the
+-- addon can still read it. Every WOW_HC reader turns that text into a link when the line is shown (1.14: a chat
+-- message filter, 1.12: the ChatFrame_OnEvent hook). 1.14 only keeps hyperlink types it knows, so the link rides on
+-- garrmission like DBM / AtlasLoot / WeakAuras do; 1.12 shows any type, same link on both. Clicking it shows a
+-- closable WotLK style tooltip of our own (title, description, who earned it); shift-click opens the window.
+-- Feats have no challenge id: "f" + their PlayerAchievements id. Link = garrmission:whcach:<key>:<1|0>:<owner>
+local LINK_PREFIX = "garrmission:whcach:"
+local LINK_COLOR = "|cffffff00"                                  -- retail achievement link yellow
+local LINK_TEXT_PATTERN = "%[([^%[%]]-) %(Legacy #(f?%d+), (n?o?t? ?)earned by ([^%s%)%]]+)%)%]"
+local TOOLTIP_TITLE_COLOR = { 1, 0.82, 0 }
+local TOOLTIP_EARNED_COLOR = { 0.1, 1, 0.1 }
+local TOOLTIP_HINT_COLOR = { 0.6, 0.6, 0.6 }
+local LINK_EVENTS = {
+    "CHAT_MSG_SAY", "CHAT_MSG_YELL", "CHAT_MSG_EMOTE", "CHAT_MSG_PARTY", "CHAT_MSG_PARTY_LEADER", "CHAT_MSG_RAID",
+    "CHAT_MSG_RAID_LEADER", "CHAT_MSG_RAID_WARNING", "CHAT_MSG_GUILD", "CHAT_MSG_OFFICER", "CHAT_MSG_WHISPER",
+    "CHAT_MSG_WHISPER_INFORM", "CHAT_MSG_CHANNEL", "CHAT_MSG_BATTLEGROUND", "CHAT_MSG_BATTLEGROUND_LEADER",
+    "CHAT_MSG_INSTANCE_CHAT", "CHAT_MSG_INSTANCE_CHAT_LEADER",
+}
+
+local function linkKey(ch)
+    if ch.id then return tostring(ch.id) end
+    if ch.ach and ch.ach.id then return "f" .. ch.ach.id end
+end
+
+local function challengeByKey(key)
+    for _, ch in ipairs(CHALLENGES) do
+        if linkKey(ch) == key then return ch end
+    end
+end
+
+local function chatText(key, name, earned, owner)
+    return "[" .. name .. " (Legacy #" .. key .. ", " .. (earned and "" or "not ") .. "earned by " .. owner .. ")]"
+end
+
+-- the description for a key, also for a card this character doesn't list (the other faction's)
+local function linkDesc(key, ch)
+    if ch then return ch.desc end
+    local id = tonumber(key)
+    if not id then return nil end
+    for _, src in ipairs(WHC_LegacyChallenges) do
+        if src.id == id then return src.desc end
+    end
+end
+
+local function activeChatBox()
+    local box = ChatEdit_GetActiveWindow and ChatEdit_GetActiveWindow()
+    if not box and ChatFrameEditBox and ChatFrameEditBox:IsVisible() then box = ChatFrameEditBox end
+    return box
+end
+
+-- true when the text went into an open chat box (the click was a link, not a select). The owner is whoever the window
+-- shows (yourself, or the player you inspect), earned = their state on that card.
+function LP.InsertChatLink(ch)
+    local box = activeChatBox()
+    local key = linkKey(ch)
+    if not box or not key then return false end
+    local owner = ((LP.viewKey or "0") ~= "0") and LP.viewKey or UnitName("player")
+    box:Insert(chatText(key, ch.name, ch.done == true, owner))
+    return true
+end
+
+-- the line's link texts -> links; nil when the line has none
+local function linkify(msg)
+    if type(msg) ~= "string" or not string.find(msg, "(Legacy #", 1, true) then return nil end
+    local out, n = string.gsub(msg, LINK_TEXT_PATTERN, function(name, key, notWord, owner)
+        local earned = (notWord == "") and "1" or "0"
+        return LINK_COLOR .. "|H" .. LINK_PREFIX .. key .. ":" .. earned .. ":" .. owner .. "|h[" .. name .. "]|h|r"
+    end)
+    if n == 0 then return nil end
+    return out
+end
+
+-- shift-click on a link: the card in the window. The owner's progress needs the server, which only answers for your
+-- target (12 yd): owner targeted -> ask; already received this session -> shown; else your own, with a hint
+function LP.OpenLinked(ch, owner)
+    LP.EnsureData()
+    local me = UnitName("player")
+    if owner == nil or owner == "" or owner == me then
+        LP.OpenToChallenge(ch)
+        return
+    end
+    local wasShown = LP.frame and LP.frame:IsShown()
+    if UnitExists("target") and UnitIsPlayer("target") and UnitName("target") == owner then
+        LP.RequestOnOpen(true)
+    elseif LP.state[owner] then
+        LP.inspecting = true
+        LP.SetView(owner)
+    else
+        if not wasShown or (LP.viewKey or "0") ~= "0" then LP.RequestOnOpen(false) end
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd100WOW-HC:|r target " .. owner ..
+            " (within 12 yards) and shift-click the link again to see their progress.")
+    end
+    if not wasShown then LP.Toggle() end
+    LP.ShowChallenge(ch)
+end
+
+-- every line wrapped by hand at TOOLTIP_MAX_W pixels, measured in the tooltip's own fonts (header for the title, body
+-- for the rest): a client wrapped line follows the widest unwrapped one, so it can't cap the width by itself
+local TOOLTIP_MAX_W = 230
+local tooltipMeasure = {}
+
+local function measureWidth(text, header)
+    local key = header and "header" or "body"
+    local fs = tooltipMeasure[key]
+    if not fs then
+        fs = UIParent:CreateFontString(nil, "ARTWORK", header and "GameTooltipHeaderText" or "GameTooltipText")
+        fs:Hide()
+        tooltipMeasure[key] = fs
+    end
+    fs:SetText(text)
+    return fs:GetStringWidth()
+end
+
+local function wrapLines(text, header, maxW)
+    if measureWidth(text, header) <= maxW then return { text } end
+    local lines, line = {}, ""
+    -- gmatch first: 1.14 (Lua 5.1) has no working gfind; 1.12 (Lua 5.0) only has gfind
+    for word in (string.gmatch or string.gfind)(text, "%S+") do
+        local candidate = (line == "") and word or (line .. " " .. word)
+        if line ~= "" and measureWidth(candidate, header) > maxW then
+            table.insert(lines, line)
+            line = word
+        else
+            line = candidate
+        end
+    end
+    if line ~= "" then table.insert(lines, line) end
+    return lines
+end
+
+local function addLines(tt, lines, color)
+    for _, line in ipairs(lines) do
+        tt:AddLine(line, color[1], color[2], color[3])
+    end
+end
+
+local function addColoredLine(tt, text, color, header)
+    addLines(tt, wrapLines(text, header, TOOLTIP_MAX_W), color)
+end
+
+-- plain click: a closable tooltip like WotLK's achievement link (close button, Escape, drag to move); the same link
+-- again closes it. Our own GameTooltip, not ItemRefTooltip: on 1.14 Blizzard's SetItemRef also drives ItemRefTooltip
+-- for the garrmission link and what we drew there never showed.
+local TOOLTIP_TOGGLE_DEBOUNCE = 0.3                              -- a second SetItemRef for the same click can't close it
+local TOOLTIP_CLOSE_W = 24                                       -- the title's first line stays clear of the close button
+local TOOLTIP_CLOSE_SPACE = "        "
+
+local function linkTooltip()
+    if LP.linkTooltip then return LP.linkTooltip end
+    local tt = CreateFrame("GameTooltip", "WHC_LegacyLinkTooltip", UIParent, "GameTooltipTemplate")
+    tt:SetFrameStrata("TOOLTIP")
+    tt:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 80)             -- ItemRefTooltip's default spot
+    tt:SetMovable(true)
+    tt:EnableMouse(true)
+    tt:SetClampedToScreen(true)
+    tt:RegisterForDrag("LeftButton")
+    tt:SetScript("OnDragStart", function() tt:StartMoving() end)
+    tt:SetScript("OnDragStop", function() tt:StopMovingOrSizing() end)
+    -- shift-click on the tooltip itself opens the card, like shift-clicking the link
+    tt:SetScript("OnMouseUp", function()
+        if IsShiftKeyDown() and LP.refCh then
+            playSound(WHC.SOUNDS.checkBoxOn)
+            LP.OpenLinked(LP.refCh, LP.refOwner)
+        end
+    end)
+    local close = CreateFrame("Button", nil, tt, "UIPanelCloseButton")
+    close:SetWidth(32)
+    close:SetHeight(32)
+    close:SetPoint("TOPRIGHT", tt, "TOPRIGHT", 1, 0)
+    close:SetScript("OnClick", function() tt:Hide() end)
+    table.insert(UISpecialFrames, "WHC_LegacyLinkTooltip")      -- Escape closes it
+    LP.linkTooltip = tt
+    return tt
+end
+
+local function showLinkTooltip(link, key, ch, name, earned, owner)
+    local tt = linkTooltip()
+    local now = GetTime()
+    if tt:IsVisible() and LP.refLink == link then
+        if now - (LP.refShownAt or 0) < TOOLTIP_TOGGLE_DEBOUNCE then return end
+        tt:Hide()
+        LP.refLink = nil
+        return
+    end
+    -- SetOwner clears the anchor points with any other anchor, PRESERVE keeps where it was dragged to
+    tt:SetOwner(UIParent, "ANCHOR_PRESERVE")
+    tt:ClearLines()
+    -- one tooltip line joined with "\n": only line 1 uses the header font, a second AddLine would drop to body size
+    local title = wrapLines(name, true, TOOLTIP_MAX_W - TOOLTIP_CLOSE_W)
+    title[1] = title[1] .. TOOLTIP_CLOSE_SPACE
+    tt:AddLine(table.concat(title, "\n"), TOOLTIP_TITLE_COLOR[1], TOOLTIP_TITLE_COLOR[2], TOOLTIP_TITLE_COLOR[3])
+    local mine = owner == "" or owner == UnitName("player")
+    if earned then
+        addColoredLine(tt, mine and "Earned" or ("Earned by " .. owner), TOOLTIP_EARNED_COLOR)
+    else
+        addColoredLine(tt, mine and "In progress" or ("Not earned yet by " .. owner), GRAY_COLOR)
+    end
+    local desc = linkDesc(key, ch)
+    if desc and desc ~= "" then addColoredLine(tt, desc, WHITE_COLOR) end
+    if ch then
+        tt:AddLine(" ")
+        addColoredLine(tt, "Shift-click the link to open", TOOLTIP_HINT_COLOR)
+    end
+    tt:Show()
+    LP.refLink = link
+    LP.refShownAt = now
+    LP.refCh, LP.refOwner = ch, owner
+end
+
+-- true when the link was ours (the 1.12 SetItemRef then stops there)
+local function onLinkClick(link, text)
+    if type(link) ~= "string" or string.sub(link, 1, string.len(LINK_PREFIX)) ~= LINK_PREFIX then
+        return false
+    end
+    local _, _, key, earnedFlag, owner = string.find(string.sub(link, string.len(LINK_PREFIX) + 1),
+        "^(f?%d+):(%d):(.*)$")
+    if not key then return true end
+    LP.EnsureData()
+    local ch = challengeByKey(key)
+    local _, _, linkName = string.find(text or "", "|h%[(.-)%]|h")
+    local name = (ch and ch.name) or linkName or "?"
+    local earned = earnedFlag == "1"
+    if IsShiftKeyDown() then
+        -- chat box open: re-link it (the plain text again, never the hyperlink); closed: open the window
+        local box = activeChatBox()
+        if box then
+            box:Insert(chatText(key, name, earned, owner))
+        elseif ch then
+            playSound(WHC.SOUNDS.checkBoxOn)
+            LP.OpenLinked(ch, owner)
+        end
+        return true
+    end
+    showLinkTooltip(link, key, ch, name, earned, owner)
+    return true
+end
+
+if ChatFrame_AddMessageEventFilter then
+    -- 1.14. Lua 5.0 (1.12 compiles this file too) can't forward `...`, so every event argument is passed by name
+    local function filter(frame, event, msg, sender, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18,
+                          a19, a20)
+        local linked = linkify(msg)
+        if not linked then return false end
+        return false, linked, sender, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20
+    end
+    for _, event in ipairs(LINK_EVENTS) do
+        ChatFrame_AddMessageEventFilter(event, filter)
+    end
+else
+    -- 1.12: the chat frames read the global arg1 (the text) in ChatFrame_OnEvent
+    local linkEvent = {}
+    for _, event in ipairs(LINK_EVENTS) do linkEvent[event] = true end
+    local origOnEvent = ChatFrame_OnEvent
+    function ChatFrame_OnEvent(event)
+        if linkEvent[event] then
+            local linked = linkify(arg1)
+            if linked then
+                local saved = arg1
+                arg1 = linked
+                origOnEvent(event)
+                arg1 = saved
+                return
+            end
+        end
+        origOnEvent(event)
+    end
+end
+
+if hooksecurefunc then
+    hooksecurefunc("SetItemRef", function(link, text) onLinkClick(link, text) end)
+else
+    local origSetItemRef = SetItemRef
+    function SetItemRef(link, text, button)
+        if onLinkClick(link, text) then return end
+        return origSetItemRef(link, text, button)
     end
 end
 
@@ -2383,8 +2709,13 @@ function LP.ShowToast(ch, force)
     end
 end
 
-SLASH_WHCLEGACY1 = "/whclegacy"
-SlashCmdList["WHCLEGACY"] = function(msg)
+-- /ach, /achievements: the server's `.ach`, whose `::whc::ch-open` reply opens the window (Events.lua) like typing it.
+-- `.ach` ignores the target (Level0.cpp HandleAchievementsCommand), so with another player targeted it opens on them
+-- like the inspect frame's button does (UI.lua: `.whc challenges target`, 12 yd server side).
+-- /ach debug: the faction and the card count of every category
+SLASH_WHCACH1 = "/ach"
+SLASH_WHCACH2 = "/achievements"
+SlashCmdList["WHCACH"] = function(msg)
     if msg == "debug" then
         LP.EnsureData()
         DEFAULT_CHAT_FRAME:AddMessage("WHC achievements: faction " .. tostring(LP.faction) .. " from " .. tostring(LP.factionSource))
@@ -2394,22 +2725,25 @@ SlashCmdList["WHCLEGACY"] = function(msg)
         end
         return
     end
-    if not (LP.frame and LP.frame:IsShown()) then
-        LP.RequestOnOpen(false)
+    if UnitExists("target") and UnitIsPlayer("target") and not UnitIsUnit("target", "player") then
+        LP.RequestOnOpen(true)
+        WHC.OpenLegacyChallenges()
+        return
     end
-    LP.Toggle()
+    SendChatMessage(".ach", "WHISPER", GetDefaultLanguage(), UnitName("player"))
 end
 
-SLASH_WHCTOAST1 = "/whctoast"
-SlashCmdList["WHCTOAST"] = function(msg)
-    LP.EnsureData()
-    -- /whctoast [n]: n toasts (default 3) from the default category (Leveling), 2 show stacked, up to 6 wait, rest dropped
-    local want = tonumber(msg or "") or 3
-    local n = 0
-    for _, ch in ipairs(CHALLENGES) do
-        if ch.cat == LP.defaultCategory and n < want then
-            LP.ShowToast(ch, true)
-            n = n + 1
-        end
-    end
-end
+-- dev only, disabled: uncomment to test the completion toast stack
+-- SLASH_WHCTOAST1 = "/whctoast"
+-- SlashCmdList["WHCTOAST"] = function(msg)
+--     LP.EnsureData()
+--     -- /whctoast [n]: n toasts (default 3) from the default category (Leveling), 2 show stacked, up to 6 wait, rest dropped
+--     local want = tonumber(msg or "") or 3
+--     local n = 0
+--     for _, ch in ipairs(CHALLENGES) do
+--         if ch.cat == LP.defaultCategory and n < want then
+--             LP.ShowToast(ch, true)
+--             n = n + 1
+--         end
+--     end
+-- end
